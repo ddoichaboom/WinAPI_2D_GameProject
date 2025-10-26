@@ -1,20 +1,37 @@
-﻿// pch.h: 미리 컴파일된 헤더 파일입니다.
-// 아래 나열된 파일은 한 번만 컴파일되었으며, 향후 빌드에 대한 빌드 성능을 향상합니다.
-// 코드 컴파일 및 여러 코드 검색 기능을 포함하여 IntelliSense 성능에도 영향을 미칩니다.
-// 그러나 여기에 나열된 파일은 빌드 간 업데이트되는 경우 모두 다시 컴파일됩니다.
-// 여기에 자주 업데이트할 파일을 추가하지 마세요. 그러면 성능이 저하됩니다.
+﻿
 
 #ifndef PCH_H
 #define PCH_H
 
+#pragma once
+
 // 여기에 미리 컴파일하려는 헤더 추가
 #include "framework.h"
 
+// 1) Windows 헤더 설정 (먼저 정의들)
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX             // <gdiplus.h> 포함 전 반드시 필요: min/max 매크로 충돌 방지
+
+
+// 2) Windows 기본
+#include <windows.h>
+#include <objidl.h>          // GDI+ 내부에서 사용
+
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+
+#pragma comment(lib, "msimg32.lib") // AlphaBlend
+
+#include <string>
+#include <algorithm>
+#include <cwctype>     // std::towlower
+#include <cwchar>      // _wcsicmp (MSVC)
 #include <list>
 #include <map>
 #include <vector>
-#include <algorithm>
 #include <ctime>
+
+
 
 #ifdef _DEBUG
 
@@ -31,6 +48,5 @@
 #endif
 
 using namespace std;
-
 
 #endif //PCH_H

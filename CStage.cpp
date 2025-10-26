@@ -37,7 +37,7 @@ void CStage::Initialize()
 
 	// UI 버튼 생성
 	CObjMgr::Get_Instance()->Add_Object(BUTTON, CAbstractFactory<CButton>::Create_Obj(JUMP));
-	//CObjMgr::Get_Instance()->Add_Object(BUTTON, CAbstractFactory<CButton>::Create_Obj(SLIDE));
+	CObjMgr::Get_Instance()->Add_Object(BUTTON, CAbstractFactory<CButton>::Create_Obj(SLIDE));
 
 
 	//CLineMgr::Get_Instance()->Initialize();

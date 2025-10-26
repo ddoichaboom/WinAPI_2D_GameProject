@@ -18,5 +18,7 @@ public:
 private:
 	void			Key_Input();
 	int				m_iDrawID;
+
+
 };
 

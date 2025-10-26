@@ -1,41 +1,118 @@
 #include "pch.h"
 #include "CMyBmp.h"
 
-CMyBmp::CMyBmp()
-{
-}
+using namespace Gdiplus;
 
-CMyBmp::~CMyBmp()
-{
-	Release();
+CMyBmp::CMyBmp() {}
+CMyBmp::~CMyBmp() { Release(); }
+
+// 확장자 소문자 비교 유틸
+static bool EndsWith(const std::wstring& s, const std::wstring& suffix) {
+    if (s.size() < suffix.size()) return false;
+    auto a = s, b = suffix;
+    std::transform(a.begin(), a.end(), a.begin(), ::towlower);
+    std::transform(b.begin(), b.end(), b.begin(), ::towlower);
+    return std::equal(b.rbegin(), b.rend(), a.rbegin());
 }
 
 void CMyBmp::Load_Bmp(const TCHAR* pFilePath)
 {
-	HDC	hDC = GetDC(g_hWnd);
+    Release(); // 재로딩 대비
 
-	// CreateCompatibleDC : 화면 dc와 호환되는 dc를 할당
+    // 1) 메모리 DC 준비
+    HDC hScreen = GetDC(g_hWnd);
+    m_hMemDC = CreateCompatibleDC(hScreen);
+    ReleaseDC(g_hWnd, hScreen);
 
-	m_hMemDC = CreateCompatibleDC(hDC);
+    // 파일 확장자로 PNG 여부 판단
+    std::wstring path(pFilePath ? pFilePath : L"");
+    bool isPng = EndsWith(path, L".png");
 
-	ReleaseDC(g_hWnd, hDC);
+    if (!isPng) {
+        // ===== BMP 경로 (기존) =====
+        m_hBitmap = (HBITMAP)LoadImage(
+            NULL,
+            pFilePath,
+            IMAGE_BITMAP,
+            0, 0,
+            LR_LOADFROMFILE | LR_CREATEDIBSECTION
+        );
+        if (!m_hBitmap) {
+            // 로드 실패 시 안전장치
+            m_hOldBmp = nullptr;
+            m_width = m_height = 0;
+            return;
+        }
 
-	m_hBitmap = (HBITMAP)LoadImage(NULL,			// 프로그램 인스턴스 핸들(파일로부터 읽어들일 것이기 때문에 NULL)
-		pFilePath,		// 파일의 이름을 포함한 경로
-		IMAGE_BITMAP,	// 어떤 타입 파일
-		0, 0,			// 가로, 세로 크기(파일로부터 읽어들일 것이기 때문에 임의의 사이즈를 제공할 이유가 없음)
-		LR_LOADFROMFILE | LR_CREATEDIBSECTION); // LR_LOADFROMFILE : 파일로부터 이미지를 불러들임
-	// LR_CREATEDIBSECTION : 읽어올 파일을 DIB 형태로 변환하여 읽음	
+        // BMP의 크기 구하기
+        BITMAP bm = {};
+        GetObject(m_hBitmap, sizeof(BITMAP), &bm);
+        m_width = bm.bmWidth;
+        m_height = bm.bmHeight;
 
-// SelectObject : 준비한 dc에 해당 gdi 오브젝트로 불러온 비트맵을 선택
-// gdi 오브젝트를 선택하기 전에 기존에 가지고 있던 오브젝트를 반환
-	m_hOldBmp = (HBITMAP)SelectObject(m_hMemDC, m_hBitmap);
+        m_hOldBmp = (HBITMAP)SelectObject(m_hMemDC, m_hBitmap);
+        return;
+    }
 
+    // ===== PNG 경로 (GDI+) =====
+    // GDI+ Bitmap 로드
+    Bitmap* png = Bitmap::FromFile(pFilePath, FALSE);
+    if (!png || png->GetLastStatus() != Ok) {
+        delete png;
+        m_hBitmap = nullptr;
+        m_hOldBmp = nullptr;
+        m_width = m_height = 0;
+        return;
+    }
+
+    m_width = (int)png->GetWidth();
+    m_height = (int)png->GetHeight();
+
+    // 32bpp 프리멀티플라이드 ARGB DIBSection 생성
+    BITMAPINFO bi = {};
+    bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bi.bmiHeader.biWidth = m_width;
+    bi.bmiHeader.biHeight = -m_height; // top-down DIB
+    bi.bmiHeader.biPlanes = 1;
+    bi.bmiHeader.biBitCount = 32;
+    bi.bmiHeader.biCompression = BI_RGB;
+
+    void* pBits = nullptr;
+    m_hBitmap = CreateDIBSection(m_hMemDC, &bi, DIB_RGB_COLORS, &pBits, NULL, 0);
+    if (!m_hBitmap || !pBits) {
+        delete png;
+        m_hBitmap = nullptr;
+        m_hOldBmp = nullptr;
+        m_width = m_height = 0;
+        return;
+    }
+
+    m_hOldBmp = (HBITMAP)SelectObject(m_hMemDC, m_hBitmap);
+
+    // GDI+로 메모리 DC에 그리면 자동으로 프리멀티 ARGB가 된다
+    {
+        Graphics g(m_hMemDC);
+        g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
+        g.SetPixelOffsetMode(PixelOffsetModeHighQuality);
+        g.DrawImage(png, 0, 0, m_width, m_height);
+    }
+
+    delete png;
 }
 
 void CMyBmp::Release()
 {
-	SelectObject(m_hMemDC, m_hOldBmp);
-	DeleteObject(m_hBitmap);
-	DeleteDC(m_hMemDC);
+    if (m_hMemDC) {
+        if (m_hOldBmp) SelectObject(m_hMemDC, m_hOldBmp);
+        m_hOldBmp = nullptr;
+    }
+    if (m_hBitmap) {
+        DeleteObject(m_hBitmap);
+        m_hBitmap = nullptr;
+    }
+    if (m_hMemDC) {
+        DeleteDC(m_hMemDC);
+        m_hMemDC = nullptr;
+    }
+    m_width = m_height = 0;
 }

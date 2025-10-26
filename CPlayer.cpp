@@ -20,7 +20,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::Initialize()
 {
-    CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Player/GingerBrave.bmp", L"GINGER_BRAVE_COOKIE");
+    CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Player/GingerBrave_Cookie.png", L"GINGER_BRAVE_COOKIE");
     CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Player/GingerBrave_Blink.bmp", L"GINGER_BRAVE_COOKIE_BLINK");
     // 용감한 쿠키 - 블링크 버전 Motion_Change 추후 수정 
 
@@ -84,28 +84,29 @@ void CPlayer::Render(HDC hDC)
     int 		iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
     int 		iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
-    HDC hMemDC = CBmpMgr::Get_Instance()->Find_Image(m_pFrameKey);
+    // 버튼 스프라이트 시트의 한 프레임 영역 계산
+    int srcX = (int)m_tInfo.fCX * m_tFrame.iStart;
+    int srcY = (int)m_tInfo.fCY * m_tFrame.iMotion;
+    int srcW = (int)m_tInfo.fCX;
+    int srcH = (int)m_tInfo.fCY;
 
-    //Rectangle(hDC,
-    //    m_tRect.left + iScrollX,
-    //    m_tRect.top + iScrollY,
-    //    m_tRect.right + iScrollX,
-    //    m_tRect.bottom + iScrollY
-    //);
+    int dstX = (int)m_tRect.left + iScrollX;
+    int dstY = (int)m_tRect.top + iScrollY;
+    int dstW = (int)m_tInfo.fCX;
+    int dstH = (int)m_tInfo.fCY;;
 
-    GdiTransparentBlt(hDC,
-        m_tRect.left + iScrollX,
-        m_tRect.top + iScrollY,
-        (int)m_tInfo.fCX ,
-        (int)m_tInfo.fCY ,
-        hMemDC,
-        (int)m_tInfo.fCX * m_tFrame.iStart,
-        (int)m_tInfo.fCY * m_tFrame.iMotion,
-        (int)m_tInfo.fCX,   // 복사할 이미지 가로
-        (int)m_tInfo.fCY,   // 복사할 이미지 세로
-        RGB(211, 211, 211));    // 제거할 픽셀 색상 값
+    BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+
+    HDC hPlayerDC = CBmpMgr::Get_Instance()->Find_Image(m_pFrameKey);
 
 
+    AlphaBlend(hDC,
+        dstX, dstY,
+        dstW, dstH,
+        hPlayerDC,
+        srcX, srcY,
+        srcW, srcH,
+        bf);
 }
 
 void CPlayer::Release()

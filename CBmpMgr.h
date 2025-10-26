@@ -15,6 +15,7 @@ public:
 	void		Insert_Bmp(const TCHAR* pFilePath, const TCHAR* pImgKey);
 	void		Release();
 
+
 public:
 	static CBmpMgr* Get_Instance()
 	{
