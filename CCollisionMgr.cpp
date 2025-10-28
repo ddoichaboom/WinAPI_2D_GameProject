@@ -1,22 +1,71 @@
 #include "pch.h"
 #include "CCollisionMgr.h"
+#include "CTile.h"
 
 void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 {
 	RECT	rc{};
+	float	fVy(0.f);
 
 	for (auto& Dst : Dst)
 	{
 		for (auto& Src : Src)
 		{
-			if (IntersectRect(&rc, Dst->Get_Rect(), Src->Get_Rect()))
+			fVy = Dst->Get_Y_Axis_Speed();
+
+			if ((Dst->Get_Info()->fHitY <= Src->Get_Info()->fHitY) && (fVy >= 0.f))
 			{
-				Dst->Set_Dead();
-				Src->Set_Dead();
+				if (IntersectRect(&rc, Dst->Get_HitRect(), Src->Get_HitRect()))
+				{
+					Dst->Set_OnGround(true);
+					Dst->Set_PrevOnGround(true);
+					Dst->Set_Y_Axis_Speed(0.f);
+					Dst->Set_PosY(-(rc.bottom - rc.top));
+					Dst->Set_Hit_Pos(
+						Dst->Get_Info()->fX,
+						(Dst->Get_Info()->fY + 
+							(Dst->Get_Info()->fCY - Dst->Get_Info()->fHitCY) / 2.f));
+					return;
+				}
+				else
+					Dst->Set_OnGround(false);
+					Dst->Set_PrevOnGround(false);
+					continue;
 			}
+			
 		}
 	}
 }
+
+void CCollisionMgr::Collision_Rect(list<CObj*> Dst, vector<CObj*> Src)
+{
+	RECT	rc{};
+	float	fVy(0.f);
+
+	for (auto& Dst : Dst)
+	{
+		for (auto& Src : Src)
+		{
+			fVy = Dst->Get_Y_Axis_Speed();
+
+			if ((Dst->Get_Info()->fHitY <= Src->Get_Info()->fHitY) && (fVy >= 0.f))
+			{
+				if (IntersectRect(&rc, Dst->Get_HitRect(), Src->Get_HitRect()))
+				{
+					Dst->Set_OnGround(true);
+					Dst->Set_Y_Axis_Speed(0.f);
+					Dst->Set_PosY(-(rc.bottom - rc.top));
+					return;
+				}
+				else
+					continue;
+			}
+			
+		}
+	}
+}
+
+
 
 void CCollisionMgr::Collision_RectEx(list<CObj*> Dst, list<CObj*> Src)
 {

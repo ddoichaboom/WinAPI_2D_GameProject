@@ -65,7 +65,7 @@ void CButton::Render(HDC hDC)
 	int srcW = (int)m_tInfo.fCX;
 	int srcH = (int)m_tInfo.fCY;
 
-	HDC     hBtnDC = CBmpMgr::Get_Instance()->Find_Image(m_pFrameKey);
+	HDC     hBtnDC = CBmpMgr::Get_Instance()->Find_Image(Get_FrameKey());
 
 	if (!hBtnDC) return;
 

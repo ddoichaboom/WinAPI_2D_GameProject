@@ -4,11 +4,13 @@
 #include "CLineMgr.h"
 #include "CScrollMgr.h"
 #include "CBmpMgr.h"
+#include "CTileMgr.h"
+#include "CCollisionMgr.h"
 
 CPlayer::CPlayer()
     : m_pTargetLine(nullptr), m_pVerticalLine(nullptr), m_iMaxJumpCount(2),
     m_ePreMotion(ST_END), m_eCurMotion(RUN), m_iJumpCount(0),
-    m_bWantJump(false), m_bWantSlide(false), m_bPrevOnGround(false)
+    m_bWantJump(false), m_bWantSlide(false)
 {
     ZeroMemory(&m_tPlayerInfo, sizeof(PLAYERINFO));
 }
@@ -26,10 +28,13 @@ void CPlayer::Initialize()
 
     m_pFrameKey = L"GINGER_BRAVE_COOKIE";
 
-    m_tInfo = { 300.f, 300.f, 364.f, 364.f };
-    m_fSpeed = 400.f;
+    m_tInfo = { 300.f, 300.f, 364.f, 364.f, 120.f, 133.f};
+
+    Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
+
+    m_fSpeed = 450.f;
     m_fVx = m_fSpeed;
-    m_fJumpSpeed = 700.f;
+    m_fJumpSpeed = 650.f;
     m_bOnGround = false;
     m_bPrevOnGround = false;
     m_eRender = GAMEOBJECT;
@@ -53,8 +58,9 @@ int CPlayer::Update(float deltaTime)
     m_tInfo.fY += m_fVy * deltaTime;
     m_tInfo.fX += m_fVx * deltaTime;
 
+    Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
 
-    __super::Update_Rect();
+    Update_Rect();
 
 
     return OBJ_NOEVENT;
@@ -63,20 +69,25 @@ int CPlayer::Update(float deltaTime)
 void CPlayer::Late_Update(float deltaTime) 
 {
 
-    Rect_Col_Movement();
+    //Rect_Col_Movement();
 
     Collision_Border_Line();
-
+    
     State_Check(deltaTime);
 
-
     Motion_Change();
+
+    Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
 
     Offset(deltaTime);
 
     Move_Frame(deltaTime);
 
     m_bPrevOnGround = m_bOnGround;
+
+
+    Update_Rect();
+
 }
 
 void CPlayer::Render(HDC hDC)
@@ -84,7 +95,6 @@ void CPlayer::Render(HDC hDC)
     int 		iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
     int 		iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
-    // 버튼 스프라이트 시트의 한 프레임 영역 계산
     int srcX = (int)m_tInfo.fCX * m_tFrame.iStart;
     int srcY = (int)m_tInfo.fCY * m_tFrame.iMotion;
     int srcW = (int)m_tInfo.fCX;
@@ -97,8 +107,15 @@ void CPlayer::Render(HDC hDC)
 
     BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-    HDC hPlayerDC = CBmpMgr::Get_Instance()->Find_Image(m_pFrameKey);
+    HDC hPlayerDC = CBmpMgr::Get_Instance()->Find_Image(Get_FrameKey());
 
+     //히트박스 체크 용
+    //Rectangle(
+    //    hDC,
+    //    (int)m_tHitRect.left + iScrollX,
+    //    (int)m_tHitRect.top,
+    //    (int)m_tHitRect.right + iScrollX,
+    //    (int)m_tHitRect.bottom);
 
     AlphaBlend(hDC,
         dstX, dstY,
@@ -159,29 +176,29 @@ void CPlayer::Rect_Col_Movement()
     }
 }
 
+// 맵 제작 전 임시로 사용
 void CPlayer::Collision_Border_Line()
 {
-    if (m_tInfo.fX <= BOUNDARY_LEFT + m_tInfo.fCX / 2)
+    if (m_tHitRect.left <= BOUNDARY_LEFT )
     {
-        m_tInfo.fX = BOUNDARY_LEFT + m_tInfo.fCX / 2;
+        m_tInfo.fX = BOUNDARY_LEFT + (m_tInfo.fHitCX / 2.f);
+        Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
         m_fVx = 0;
     }
 
-    if (m_tInfo.fY <= BOUNDARY_TOP + m_tInfo.fCY / 2)
-    {
-        m_tInfo.fY = BOUNDARY_TOP + m_tInfo.fCY / 2;
-        m_fVy = 0;
-    }
 
-    if (m_tInfo.fX >= BOUNDARY_RIGHT - m_tInfo.fCX / 2)
+
+    if (m_tHitRect.right >= BOUNDARY_RIGHT)
     {
-        m_tInfo.fX = BOUNDARY_RIGHT - m_tInfo.fCX / 2;
+        m_tInfo.fX = BOUNDARY_RIGHT - (m_tInfo.fHitCX / 2.f);
+        Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
         m_fVx = 0;
     }
 
-    if (m_tInfo.fY >= BOUNDARY_BOTTOM - m_tInfo.fCY / 2)
+    if (m_tHitRect.bottom >= BOUNDARY_BOTTOM )
     {
-        m_tInfo.fY = BOUNDARY_BOTTOM - m_tInfo.fCY / 2;
+        m_tInfo.fY = BOUNDARY_BOTTOM - (m_tInfo.fCY / 2.f);
+        Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
         m_bOnGround = true;
         m_fVy = 0;
     }
@@ -198,6 +215,9 @@ void CPlayer::Key_Input()
     
     m_bWantSlide = CKeyMgr::Get_Instance()->Key_Pressing('S'); 
 
+
+
+
     
 }
 
@@ -210,8 +230,13 @@ void CPlayer::Offset(float deltaTime)
 
     if (iOffSetX < m_tInfo.fX + iScrollX)
     {
-        CScrollMgr::Get_Instance()->Set_ScrollX(-m_fSpeed * deltaTime);
+        CScrollMgr::Get_Instance()->Set_ScrollX(-m_fVx * deltaTime);
     }
+
+    //if (iOffSetX > m_tInfo.fX + iScrollX)
+    //{
+    //    CScrollMgr::Get_Instance()->Set_ScrollX(-m_fVx * deltaTime);
+    //}
 
 }
 
@@ -225,52 +250,84 @@ void    CPlayer::Motion_Change()
             switch (m_eCurMotion)
             {
             case RUN:
+                m_tInfo.fHitCX = 120.f;
+                m_tInfo.fHitCY = 133.f;
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 3;
                 m_tFrame.iMotion = 0;
                 m_tFrame.frameElapsedSec = 0.0f;
-                m_tFrame.frameIntervalSec = 0.20f;   // 200ms
+                m_tFrame.frameIntervalSec = 0.10f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
                 m_tFrame.bLoop = true;    // 루프
                 break;
 
             case JUMP:
+                m_tInfo.fHitCX = 124.f;
+                m_tInfo.fHitCY = 113.f;
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 1;
                 m_tFrame.iMotion = 1;
                 m_tFrame.frameElapsedSec = 0.0f;
-                m_tFrame.frameIntervalSec = 0.20f;   // 200ms
+                m_tFrame.frameIntervalSec = 0.10f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.00f;    // 락 없음
                 m_tFrame.bLoop = true;
                 break;
 
-
-            case DOUBLE_JUMP:
+            case DOUBLE_JUMP_INTRO:
+                m_tInfo.fHitCX = 120.f;
+                m_tInfo.fHitCY = 145.f;
                 m_tFrame.iStart = 0;
-                m_tFrame.iEnd = 4;
+                m_tFrame.iEnd = 0;
                 m_tFrame.iMotion = 2;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   // 100ms
-                m_tFrame.stateLockRemainSec = 0.50f;    // 500ms
-                m_tFrame.bLoop = false;    // 루프
+                m_tFrame.stateLockRemainSec = 0.10f;    // 500ms
+                m_tFrame.bLoop = false;
                 break;
 
+            case DOUBLE_JUMP_TURN:
+                m_tInfo.fHitCX = 117.f;
+                m_tInfo.fHitCY = 117.f;
+                m_tFrame.iStart = 0;
+                m_tFrame.iEnd = 2;
+                m_tFrame.iMotion = 3;
+                m_tFrame.frameElapsedSec = 0.0f;
+                m_tFrame.frameIntervalSec = 0.10f;   // 100ms
+                m_tFrame.stateLockRemainSec = 0.0f;    // 500ms
+                m_tFrame.bLoop = true;
+                break;
 
-            case FALLING:
+            case DOUBLE_JUMP_OUTRO:
+                m_tInfo.fHitCX = 110.f;
+                m_tInfo.fHitCY = 120.f;
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 0;
-                m_tFrame.iMotion = 3;
+                m_tFrame.iMotion = 4;
+                m_tFrame.frameElapsedSec = 0.0f;
+                m_tFrame.frameIntervalSec = 0.10f;   // 100ms
+                m_tFrame.stateLockRemainSec = 0.10f;    // 500ms
+                m_tFrame.bLoop = false;
+                break;
+
+            case FALLING:
+                m_tInfo.fHitCX = 77.f;
+                m_tInfo.fHitCY = 144.f;
+                m_tFrame.iStart = 0;
+                m_tFrame.iEnd = 0;
+                m_tFrame.iMotion = 5;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   
                 m_tFrame.stateLockRemainSec = 0.0f;    
-                m_tFrame.bLoop = true;
+                m_tFrame.bLoop = false;
                 break;
 
 
             case LANDING:
+                m_tInfo.fHitCX = 113.f;
+                m_tInfo.fHitCY = 112.f;
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 0;
-                m_tFrame.iMotion = 4;
+                m_tFrame.iMotion = 6;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   
                 m_tFrame.stateLockRemainSec = 0.10f;    
@@ -279,9 +336,11 @@ void    CPlayer::Motion_Change()
 
 
             case SLIDE:
+                m_tInfo.fHitCX = 168.f;
+                m_tInfo.fHitCY = 66.f;
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 1;
-                m_tFrame.iMotion = 5;
+                m_tFrame.iMotion = 7;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.20f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
@@ -293,7 +352,7 @@ void    CPlayer::Motion_Change()
             case HIT:
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 4;
-                m_tFrame.iMotion = 6;
+                m_tFrame.iMotion = 8;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.50f;    // 500ms
@@ -304,7 +363,7 @@ void    CPlayer::Motion_Change()
             case BONUS_TIME_INTRO:
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 4;
-                m_tFrame.iMotion = 7;
+                m_tFrame.iMotion = 9;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   // 100ms
                 m_tFrame.stateLockRemainSec = 0.50f;    
@@ -315,7 +374,7 @@ void    CPlayer::Motion_Change()
             case BONUS_TIME_UP:
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 2;
-                m_tFrame.iMotion = 8;
+                m_tFrame.iMotion = 10;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.30f;    // 300ms
@@ -325,7 +384,7 @@ void    CPlayer::Motion_Change()
             case BONUS_TIME_DOWN:
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 1;
-                m_tFrame.iMotion = 9;
+                m_tFrame.iMotion = 11;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.20f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
@@ -335,26 +394,6 @@ void    CPlayer::Motion_Change()
             case BONUS_TIME_OUTRO:
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 2;
-                m_tFrame.iMotion = 10;
-                m_tFrame.frameElapsedSec = 0.0f;
-                m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-                m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
-                m_tFrame.bLoop = true;    // 루프
-                break;
-
-            case BOOST:
-                m_tFrame.iStart = 0;
-                m_tFrame.iEnd = 3;
-                m_tFrame.iMotion = 11;
-                m_tFrame.frameElapsedSec = 0.0f;
-                m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-                m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
-                m_tFrame.bLoop = true;    // 루프
-                break;
-
-            case CLEAR:
-                m_tFrame.iStart = 0;
-                m_tFrame.iEnd = 10;
                 m_tFrame.iMotion = 12;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.20f;   // 200ms
@@ -362,7 +401,9 @@ void    CPlayer::Motion_Change()
                 m_tFrame.bLoop = true;    // 루프
                 break;
 
-            case EXHAUST:
+            case BOOST:
+                m_tInfo.fHitCX = 122.f;
+                m_tInfo.fHitCY = 140.f;
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 3;
                 m_tFrame.iMotion = 13;
@@ -372,10 +413,30 @@ void    CPlayer::Motion_Change()
                 m_tFrame.bLoop = true;    // 루프
                 break;
 
+            case CLEAR:
+                m_tFrame.iStart = 0;
+                m_tFrame.iEnd = 10;
+                m_tFrame.iMotion = 14;
+                m_tFrame.frameElapsedSec = 0.0f;
+                m_tFrame.frameIntervalSec = 0.20f;   // 200ms
+                m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
+                m_tFrame.bLoop = true;    // 루프
+                break;
+
+            case EXHAUST:
+                m_tFrame.iStart = 0;
+                m_tFrame.iEnd = 3;
+                m_tFrame.iMotion = 15;
+                m_tFrame.frameElapsedSec = 0.0f;
+                m_tFrame.frameIntervalSec = 0.20f;   // 200ms
+                m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
+                m_tFrame.bLoop = true;    // 루프
+                break;
+
             case DEAD:
                 m_tFrame.iStart = 0;
                 m_tFrame.iEnd = 4;
-                m_tFrame.iMotion = 14;
+                m_tFrame.iMotion = 16;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.20f;   // 200ms
                 m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
@@ -387,7 +448,7 @@ void    CPlayer::Motion_Change()
             m_ePreMotion = m_eCurMotion;
         }
     }
-    else if (m_pFrameKey == L"GINGER_BRAVE_COOKIE_BLINK")
+    /*else if (m_pFrameKey == L"GINGER_BRAVE_COOKIE_BLINK")
     {
         if (m_ePreMotion != m_eCurMotion)
         {
@@ -523,7 +584,7 @@ void    CPlayer::Motion_Change()
 
             m_ePreMotion = m_eCurMotion;
         }
-    }
+    }*/
 }
 
 void    CPlayer::State_Check(float deltaTime)
@@ -554,8 +615,7 @@ void    CPlayer::State_Check(float deltaTime)
             m_bOnGround = false;
             m_fVy = -m_fJumpSpeed;
 
-            m_eCurMotion = (m_iJumpCount == 0) ? JUMP : DOUBLE_JUMP;
-            
+            m_eCurMotion = (m_iJumpCount == 0) ? JUMP : DOUBLE_JUMP_INTRO;
 
             ++m_iJumpCount;
         }
@@ -563,7 +623,21 @@ void    CPlayer::State_Check(float deltaTime)
         return;
     }
 
-    if (!m_bOnGround)
+    if (m_eCurMotion == DOUBLE_JUMP_INTRO)
+    {
+        m_eCurMotion = DOUBLE_JUMP_TURN;
+        return;
+    }
+
+    if ((m_eCurMotion == DOUBLE_JUMP_TURN))
+    {
+        if (m_fVy > eps)
+            m_eCurMotion = DOUBLE_JUMP_OUTRO;
+
+        return;
+    }
+
+    if ((m_eCurMotion == DOUBLE_JUMP_OUTRO) && (!m_bOnGround))
     {
         if (m_fVy > eps)
             m_eCurMotion = FALLING;

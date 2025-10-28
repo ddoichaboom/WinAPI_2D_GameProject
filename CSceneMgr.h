@@ -2,15 +2,13 @@
 
 #include "CLogo.h"
 #include "CMenu.h"
-#include "CStage.h"
+#include "CStage01.h"
 #include "CBossStage.h"
 #include "CEdit.h"
 
 class CSceneMgr
 {
-public:
-	enum SCENEID { SC_LOGO, SC_MENU, SC_EDIT, SC_STAGE, SC_BOSS_STAGE, SC_END };
-
+	
 private:
 	CSceneMgr();
 	~CSceneMgr();

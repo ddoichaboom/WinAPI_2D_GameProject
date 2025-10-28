@@ -26,7 +26,7 @@ void CLogo::Late_Update()
 {
 	if (CKeyMgr::Get_Instance()->Key_Down(VK_RETURN))
 	{
-		CSceneMgr::Get_Instance()->Scene_Change(CSceneMgr::SC_MENU);
+		CSceneMgr::Get_Instance()->Scene_Change(SC_MENU);
 		return;
 	}
 

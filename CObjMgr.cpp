@@ -21,7 +21,7 @@ void CObjMgr::Check_Collision(OBJID Dst, OBJID Src, Method eMethod)
 		CCollisionMgr::Collision_Circle(m_ObjList[Dst], m_ObjList[Src]);
 		break;
 	case CObjMgr::RECT:
-		CCollisionMgr::Collision_RectEx(m_ObjList[Dst], m_ObjList[Src]);
+		CCollisionMgr::Collision_Rect(m_ObjList[Dst], m_ObjList[Src]);
 		break;
 	case CObjMgr::LINE:
 		break;

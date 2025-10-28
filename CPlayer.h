@@ -12,7 +12,8 @@ public:
 public:
     enum STATE { 
         RUN,
-        JUMP, DOUBLE_JUMP,
+        JUMP,
+        DOUBLE_JUMP_INTRO, DOUBLE_JUMP_TURN, DOUBLE_JUMP_OUTRO,
         FALLING, LANDING,
         SLIDE, HIT,
         BONUS_TIME_INTRO, BONUS_TIME_UP, BONUS_TIME_DOWN, BONUS_TIME_OUTRO,
@@ -47,7 +48,6 @@ private:
 
     bool            m_bWantJump;
     bool            m_bWantSlide;
-    bool            m_bPrevOnGround;
 
 
 

@@ -17,20 +17,36 @@
 
 #define		BOUNDARY_LEFT		0.f
 #define		BOUNDARY_TOP		0.f
-#define		BOUNDARY_RIGHT		6393.f
+#define		BOUNDARY_RIGHT		5457.f
 #define		BOUNDARY_BOTTOM		720.f
 
 #define		INFINITY			numeric_limits<float>::infinity()
+
+#define		STAGE01_SIZE		5457.f
+
+#define		TILEX				44
+
+#define		TILECX				124
+#define		TILECY				140
+
+
 
 
 extern HWND g_hWnd;
 
 typedef struct tagInfo
 {
+	// Render Rect¿ë 
 	float fX;
 	float fY;
-	float fCX;
+	float fCX;				
 	float fCY;
+
+	// HitBox Rect¿ë 
+	float fHitCX;			
+	float fHitCY;			
+	float fHitX;
+	float fHitY;
 
 }INFO;
 
@@ -54,6 +70,7 @@ enum OBJID
 {
 	PLAYER,
 	BUTTON,
+	PLATFORM,
 	PET,
 	OBSTACLE,
 	OBJ_END
@@ -61,12 +78,17 @@ enum OBJID
 
 enum RENDERID
 {
-	BACKGROUND, GAMEOBJECT, EFFECT, UI, RENDER_END
+	BACKGROUND, TILE, GAMEOBJECT, EFFECT, UI, RENDER_END
 };
 
 enum BUTTON_TYPE 
 { 
 	JUMP, SLIDE, BT_END 
+};
+
+enum SCENEID 
+{ 
+	SC_LOGO, SC_MENU, SC_EDIT, SC_STAGE01, SC_STAGE02, SC_BOSS_STAGE, SC_END
 };
 
 typedef struct tagFrame

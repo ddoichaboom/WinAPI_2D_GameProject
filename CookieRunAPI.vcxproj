@@ -151,7 +151,10 @@
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CSceneMgr.h" />
     <ClInclude Include="CScrollMgr.h" />
-    <ClInclude Include="CStage.h" />
+    <ClInclude Include="CStage01.h" />
+    <ClInclude Include="TcharIO.h" />
+    <ClInclude Include="CTile.h" />
+    <ClInclude Include="CTileMgr.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -178,7 +181,10 @@
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CSceneMgr.cpp" />
     <ClCompile Include="CScrollMgr.cpp" />
-    <ClCompile Include="CStage.cpp" />
+    <ClCompile Include="CStage01.cpp" />
+    <ClCompile Include="TcharIO.cpp" />
+    <ClCompile Include="CTile.cpp" />
+    <ClCompile Include="CTileMgr.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -79,6 +79,15 @@
     <Filter Include="01. Obj\01. Button">
       <UniqueIdentifier>{584f8e1b-6acb-4e4b-b24e-11c95965ac8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Design\08. TileMgr\Tile">
+      <UniqueIdentifier>{a891e110-4fa5-4b08-bf84-56f90cefc55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Scene\03. Stage\Stage01">
+      <UniqueIdentifier>{b46c678b-ee64-4566-b34a-7713dba63cc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Utils">
+      <UniqueIdentifier>{f1c2da64-9fbb-40a0-adda-4ee25b972d30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -141,9 +150,6 @@
     <ClInclude Include="CEdit.h">
       <Filter>03. Scene\02. Edit</Filter>
     </ClInclude>
-    <ClInclude Include="CStage.h">
-      <Filter>03. Scene\03. Stage</Filter>
-    </ClInclude>
     <ClInclude Include="CPlayer.h">
       <Filter>01. Obj\00. Player</Filter>
     </ClInclude>
@@ -158,6 +164,18 @@
     </ClInclude>
     <ClInclude Include="CButton.h">
       <Filter>01. Obj\01. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="CTile.h">
+      <Filter>02. Design\08. TileMgr\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="CStage01.h">
+      <Filter>03. Scene\03. Stage\Stage01</Filter>
+    </ClInclude>
+    <ClInclude Include="CTileMgr.h">
+      <Filter>02. Design\08. TileMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="TcharIO.h">
+      <Filter>05. Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +224,6 @@
     <ClCompile Include="CEdit.cpp">
       <Filter>03. Scene\02. Edit</Filter>
     </ClCompile>
-    <ClCompile Include="CStage.cpp">
-      <Filter>03. Scene\03. Stage</Filter>
-    </ClCompile>
     <ClCompile Include="CPlayer.cpp">
       <Filter>01. Obj\00. Player</Filter>
     </ClCompile>
@@ -223,6 +238,18 @@
     </ClCompile>
     <ClCompile Include="CButton.cpp">
       <Filter>01. Obj\01. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="CTile.cpp">
+      <Filter>02. Design\08. TileMgr\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="CStage01.cpp">
+      <Filter>03. Scene\03. Stage\Stage01</Filter>
+    </ClCompile>
+    <ClCompile Include="CTileMgr.cpp">
+      <Filter>02. Design\08. TileMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="TcharIO.cpp">
+      <Filter>05. Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

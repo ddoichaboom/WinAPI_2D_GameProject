@@ -3,7 +3,7 @@
 
 CObj::CObj()
 	: m_fSpeed(0.f), m_bDead(false), m_bOnGround(false),
-	m_fJumpSpeed(0.f), m_fVy(0.f), m_fVx(0.f)
+	m_fJumpSpeed(0.f), m_fVy(0.f), m_fVx(0.f), m_bPrevOnGround(false)
 {
 	ZeroMemory(&m_tInfo, sizeof(INFO));
 	ZeroMemory(&m_tRect, sizeof(RECT));
@@ -23,7 +23,11 @@ void	CObj::Update_Rect()
 	m_tRect.right = long(m_tInfo.fX + (m_tInfo.fCX / 2.f));
 	m_tRect.bottom = long(m_tInfo.fY + (m_tInfo.fCY / 2.f));
 
-
+	// 히트박스 좌표 매핑
+	m_tHitRect.left = long(m_tInfo.fHitX - (m_tInfo.fHitCX / 2.f));
+	m_tHitRect.top = long(m_tInfo.fHitY - (m_tInfo.fHitCY / 2.f));
+	m_tHitRect.right = long(m_tInfo.fHitX + (m_tInfo.fHitCX / 2.f));
+	m_tHitRect.bottom = long(m_tInfo.fHitY + (m_tInfo.fHitCY / 2.f));
 }
 
 void	CObj::Move_Frame(float deltaTime)

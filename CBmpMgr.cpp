@@ -29,6 +29,8 @@ HDC CBmpMgr::Find_Image(const TCHAR* pImgKey)
 	return iter->second->Get_MemDC();
 }
 
+
+
 void CBmpMgr::Insert_Bmp(const TCHAR* pFilePath, const TCHAR* pImgKey)
 {
 	auto iter = find_if(m_mapBit.begin(), m_mapBit.end(), [&](auto& Pair)-> bool

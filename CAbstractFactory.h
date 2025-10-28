@@ -26,11 +26,22 @@ public:
 		return pObj;
 	}
 
-	static CObj* Create_Obj(float fX, float fY, float fSpeed)
+	static CObj* Create_Obj(float fX, float fY)
 	{
 		CObj* pObj = new T;
 		pObj->Initialize();
 		pObj->Set_Pos(fX, fY);
+
+		return pObj;
+	}
+
+	static CObj* Create_Obj(float fX, float fY, const TCHAR* pFrameKey)
+	{
+		CObj* pObj = new T;
+		pObj->Set_FrameKey(pFrameKey);
+		pObj->Initialize();
+		pObj->Set_Pos(fX, fY);
+		pObj->Set_Hit_Pos(fX, (fY + ((pObj->Get_Info()->fCY) - (pObj->Get_Info()->fHitCY)) / 2.f));
 
 		return pObj;
 	}
