@@ -11,7 +11,7 @@
 
 #define		VK_MAX				0xff
 
-#define		GC					981.f			// 중력 상수 ( Gravitational Constant : 9.81f) 
+#define		GC					1500.f			// 중력 상수 ( Gravitational Constant : 9.81f) 
 #define		PI					3.141592f
 #define		INV_SQRT2			0.70710678f		// 1.0f / sqrtf(2.0f) : 1 / 루트 2 
 
@@ -68,11 +68,15 @@ void Safe_Delete(T& p)
 
 enum OBJID
 {
+	PLATFORM,
 	PLAYER,
 	BUTTON,
-	PLATFORM,
-	PET,
 	OBSTACLE,
+	JELLY,
+	GBJELLY,
+	COIN,
+	ITEM,
+	PET,
 	OBJ_END
 };
 
@@ -88,7 +92,7 @@ enum BUTTON_TYPE
 
 enum SCENEID 
 { 
-	SC_LOGO, SC_MENU, SC_EDIT, SC_STAGE01, SC_STAGE02, SC_BOSS_STAGE, SC_END
+	SC_LOGO, SC_MENU, SC_EDIT, SC_STAGE, SC_END
 };
 
 typedef struct tagFrame

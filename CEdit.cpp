@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "CEdit.h"
-//#include "CTileMgr.h"
 #include "CBmpMgr.h"
 #include "CKeyMgr.h"
 #include "CScrollMgr.h"
@@ -8,10 +7,11 @@
 #include "CObjMgr.h"
 #include "CAbstractFactory.h"
 #include "CPlayer.h"
+#include "TcharIO.h"
 
 CEdit::CEdit()
 	: m_bTestMode(false), m_bEditMode(false), m_iSequence(1),
-	m_bRenderVerticalLine(false)
+	m_bRenderVerticalLine(false), m_iObjectSequence(1)
 {
 	ZeroMemory(&m_tCursor, sizeof(POINT));
 }
@@ -157,6 +157,9 @@ void CEdit::Key_Input()
 			case 2:
 				CTileMgr::Get_Instance()->Add_Tile(pt.x, pt.y);
 				break;
+
+			case 3:
+				break;
 			}
 		}
 	}
@@ -185,9 +188,9 @@ void CEdit::Key_Input()
 
 		if (m_bTestMode)
 		{
-			if (!CObjMgr::Get_Instance()->Get_Target(PLAYER, nullptr))
+			if (!CObjMgr::Get_Instance()->Get_Target(PLAYER))
 			{
-				CObjMgr::Get_Instance()->Add_Object(PLAYER, CAbstractFactory<CPlayer>::Create_Obj());
+				CObjMgr::Get_Instance()->Add_Object(PLAYER, CAbstractFactory<CPlayer>::Create_Obj(300.f, 398.f));
 			}
 		}
 		else
@@ -197,23 +200,35 @@ void CEdit::Key_Input()
 		
 	}
 
-	if (CKeyMgr::Get_Instance()->Key_Down('M'))
-		CTileMgr::Get_Instance()->Save_Tile();
-
-	if (CKeyMgr::Get_Instance()->Key_Down('L'))
-		CTileMgr::Get_Instance()->Load_Tile();
-
-	if (CKeyMgr::Get_Instance()->Key_Down('O'))
+	if (m_bEditMode)
 	{
-		if (m_iSequence < 4)
-			m_iSequence++;
-		else
-			m_iSequence = 1;
-	}
+		if (CKeyMgr::Get_Instance()->Key_Down('M'))
+			CTileMgr::Get_Instance()->Save_Tile(L"/.Data/Stage01_Chunk_01.dat");
 
-	if (CKeyMgr::Get_Instance()->Key_Down('R'))
-	{
-		m_bRenderVerticalLine = !m_bRenderVerticalLine;
+		if (CKeyMgr::Get_Instance()->Key_Down('L'))
+			CTileMgr::Get_Instance()->Load_Tile();
+
+		
+		if (CKeyMgr::Get_Instance()->Key_Down('O'))
+		{
+			if (m_iSequence < 4)
+				m_iSequence++;
+			else
+				m_iSequence = 1;
+		}
+
+		if (CKeyMgr::Get_Instance()->Key_Down('R'))
+		{
+			m_bRenderVerticalLine = !m_bRenderVerticalLine;
+		}
+
+		if (CKeyMgr::Get_Instance()->Key_Down('I'))
+		{
+			if (m_iObjectSequence < 3)
+				m_iObjectSequence++;
+			else
+				m_iObjectSequence = 1;
+		}
 	}
 
 }
@@ -251,10 +266,23 @@ void CEdit::Edit_State(HDC hDC)
 
 
 	swprintf_s(szEditState, _countof(szEditState),
-		L"편집 모드 (E) : %s  테스트 모드 (P) : %s  수직선 (R) : %s  현재 단계 (O) : %d",
-		EditMode, TestMode, VerticalLineMode, m_iSequence);
+		L"편집 모드 (E) : %s  테스트 모드 (P) : %s  수직선 (R) : %s  현재 단계 (O) : %d 오브젝트 배치 단계 (I) :  %d",
+		EditMode, TestMode, VerticalLineMode, m_iSequence, m_iObjectSequence);
 	DrawTextW(hDC, szEditState, -1, &rcState, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOCLIP);
 
+	if (CObjMgr::Get_Instance()->Get_Target(PLAYER))
+	{
+		wchar_t szPlayer[64] = L"";
+		swprintf_s(szPlayer, _countof(szPlayer),
+			L"Player fX : %ld    Player fY : %d  Player fVy : %ld",
+			(long)CObjMgr::Get_Instance()->Get_Target(PLAYER)->Get_Info()->fX,
+			(long)CObjMgr::Get_Instance()->Get_Target(PLAYER)->Get_Info()->fY,
+			(long)CObjMgr::Get_Instance()->Get_Target(PLAYER)->Get_Y_Axis_Speed());
+
+		RECT rcPlayerPos = { 10, 100, 100, 120 };
+		DrawTextW(hDC, szPlayer, -1, &rcPlayerPos, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOCLIP);
+	}
+	
 
 	// (선택) 십자선 마커
 	MoveToEx(hDC, screenPt.x - 5, screenPt.y, nullptr);
@@ -264,4 +292,50 @@ void CEdit::Edit_State(HDC hDC)
 
 	SetTextColor(hDC, oldColor);
 	SetBkMode(hDC, oldBk);
+}
+
+void CEdit::Save_Chunk_Data(const TCHAR* pFilePath)
+{
+	HANDLE hFile = CreateFile(pFilePath,
+		GENERIC_WRITE,
+		0,
+		nullptr,
+		CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr
+	);
+
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		MessageBox(g_hWnd, L"Chunk File Create Failed", L"Error", MB_OK);
+		return;
+	}
+
+	const vector<CObj*>& vecTiles = CTileMgr::Get_Instance()->Get_vecTile();
+
+	for (const auto& pTile : vecTiles)
+	{
+		if (static_cast<CTile*>(pTile)->Get_Tile_State())
+		{
+			OBJID eID = PLATFORM;
+			Utils::WritePOD(hFile, eID);					// 1. 객체 ID 저장
+			Utils::WritePOD(hFile, *pTile->Get_Info());		// 2. 객체 Info 구조체 저장
+			Utils::WriteTString(hFile, pTile->Get_FrameKey());	// 3. 객체 FrameKey 저장
+		}
+	}
+
+	const list<CObj*>& listObstacles = CObjMgr::Get_Instance()->Get_ObjList(OBSTACLE);
+
+	for (const auto& pObj : listObstacles)
+	{
+		OBJID eID = OBSTACLE;
+		Utils::WritePOD(hFile, eID);					// 1. 객체 ID 저장
+		Utils::WritePOD(hFile, *pObj->Get_Info());		// 2. 객체 Info 구조체 저장
+		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. 객체 FrameKey 저장
+	}
+
+	// TODO :  젤리, 곰젤리, 코인 등 다른 오브젝트 타입에 대한 저장 로직 추가 해야 함
+	
+	CloseHandle(hFile);
+	MessageBox(g_hWnd, L"Chunk Save Success!", L"Success", MB_OK);
 }

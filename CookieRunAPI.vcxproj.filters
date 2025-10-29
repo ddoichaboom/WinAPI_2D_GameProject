@@ -70,9 +70,6 @@
     <Filter Include="03. Scene\03. Stage">
       <UniqueIdentifier>{e2b66ce3-3550-4188-8126-85a20e4f2f0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Scene\04. BossStage">
-      <UniqueIdentifier>{697645a9-b88f-413a-a7cd-5bae2f47d0dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Design\03. LineMgr\Line">
       <UniqueIdentifier>{844b38c0-f27f-4076-b8de-f31d859c8791}</UniqueIdentifier>
     </Filter>
@@ -82,11 +79,17 @@
     <Filter Include="02. Design\08. TileMgr\Tile">
       <UniqueIdentifier>{a891e110-4fa5-4b08-bf84-56f90cefc55d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Scene\03. Stage\Stage01">
-      <UniqueIdentifier>{b46c678b-ee64-4566-b34a-7713dba63cc6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Utils">
       <UniqueIdentifier>{f1c2da64-9fbb-40a0-adda-4ee25b972d30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\09. ChunkMgr">
+      <UniqueIdentifier>{9f1ebba6-a651-4ff1-b569-67372f433c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\02. ObStacle">
+      <UniqueIdentifier>{33809dc1-f568-4b27-be1d-7811255fd564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Scene\03. Stage\Stage">
+      <UniqueIdentifier>{b46c678b-ee64-4566-b34a-7713dba63cc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +156,6 @@
     <ClInclude Include="CPlayer.h">
       <Filter>01. Obj\00. Player</Filter>
     </ClInclude>
-    <ClInclude Include="CBossStage.h">
-      <Filter>03. Scene\04. BossStage</Filter>
-    </ClInclude>
     <ClInclude Include="CLineMgr.h">
       <Filter>02. Design\03. LineMgr</Filter>
     </ClInclude>
@@ -168,14 +168,20 @@
     <ClInclude Include="CTile.h">
       <Filter>02. Design\08. TileMgr\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="CStage01.h">
-      <Filter>03. Scene\03. Stage\Stage01</Filter>
+    <ClInclude Include="CStage.h">
+      <Filter>03. Scene\03. Stage\Stage</Filter>
     </ClInclude>
     <ClInclude Include="CTileMgr.h">
       <Filter>02. Design\08. TileMgr</Filter>
     </ClInclude>
     <ClInclude Include="TcharIO.h">
       <Filter>05. Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CChunkMgr.h">
+      <Filter>02. Design\09. ChunkMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CObstacle.h">
+      <Filter>01. Obj\02. ObStacle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -227,9 +233,6 @@
     <ClCompile Include="CPlayer.cpp">
       <Filter>01. Obj\00. Player</Filter>
     </ClCompile>
-    <ClCompile Include="CBossStage.cpp">
-      <Filter>03. Scene\04. BossStage</Filter>
-    </ClCompile>
     <ClCompile Include="CLineMgr.cpp">
       <Filter>02. Design\03. LineMgr</Filter>
     </ClCompile>
@@ -242,14 +245,20 @@
     <ClCompile Include="CTile.cpp">
       <Filter>02. Design\08. TileMgr\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="CStage01.cpp">
-      <Filter>03. Scene\03. Stage\Stage01</Filter>
+    <ClCompile Include="CStage.cpp">
+      <Filter>03. Scene\03. Stage\Stage</Filter>
     </ClCompile>
     <ClCompile Include="CTileMgr.cpp">
       <Filter>02. Design\08. TileMgr</Filter>
     </ClCompile>
     <ClCompile Include="TcharIO.cpp">
       <Filter>05. Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CChunkMgr.cpp">
+      <Filter>02. Design\09. ChunkMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CObstacle.cpp">
+      <Filter>01. Obj\02. ObStacle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

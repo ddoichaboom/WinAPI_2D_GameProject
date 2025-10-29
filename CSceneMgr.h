@@ -2,8 +2,7 @@
 
 #include "CLogo.h"
 #include "CMenu.h"
-#include "CStage01.h"
-#include "CBossStage.h"
+#include "CStage.h"
 #include "CEdit.h"
 
 class CSceneMgr

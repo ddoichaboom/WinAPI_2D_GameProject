@@ -58,6 +58,24 @@ CObj* CObjMgr::Get_Target(OBJID eID, CObj* pObj)
 	return pTarget;
 }
 
+// 임시로 플레이어 찾아서 반환해주는 오버로드 타겟 체크 함수 
+CObj* CObjMgr::Get_Target(OBJID eID)
+{
+	if (m_ObjList[eID].empty())
+		return nullptr;
+
+	CObj* pTarget = nullptr;
+
+	float	fDistance(0.f);
+
+	for (auto& Dst : m_ObjList[eID])
+	{
+		pTarget = Dst;
+	}
+
+	return pTarget;
+}
+
 void CObjMgr::Add_Object(OBJID eID, CObj* pObj)
 {
 	if (eID >= OBJ_END || nullptr == pObj)

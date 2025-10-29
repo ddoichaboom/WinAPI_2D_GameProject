@@ -16,8 +16,10 @@ public:
 
 
 public:
-	CObj* Get_Target(OBJID eID, CObj* pObj);
-	list<CObj*>		Get_ObjList(OBJID eID) { return m_ObjList[eID]; };
+	CObj*			Get_Target(OBJID eID, CObj* pObj);
+	CObj*			Get_Target(OBJID eID);
+
+	list<CObj*>&	Get_ObjList(OBJID eID) { return m_ObjList[eID]; };
 
 public:
 	void	Add_Object(OBJID eID, CObj* pObj);

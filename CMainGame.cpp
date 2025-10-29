@@ -7,6 +7,7 @@
 #include "CScrollMgr.h"
 #include "CObjMgr.h"
 #include "CLineMgr.h"
+#include "CTileMgr.h"
 
 CMainGame::CMainGame()
 	: m_dwTime(GetTickCount64()), m_iFPS(0),
@@ -26,12 +27,9 @@ void CMainGame::Initialize()
 
 	m_hDC = GetDC(g_hWnd);
 
-	CSceneMgr::Get_Instance()->Scene_Change(SC_STAGE01);
+	CSceneMgr::Get_Instance()->Scene_Change(SC_EDIT);
 
 	CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Back.bmp", L"Back");
-
-
-
 
 }
 
@@ -74,7 +72,7 @@ void CMainGame::Release()
 {
 	ReleaseDC(g_hWnd, m_hDC);
 
-	//CTileMgr::Destroy_Instance();
+	CTileMgr::Destroy_Instance();
 	CSceneMgr::Destroy_Instance();
 	CBmpMgr::Destroy_Instance();
 	CKeyMgr::Destroy_Instance();

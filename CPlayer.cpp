@@ -27,14 +27,19 @@ void CPlayer::Initialize()
     // 용감한 쿠키 - 블링크 버전 Motion_Change 추후 수정 
 
     m_pFrameKey = L"GINGER_BRAVE_COOKIE";
-
-    m_tInfo = { 300.f, 300.f, 364.f, 364.f, 120.f, 133.f};
+     
+    m_tInfo.fX = 300.f;
+    m_tInfo.fY = 398.f;
+    m_tInfo.fCX = 364.f;
+    m_tInfo.fCY = 364.f;
+    m_tInfo.fHitCX = 120.f;
+    m_tInfo.fHitCY = 133.f;
 
     Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
 
-    m_fSpeed = 450.f;
+    m_fSpeed = 450.0f;
     m_fVx = m_fSpeed;
-    m_fJumpSpeed = 650.f;
+    m_fJumpSpeed = 700.f;
     m_bOnGround = false;
     m_bPrevOnGround = false;
     m_eRender = GAMEOBJECT;
@@ -69,7 +74,6 @@ int CPlayer::Update(float deltaTime)
 void CPlayer::Late_Update(float deltaTime) 
 {
 
-    //Rect_Col_Movement();
 
     Collision_Border_Line();
     
@@ -84,7 +88,6 @@ void CPlayer::Late_Update(float deltaTime)
     Move_Frame(deltaTime);
 
     m_bPrevOnGround = m_bOnGround;
-
 
     Update_Rect();
 
@@ -109,7 +112,7 @@ void CPlayer::Render(HDC hDC)
 
     HDC hPlayerDC = CBmpMgr::Get_Instance()->Find_Image(Get_FrameKey());
 
-     //히트박스 체크 용
+     //히트박스 체크용
     //Rectangle(
     //    hDC,
     //    (int)m_tHitRect.left + iScrollX,
@@ -330,7 +333,7 @@ void    CPlayer::Motion_Change()
                 m_tFrame.iMotion = 6;
                 m_tFrame.frameElapsedSec = 0.0f;
                 m_tFrame.frameIntervalSec = 0.10f;   
-                m_tFrame.stateLockRemainSec = 0.10f;    
+                m_tFrame.stateLockRemainSec = 0.025f;    
                 m_tFrame.bLoop = false;    
                 break;
 
@@ -637,7 +640,7 @@ void    CPlayer::State_Check(float deltaTime)
         return;
     }
 
-    if ((m_eCurMotion == DOUBLE_JUMP_OUTRO) && (!m_bOnGround))
+    if ((m_eCurMotion != JUMP) && (!m_bOnGround))
     {
         if (m_fVy > eps)
             m_eCurMotion = FALLING;
@@ -645,7 +648,7 @@ void    CPlayer::State_Check(float deltaTime)
         return;
     }
 
-    if (bLanded)
+    if (bLanded && ((m_eCurMotion == FALLING) || (m_eCurMotion == JUMP)))
     {
         m_eCurMotion = LANDING;
         return;

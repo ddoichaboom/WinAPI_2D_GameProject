@@ -37,6 +37,9 @@ public:
 	void			Set_OnGround(bool bOnGround) { m_bOnGround = bOnGround; }
 	void			Set_PrevOnGround(bool bOnGround) { m_bPrevOnGround = bOnGround; }
 
+	bool			Get_OnGround() { return m_bOnGround; }
+
+
 	void			Set_PosX(float fX) { m_tInfo.fX += fX; }
 	void			Set_PosY(float fY) { m_tInfo.fY += fY; }
 
