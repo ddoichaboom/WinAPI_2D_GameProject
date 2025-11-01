@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CCollisionMgr.h"
 #include "CTile.h"
+#include "CPlayer.h"
+#include "CJelly.h"
 
 void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 {
@@ -200,4 +202,53 @@ bool CCollisionMgr::Check_Circle(CObj* pDst, CObj* pSrc)
 	float	fRadius = (pDst->Get_Info()->fCX + pSrc->Get_Info()->fCX) * 0.5f;
 
 	return fRadius >= fDiagonal;
+}
+
+void CCollisionMgr::Collision_Collect(list<CObj*>& Dst, list<CObj*>& Src)
+{
+	if (!Dst.empty())
+	{
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(Dst.front());
+		if (pPlayer)
+		{
+			for (auto& pSrc : Src)
+			{
+				if (pSrc->Get_Dead())
+					continue;
+
+				RECT rc{};
+				if (IntersectRect(&rc, pPlayer->Get_HitRect(), pSrc->Get_HitRect()))
+				{
+					JELLYINFO* pJellyInfo = static_cast<CJelly*>(pSrc)->Get_JellyInfo();
+					pPlayer->Add_Score(pJellyInfo->iScore);
+					pPlayer->Add_Coin(pJellyInfo->iCoin);
+					pSrc->Set_Dead();
+				}
+			}
+		}
+	}
+}
+
+bool CCollisionMgr::Collision_Obstacle(list<CObj*>& Dst, list<CObj*>& Src)
+{
+	for (auto& pDst : Dst)
+	{
+		if (pDst->Get_Dead())
+			continue;
+
+		for (auto& pSrc : Src)
+		{
+			if (pSrc->Get_Dead())
+				continue;
+
+			RECT rc{};
+
+			if (IntersectRect(&rc, pDst->Get_HitRect(), pSrc->Get_HitRect()))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

@@ -19,7 +19,7 @@ void CSceneMgr::Scene_Change(SCENEID eScene)
 
 	if (m_ePreID != m_eCurrentID)
 	{
-		//Safe_Delete(m_pScene);
+		Safe_Delete(m_pScene);
 
 		switch (m_eCurrentID)
 		{
@@ -27,8 +27,8 @@ void CSceneMgr::Scene_Change(SCENEID eScene)
 			m_pScene = new CLogo;
 			break;
 
-		case SC_MENU:
-			m_pScene = new CMenu;
+		case SC_LOBBY:
+			m_pScene = new CLobby;
 			break;
 
 		case SC_EDIT:
@@ -49,14 +49,14 @@ void CSceneMgr::Scene_Change(SCENEID eScene)
 
 }
 
-void CSceneMgr::Update()
+void CSceneMgr::Update(float fDeltaTime)
 {
-	m_pScene->Update();
+	m_pScene->Update(fDeltaTime);
 }
 
-void CSceneMgr::Late_Update()
+void CSceneMgr::Late_Update(float fDeltaTime)
 {
-	m_pScene->Late_Update();
+	m_pScene->Late_Update(fDeltaTime);
 }
 
 void CSceneMgr::Render(HDC hDC)

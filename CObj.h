@@ -32,6 +32,8 @@ public:
 		m_fSpeed = fSpeed;
 	}
 
+	void			Set_Info(const INFO& _tInfo) { m_tInfo = _tInfo; }
+
 	void			Set_Y_Axis_Speed(float fVy) { m_fVy = fVy; }
 	float			Get_Y_Axis_Speed() { return m_fVy; }
 	void			Set_OnGround(bool bOnGround) { m_bOnGround = bOnGround; }
@@ -55,11 +57,11 @@ public:
 
 
 	const RENDERID		Get_RenderID() { return m_eRender; }
+	void				Update_Rect(OBJID eID);
 
 
 
 protected:
-	void	Update_Rect();
 	void	Move_Frame(float deltaTime);
 
 protected:

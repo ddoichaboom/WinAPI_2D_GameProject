@@ -12,6 +12,7 @@ public:
 	void	Initialize(const list<wstring>& chunkList);
 	int		Update();
 	void	Release();
+	void	LoadChunk(const TCHAR* pFilePath);
 
 private:
 	void	Load_Next_Chunk();

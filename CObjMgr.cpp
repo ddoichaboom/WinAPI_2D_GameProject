@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "CObjMgr.h"
 #include "CCollisionMgr.h"
+#include "CScrollMgr.h"
+#include "CPlayer.h"
+#include "CKeyMgr.h"
 
 CObjMgr* CObjMgr::m_pInstance = nullptr;
 
@@ -22,6 +25,24 @@ void CObjMgr::Check_Collision(OBJID Dst, OBJID Src, Method eMethod)
 		break;
 	case CObjMgr::RECT:
 		CCollisionMgr::Collision_Rect(m_ObjList[Dst], m_ObjList[Src]);
+		break;
+	case CObjMgr::COLLECT:
+		CCollisionMgr::Collision_Collect(m_ObjList[Dst], m_ObjList[Src]);
+		break;
+	case CObjMgr::OBSTACLE:
+		if (!m_ObjList[Dst].empty())
+		{
+			CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_ObjList[Dst].front());
+
+			if (pPlayer && (!pPlayer->Is_Invincible()))
+			{
+				if (CCollisionMgr::Collision_Obstacle(m_ObjList[Dst], m_ObjList[Src]))
+				{
+					pPlayer->On_Hit();
+					pPlayer->Take_Damage(10.f);
+				}
+			}
+		}
 		break;
 	case CObjMgr::LINE:
 		break;
@@ -91,6 +112,11 @@ void CObjMgr::Update(float deltaTime)
 		for (auto iter = m_ObjList[i].begin();
 			iter != m_ObjList[i].end(); )
 		{
+			if (Is_Culling(*iter))
+			{
+				++iter;
+				continue;
+			}
 			int iResult = (*iter)->Update(deltaTime);
 
 			if (iResult == OBJ_DEAD)
@@ -112,6 +138,9 @@ void CObjMgr::Late_Update(float deltaTime)
 	{
 		for (auto& pObj : m_ObjList[i])
 		{
+			if (Is_Culling(pObj))
+				continue;
+
 			pObj->Late_Update(deltaTime);
 
 			if (m_ObjList[i].empty())
@@ -128,7 +157,6 @@ void CObjMgr::Render(HDC hDC)
 {
 	for (UINT i = 0; i < RENDER_END; ++i)
 	{
-
 		m_RenderList[i].sort([](CObj* pDst, CObj* pSrc)->bool
 			{
 				return pDst->Get_Info()->fY < pSrc->Get_Info()->fY;
@@ -136,7 +164,25 @@ void CObjMgr::Render(HDC hDC)
 
 		for (auto& pObj : m_RenderList[i])
 		{
+			if (Is_Culling(pObj))
+				continue;
 			pObj->Render(hDC);
+
+			if (CKeyMgr::g_bDebugRender && pObj->Get_RenderID() != UI)
+			{
+				int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
+				const auto* pRect = pObj->Get_Rect();
+				HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 255, 0));
+				HPEN hOldPen = (HPEN)SelectObject(hDC, hPen);
+
+				HBRUSH hOldBrush = (HBRUSH)SelectObject(hDC, GetStockObject(NULL_BRUSH));
+
+				Rectangle(hDC, pRect->left + iScrollX, pRect->top, pRect->right + iScrollX, pRect->bottom);
+
+				SelectObject(hDC, hOldPen);
+				SelectObject(hDC, hOldBrush);
+				DeleteObject(hPen);
+			}
 		}
 
 		m_RenderList[i].clear();
@@ -158,4 +204,23 @@ void CObjMgr::Delete_ID(OBJID eID)
 		Safe_Delete(pObj);
 
 	m_ObjList[eID].clear();
+}
+
+bool CObjMgr::Is_Culling(CObj* pObj)
+{
+	if (pObj->Get_RenderID() == UI)
+		return false;
+	
+	float fScrollX = CScrollMgr::Get_Instance()->Get_ScrollX();
+	float fBuffer = 400.f; // 화면 경계에서 약간의 여유 공간 
+
+	float fScreenX = pObj->Get_Info()->fX + fScrollX;
+	float fObjHalfSizeX = pObj->Get_Info()->fCX / 2.f;
+
+	if ((fScreenX < -fObjHalfSizeX - fBuffer) || (fScreenX > WINCX + fObjHalfSizeX + fBuffer))
+	{
+		return true;		// 컬링 대상
+	}
+
+	return false;		// 컬링 대상이 아님 ( 화면에 보임 )
 }

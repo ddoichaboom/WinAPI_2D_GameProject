@@ -37,27 +37,6 @@
     <Filter Include="02. Design\02. ObjMgr">
       <UniqueIdentifier>{ddfcdd0b-4140-40d1-b185-762917977003}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Design\03. LineMgr">
-      <UniqueIdentifier>{d00c33b4-7210-4ce7-9e12-8f603361c44e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\04. ScrollMgr">
-      <UniqueIdentifier>{20221071-625d-41ac-97b8-228c21da1966}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\05. KeyMgr">
-      <UniqueIdentifier>{9c99ba75-9152-4677-8b4d-3f109711f4d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\06. BmpMgr">
-      <UniqueIdentifier>{3d325835-9ac1-408a-8dee-272ccfa62497}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\07. SceneMgr">
-      <UniqueIdentifier>{173bf9aa-3fe5-4ba7-b1f6-5645c65aa0e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\08. TileMgr">
-      <UniqueIdentifier>{47890138-1eee-4714-87a6-fe69b59622d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\06. BmpMgr\MyBmp">
-      <UniqueIdentifier>{3a559268-dff9-47e5-ac6c-32c87e237aac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Scene\00. Logo">
       <UniqueIdentifier>{a6f51294-ddbb-48ec-93a3-78993d8f97c6}</UniqueIdentifier>
     </Filter>
@@ -70,26 +49,71 @@
     <Filter Include="03. Scene\03. Stage">
       <UniqueIdentifier>{e2b66ce3-3550-4188-8126-85a20e4f2f0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Design\03. LineMgr\Line">
-      <UniqueIdentifier>{844b38c0-f27f-4076-b8de-f31d859c8791}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Obj\01. Button">
-      <UniqueIdentifier>{584f8e1b-6acb-4e4b-b24e-11c95965ac8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\08. TileMgr\Tile">
-      <UniqueIdentifier>{a891e110-4fa5-4b08-bf84-56f90cefc55d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Utils">
       <UniqueIdentifier>{f1c2da64-9fbb-40a0-adda-4ee25b972d30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Design\09. ChunkMgr">
-      <UniqueIdentifier>{9f1ebba6-a651-4ff1-b569-67372f433c43}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Obj\02. ObStacle">
       <UniqueIdentifier>{33809dc1-f568-4b27-be1d-7811255fd564}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Scene\03. Stage\Stage">
       <UniqueIdentifier>{b46c678b-ee64-4566-b34a-7713dba63cc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\03. Jelly">
+      <UniqueIdentifier>{8d8e429f-63bb-4533-93f0-5e9ec2019d62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\04. Item">
+      <UniqueIdentifier>{29f7106b-6fb6-4384-8bbf-83fb87530b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\03. ScrollMgr">
+      <UniqueIdentifier>{20221071-625d-41ac-97b8-228c21da1966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\04. KeyMgr">
+      <UniqueIdentifier>{9c99ba75-9152-4677-8b4d-3f109711f4d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\05. BmpMgr">
+      <UniqueIdentifier>{3d325835-9ac1-408a-8dee-272ccfa62497}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\05. BmpMgr\MyBmp">
+      <UniqueIdentifier>{3a559268-dff9-47e5-ac6c-32c87e237aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\06. SceneMgr">
+      <UniqueIdentifier>{173bf9aa-3fe5-4ba7-b1f6-5645c65aa0e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\07. TileMgr">
+      <UniqueIdentifier>{47890138-1eee-4714-87a6-fe69b59622d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\07. TileMgr\Tile">
+      <UniqueIdentifier>{a891e110-4fa5-4b08-bf84-56f90cefc55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\08. ChunkMgr">
+      <UniqueIdentifier>{9f1ebba6-a651-4ff1-b569-67372f433c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\09. SoundMgr">
+      <UniqueIdentifier>{70279770-68c7-4d65-a2c8-9cd8b226dc06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\10. TimeMgr">
+      <UniqueIdentifier>{101cf8f6-0465-4565-88d3-cea60b173dcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\11. DataMgr">
+      <UniqueIdentifier>{463abc45-c9d1-43e8-be65-eee391b0957c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr">
+      <UniqueIdentifier>{3ab250fd-7222-44d9-9f1d-08dfaab9ce4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr\06. Ui">
+      <UniqueIdentifier>{d4e65284-f93c-4e3f-a523-385a957bcec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr\06. Ui\00. Button">
+      <UniqueIdentifier>{584f8e1b-6acb-4e4b-b24e-11c95965ac8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr\06. Ui\01. HpBar">
+      <UniqueIdentifier>{59f973fc-c520-493f-a1dd-0ad4b0c1152d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr\06. Ui\02. Score">
+      <UniqueIdentifier>{0acaf1e1-edba-4f1f-adea-2c5c3dfd93d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr\06. Ui\03. BonusTime">
+      <UniqueIdentifier>{423a10a6-6c75-46a2-b899-4a1da14b435a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,19 +151,19 @@
       <Filter>02. Design\02. ObjMgr</Filter>
     </ClInclude>
     <ClInclude Include="CScrollMgr.h">
-      <Filter>02. Design\04. ScrollMgr</Filter>
+      <Filter>02. Design\03. ScrollMgr</Filter>
     </ClInclude>
     <ClInclude Include="CKeyMgr.h">
-      <Filter>02. Design\05. KeyMgr</Filter>
+      <Filter>02. Design\04. KeyMgr</Filter>
     </ClInclude>
     <ClInclude Include="CMyBmp.h">
-      <Filter>02. Design\06. BmpMgr\MyBmp</Filter>
+      <Filter>02. Design\05. BmpMgr\MyBmp</Filter>
     </ClInclude>
     <ClInclude Include="CBmpMgr.h">
-      <Filter>02. Design\06. BmpMgr</Filter>
+      <Filter>02. Design\05. BmpMgr</Filter>
     </ClInclude>
     <ClInclude Include="CSceneMgr.h">
-      <Filter>02. Design\07. SceneMgr</Filter>
+      <Filter>02. Design\06. SceneMgr</Filter>
     </ClInclude>
     <ClInclude Include="CScene.h">
       <Filter>03. Scene</Filter>
@@ -147,7 +171,7 @@
     <ClInclude Include="CLogo.h">
       <Filter>03. Scene\00. Logo</Filter>
     </ClInclude>
-    <ClInclude Include="CMenu.h">
+    <ClInclude Include="CLobby.h">
       <Filter>03. Scene\01. Menu</Filter>
     </ClInclude>
     <ClInclude Include="CEdit.h">
@@ -156,32 +180,53 @@
     <ClInclude Include="CPlayer.h">
       <Filter>01. Obj\00. Player</Filter>
     </ClInclude>
-    <ClInclude Include="CLineMgr.h">
-      <Filter>02. Design\03. LineMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="CLine.h">
-      <Filter>02. Design\03. LineMgr\Line</Filter>
-    </ClInclude>
-    <ClInclude Include="CButton.h">
-      <Filter>01. Obj\01. Button</Filter>
-    </ClInclude>
     <ClInclude Include="CTile.h">
-      <Filter>02. Design\08. TileMgr\Tile</Filter>
+      <Filter>02. Design\07. TileMgr\Tile</Filter>
     </ClInclude>
     <ClInclude Include="CStage.h">
       <Filter>03. Scene\03. Stage\Stage</Filter>
     </ClInclude>
     <ClInclude Include="CTileMgr.h">
-      <Filter>02. Design\08. TileMgr</Filter>
+      <Filter>02. Design\07. TileMgr</Filter>
     </ClInclude>
     <ClInclude Include="TcharIO.h">
       <Filter>05. Utils</Filter>
     </ClInclude>
     <ClInclude Include="CChunkMgr.h">
-      <Filter>02. Design\09. ChunkMgr</Filter>
+      <Filter>02. Design\08. ChunkMgr</Filter>
     </ClInclude>
     <ClInclude Include="CObstacle.h">
       <Filter>01. Obj\02. ObStacle</Filter>
+    </ClInclude>
+    <ClInclude Include="CSoundMgr.h">
+      <Filter>02. Design\09. SoundMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CTimeMgr.h">
+      <Filter>02. Design\10. TimeMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CDataMgr.h">
+      <Filter>02. Design\11. DataMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CJelly.h">
+      <Filter>01. Obj\03. Jelly</Filter>
+    </ClInclude>
+    <ClInclude Include="CItem.h">
+      <Filter>01. Obj\04. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="CUi.h">
+      <Filter>02. Design\12. UiMgr\06. Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CUiMgr.h">
+      <Filter>02. Design\12. UiMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CButton.h">
+      <Filter>02. Design\12. UiMgr\06. Ui\00. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="CHpBar.h">
+      <Filter>02. Design\12. UiMgr\06. Ui\01. HpBar</Filter>
+    </ClInclude>
+    <ClInclude Include="CScore.h">
+      <Filter>02. Design\12. UiMgr\06. Ui\02. Score</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -204,19 +249,19 @@
       <Filter>02. Design\02. ObjMgr</Filter>
     </ClCompile>
     <ClCompile Include="CScrollMgr.cpp">
-      <Filter>02. Design\04. ScrollMgr</Filter>
+      <Filter>02. Design\03. ScrollMgr</Filter>
     </ClCompile>
     <ClCompile Include="CKeyMgr.cpp">
-      <Filter>02. Design\05. KeyMgr</Filter>
+      <Filter>02. Design\04. KeyMgr</Filter>
     </ClCompile>
     <ClCompile Include="CMyBmp.cpp">
-      <Filter>02. Design\06. BmpMgr\MyBmp</Filter>
+      <Filter>02. Design\05. BmpMgr\MyBmp</Filter>
     </ClCompile>
     <ClCompile Include="CBmpMgr.cpp">
-      <Filter>02. Design\06. BmpMgr</Filter>
+      <Filter>02. Design\05. BmpMgr</Filter>
     </ClCompile>
     <ClCompile Include="CSceneMgr.cpp">
-      <Filter>02. Design\07. SceneMgr</Filter>
+      <Filter>02. Design\06. SceneMgr</Filter>
     </ClCompile>
     <ClCompile Include="CScene.cpp">
       <Filter>03. Scene</Filter>
@@ -224,7 +269,7 @@
     <ClCompile Include="CLogo.cpp">
       <Filter>03. Scene\00. Logo</Filter>
     </ClCompile>
-    <ClCompile Include="CMenu.cpp">
+    <ClCompile Include="CLobby.cpp">
       <Filter>03. Scene\01. Menu</Filter>
     </ClCompile>
     <ClCompile Include="CEdit.cpp">
@@ -233,32 +278,53 @@
     <ClCompile Include="CPlayer.cpp">
       <Filter>01. Obj\00. Player</Filter>
     </ClCompile>
-    <ClCompile Include="CLineMgr.cpp">
-      <Filter>02. Design\03. LineMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="CLine.cpp">
-      <Filter>02. Design\03. LineMgr\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="CButton.cpp">
-      <Filter>01. Obj\01. Button</Filter>
-    </ClCompile>
     <ClCompile Include="CTile.cpp">
-      <Filter>02. Design\08. TileMgr\Tile</Filter>
+      <Filter>02. Design\07. TileMgr\Tile</Filter>
     </ClCompile>
     <ClCompile Include="CStage.cpp">
       <Filter>03. Scene\03. Stage\Stage</Filter>
     </ClCompile>
     <ClCompile Include="CTileMgr.cpp">
-      <Filter>02. Design\08. TileMgr</Filter>
+      <Filter>02. Design\07. TileMgr</Filter>
     </ClCompile>
     <ClCompile Include="TcharIO.cpp">
       <Filter>05. Utils</Filter>
     </ClCompile>
     <ClCompile Include="CChunkMgr.cpp">
-      <Filter>02. Design\09. ChunkMgr</Filter>
+      <Filter>02. Design\08. ChunkMgr</Filter>
     </ClCompile>
     <ClCompile Include="CObstacle.cpp">
       <Filter>01. Obj\02. ObStacle</Filter>
+    </ClCompile>
+    <ClCompile Include="CSoundMgr.cpp">
+      <Filter>02. Design\09. SoundMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CTimeMgr.cpp">
+      <Filter>02. Design\10. TimeMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CDataMgr.cpp">
+      <Filter>02. Design\11. DataMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CJelly.cpp">
+      <Filter>01. Obj\03. Jelly</Filter>
+    </ClCompile>
+    <ClCompile Include="CItem.cpp">
+      <Filter>01. Obj\04. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="CUi.cpp">
+      <Filter>02. Design\12. UiMgr\06. Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CUiMgr.cpp">
+      <Filter>02. Design\12. UiMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CButton.cpp">
+      <Filter>02. Design\12. UiMgr\06. Ui\00. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="CHpBar.cpp">
+      <Filter>02. Design\12. UiMgr\06. Ui\01. HpBar</Filter>
+    </ClCompile>
+    <ClCompile Include="CScore.cpp">
+      <Filter>02. Design\12. UiMgr\06. Ui\02. Score</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

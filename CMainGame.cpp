@@ -6,12 +6,15 @@
 #include "CKeyMgr.h"
 #include "CScrollMgr.h"
 #include "CObjMgr.h"
-#include "CLineMgr.h"
 #include "CTileMgr.h"
+#include "CSoundMgr.h"
+#include <tchar.h>
+#include "CTimeMgr.h"
+#include "CDataMgr.h"
+#include "CUiMgr.h"
 
 CMainGame::CMainGame()
-	: m_dwTime(GetTickCount64()), m_iFPS(0),
-	m_currTime(GetTickCount64()),m_prevTime(m_currTime), m_deltaTime(0)
+	: m_dwTime(GetTickCount64()), m_iFPS(0)
 {
 	ZeroMemory(m_szFPS, sizeof(m_szFPS));
 }
@@ -27,22 +30,58 @@ void CMainGame::Initialize()
 
 	m_hDC = GetDC(g_hWnd);
 
-	CSceneMgr::Get_Instance()->Scene_Change(SC_EDIT);
+	CDataMgr::Get_Instance()->Initialize();
 
-	CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Back.bmp", L"Back");
+	CTimeMgr::Get_Instance()->Initialize();
+	CBmpMgr::Get_Instance()->Insert_Bmp(L"./Image/Back.bmp", L"Back");
+	CSoundMgr::Get_Instance()->Initialize();
+
+	CSceneMgr::Get_Instance()->Scene_Change(SC_LOBBY);
+
+
+#ifdef _DEBUG
+
+	TCHAR szPath[MAX_PATH] = { 0 };
+	GetCurrentDirectory(MAX_PATH, szPath);
+	OutputDebugString(L"현재 작업 디렉토리: ");
+	OutputDebugString(szPath);
+	OutputDebugString(L"\n");
+
+#endif // _DEBUG
+
 
 }
 
 void CMainGame::Update()
 {
+	CTimeMgr::Get_Instance()->Update_DeltaTime();
 
-	CSceneMgr::Get_Instance()->Update();
+	const float fixedDt = CTimeMgr::Get_Instance()->m_fFixedDeltaTime;
+	int iSteps = 0;
+	const int MAX_STEPS = 5;
+
+
+	while (CTimeMgr::Get_Instance()->m_fAccumulator >= fixedDt)
+		{
+			float fDeltaTime = CTimeMgr::Get_Instance()->Get_DeltaTime();
+
+			CSceneMgr::Get_Instance()->Update(fDeltaTime);
+			CSceneMgr::Get_Instance()->Late_Update(fDeltaTime);
+			CKeyMgr::Get_Instance()->Update();
+
+			CTimeMgr::Get_Instance()->m_fAccumulator -= fDeltaTime;
+
+			if (++iSteps >= MAX_STEPS)
+			{
+				// 남은 누적분은 버리거나(여기서는 버림) 보간용으로만 유지하는 선택도 가능
+				CTimeMgr::Get_Instance()->m_fAccumulator = 0.f;
+				break;
+			}
+		}
 }
 
 void CMainGame::Late_Update()
 {
-	CSceneMgr::Get_Instance()->Late_Update();
-	CKeyMgr::Get_Instance()->Update();
 
 }
 
@@ -66,17 +105,21 @@ void CMainGame::Render()
 
 	BitBlt(m_hDC, 0, 0, WINCX, WINCY, hBackDC, 0, 0, SRCCOPY);
 
+
 }
 
 void CMainGame::Release()
 {
 	ReleaseDC(g_hWnd, m_hDC);
 
+	CDataMgr::Get_Instance()->Destroy_Instance();
+	CTimeMgr::Get_Instance()->Destroy_Instance();
+	CSoundMgr::Destroy_Instance();
 	CTileMgr::Destroy_Instance();
 	CSceneMgr::Destroy_Instance();
 	CBmpMgr::Destroy_Instance();
 	CKeyMgr::Destroy_Instance();
 	CScrollMgr::Destroy_Instance();
-	CLineMgr::Destroy_Instance();
 	CObjMgr::Destroy_Instance();
+	CUiMgr::Get_Instance()->Destroy_Instance();
 }

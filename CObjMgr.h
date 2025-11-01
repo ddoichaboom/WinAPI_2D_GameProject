@@ -11,7 +11,7 @@ private:
 	~CObjMgr();
 
 public:
-	enum Method { CIRCLE = 0, RECT, LINE };
+	enum Method { CIRCLE = 0, RECT, LINE, COLLECT, OBSTACLE };
 	void	Check_Collision(OBJID Dst, OBJID Src, Method eMethod);
 
 
@@ -30,9 +30,12 @@ public:
 
 	void	Delete_ID(OBJID eID);
 
+
+
 private:
 	list<CObj*>		m_ObjList[OBJ_END];
 	list<CObj*>		m_RenderList[RENDER_END];
+	bool			Is_Culling(CObj* pObj);		// 화면 컬링을 위한 함수 선언 추가
 
 public:
 	static CObjMgr* Get_Instance()

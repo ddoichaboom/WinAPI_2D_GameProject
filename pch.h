@@ -17,6 +17,16 @@
 #include <windows.h>
 #include <objidl.h>          // GDI+ 내부에서 사용
 
+#include <timeapi.h>
+#pragma comment(lib, "winmm.lib")
+
+// FMOD
+#include <iostream>
+#include <io.h>
+
+#include "fmod.h"
+#include "fmod.hpp"
+
 #include <gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 
@@ -27,9 +37,11 @@
 #include <cwctype>     // std::towlower
 #include <cwchar>      // _wcsicmp (MSVC)
 #include <list>
+#include <unordered_map>
 #include <map>
 #include <vector>
 #include <ctime>
+#include <cmath>
 
 
 

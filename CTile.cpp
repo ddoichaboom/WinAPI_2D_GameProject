@@ -16,37 +16,19 @@ CTile::~CTile()
 
 void CTile::Initialize()
 {
-    // 문자열 비교로 교체
-    if (!lstrcmp(Get_FrameKey(), L"STAGE01_PLATFORM01"))
-    {
-        m_tInfo.fCX = 124.f;
-        m_tInfo.fCY = 140.f;
-        m_tInfo.fHitCX = 124.f;
-        m_tInfo.fHitCY = 140.f;
-    }
-    else if (!lstrcmp(Get_FrameKey(), L"STAGE01_PLATFORM02"))
-    {
-        m_tInfo.fCX = 124.f;
-        m_tInfo.fCY = 39.f;
-        m_tInfo.fHitCX = 124.f;
-        m_tInfo.fHitCY = 39.f;
-    }
-
     m_eRender = TILE;
-
-
-    
 }
 
 int CTile::Update(float deltaTime)
 {
-    Update_Rect();
+    Update_Rect(PLATFORM);
 
     return 0;
 }
 
 void CTile::Late_Update(float deltaTime)
 {
+
 }
 
 void CTile::Render(HDC hDC)

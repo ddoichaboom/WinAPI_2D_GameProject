@@ -9,8 +9,8 @@ public:
 
 public:
 	void Initialize() override;
-	void Update() override;
-	void Late_Update() override;
+	void Update(float fDeltaTime) override;
+	void Late_Update(float fDeltaTime) override;
 	void Render(HDC hDC) override;
 	void Release() override;
 };

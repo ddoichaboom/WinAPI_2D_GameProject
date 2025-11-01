@@ -7,8 +7,6 @@ public:
     CTile();
     virtual ~CTile();
 
-
-
 public:
     void Initialize() override;
     int Update(float deltaTime) override;

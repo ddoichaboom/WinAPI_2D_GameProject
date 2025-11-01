@@ -40,5 +40,8 @@ public:
 private:
 	static CKeyMgr* m_pInstance;
 	bool			m_bKeyState[VK_MAX];
+
+public:
+	static bool g_bDebugRender;
 };
 

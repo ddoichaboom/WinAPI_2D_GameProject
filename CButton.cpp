@@ -3,9 +3,7 @@
 #include "CBmpMgr.h"
 #include "CScrollMgr.h"
 #include "CKeyMgr.h"
-
-const float ButtonfCX = 236.f;
-const float ButtonfCY = 178.f;
+#include "CDataMgr.h"
 
 
 CButton::CButton()
@@ -21,31 +19,33 @@ CButton::~CButton()
 void CButton::Initialize()
 {
 
-	CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Button/Jump_button.png", L"JUMP_BUITTON");
-	CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Button/Slide_button.png", L"SLIDE_BUITTON");
+	const IMAGEDATA* pJumpData = CDataMgr::Get_Instance()->Get_ImageData(L"JUMP_BUTTON");
+	const IMAGEDATA* pSlideData = CDataMgr::Get_Instance()->Get_ImageData(L"SLIDE_BUTTON");
+
 
 	switch (m_eButtonType)
 	{
 	case JUMP:
-		m_tInfo = { ButtonfCX / 2.f + 50.f, WINCY - (ButtonfCY / 2.f + 50.f)  , ButtonfCX, ButtonfCY };
-		m_iDrawID = 0;
-		m_pFrameKey = L"JUMP_BUITTON";
+		m_tInfo = pJumpData->tInfo;
+		m_tInfo.fX = (m_tInfo.fCX / 2.f) + 50.f;
+		m_tInfo.fY = WINCY - ((m_tInfo.fCX / 2.f) + 50.f);
+		m_pFrameKey = pJumpData->pFrameKey;
 		break;
 
 	case SLIDE:
-		m_tInfo = { WINCX - (ButtonfCX / 2.f + 50.f), WINCY - (ButtonfCY / 2.f + 50.f)  , ButtonfCX, ButtonfCY };
-		m_iDrawID = 0;
-		m_pFrameKey = L"SLIDE_BUITTON";
+		m_tInfo = pSlideData->tInfo;
+		m_tInfo.fX = WINCX - (m_tInfo.fCX / 2.f) + 50.f;
+		m_tInfo.fY = WINCY - ((m_tInfo.fCX / 2.f) + 50.f);
+		m_pFrameKey = pSlideData->pFrameKey;		
 		break;
 	}
-	 
-	m_eRender = UI;
 
+	m_iDrawID = 0;
 }
 
 int CButton::Update(float deltaTime)
 {
-	Update_Rect();
+	Update_Rect(UI_OBJECT);
 
 	Key_Input();
 

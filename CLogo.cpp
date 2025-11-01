@@ -18,15 +18,15 @@ void CLogo::Initialize()
 	CBmpMgr::Get_Instance()->Insert_Bmp(L"../Image/Logo/Logo.bmp", L"Logo");
 }
 
-void CLogo::Update()
+void CLogo::Update(float fDeltaTime)
 {
 }
 
-void CLogo::Late_Update()
+void CLogo::Late_Update(float fDeltaTime)
 {
 	if (CKeyMgr::Get_Instance()->Key_Down(VK_RETURN))
 	{
-		CSceneMgr::Get_Instance()->Scene_Change(SC_MENU);
+		CSceneMgr::Get_Instance()->Scene_Change(SC_LOBBY);
 		return;
 	}
 

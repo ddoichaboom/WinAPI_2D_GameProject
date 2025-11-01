@@ -1,6 +1,10 @@
 #pragma once
 #include "pch.h"
 #include <type_traits>
+#include "CAbstractFactory.h"
+#include "CTile.h"
+#include "CObstacle.h"
+#include "CJelly.h"
 
 namespace Utils {
 
@@ -27,4 +31,18 @@ namespace Utils {
     }
 
 } // namespace Utils
+
+inline CObj* Create_Object_By_ID(OBJID eID, float fX, float fY, const IMAGEDATA* pImageData)
+{
+    switch (eID)
+    {
+    case PLATFORM:
+        return CAbstractFactory<CTile>::Create_Obj(fX, fY, pImageData);
+    case OBSTACLE:
+        return CAbstractFactory<CObstacle>::Create_Obj(fX, fY, pImageData);
+    case JELLY:
+        return CAbstractFactory<CJelly>::Create_Obj(fX, fY, pImageData);
+        // TODO : ITEM Ãß°¡ 
+    }
+}
 

@@ -14,5 +14,7 @@ public:
 	static void	Collision_Circle(list<CObj*> Dst, list<CObj*> Src);
 	static bool Check_Circle(CObj* pDst, CObj* pSrc);
 
+	static void Collision_Collect(list<CObj*>& Dst, list<CObj*>& Src);
+	static bool Collision_Obstacle(list<CObj*>& Dst, list<CObj*>& Src);
 };
 

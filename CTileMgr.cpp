@@ -3,13 +3,14 @@
 #include "CAbstractFactory.h"
 #include "CScrollMgr.h"
 #include "CBmpMgr.h"
+#include "CDataMgr.h"
 
 
 CTileMgr* CTileMgr::m_pInstance = nullptr;
 
 CTileMgr::CTileMgr()
 {
-	m_vecTile.reserve(TILEX);
+	m_vecTile.reserve(300);
 }
 
 CTileMgr::~CTileMgr()
@@ -17,22 +18,46 @@ CTileMgr::~CTileMgr()
 	Release();
 }
 
-void CTileMgr::Initialize()
+void CTileMgr::Initialize(const TCHAR* pStageFrameKey)
 {
+	Release();
 
-		for (int i = 0; i < TILEX; ++i)
+	wstring  platformKey = pStageFrameKey;
+	platformKey += L"_PLATFORM01";
+
+	auto pStageData = CDataMgr::Get_Instance()->Get_ImageData(pStageFrameKey);
+	auto pTileData = CDataMgr::Get_Instance()->Get_ImageData(platformKey.c_str());
+
+	if (!pStageData || !pTileData)
+		return;
+
+	int iTILECX = pTileData->tInfo.fCX;
+	int iTILECY = pTileData->tInfo.fCY;
+	int iTILECount = static_cast<int>(ceil(pStageData->tInfo.fCX / iTILECX));
+
+
+
+	for (int i = 0; i < iTILECount; ++i)
+	{
+		float fX = float((iTILECX / 2) + (iTILECX * i));
+		float fY = float(WINCY - (iTILECY  / 2));
+
+		CObj* pTile = CAbstractFactory<CTile>::Create_Obj(fX, fY, CDataMgr::Get_Instance()->Get_ImageData(platformKey));
+
+		if (pTile)
 		{
-			float fX = float((TILECX >> 1) + (TILECX * i));
-			float fY = float(WINCY - (TILECY >> 1));
-
-			CObj* pTile = CAbstractFactory<CTile>::Create_Obj(fX, fY, L"STAGE01_PLATFORM01");
 			dynamic_cast<CTile*>(pTile)->Set_Tile_State(true);
 			m_vecTile.push_back(pTile);
 		}
+		
+	}
 }
 
 int CTileMgr::Update()
 {
+	// 화면 안 + 버퍼 앞부분에 있는 것들만 업데이트 하는 컬링 
+	// 이후 ObjMgr에 적용 해야함.
+
 	float fScrollX = CScrollMgr::Get_Instance()->Get_ScrollX();
 	float fBuffer = 100.f;
 
@@ -59,7 +84,7 @@ void CTileMgr::Late_Update()
 void CTileMgr::Render(HDC hDC)
 {
 	float fScrollX = CScrollMgr::Get_Instance()->Get_ScrollX();
-	float fBuffer = 100.f;
+	float fBuffer = 400.f;
 
 	for (auto& pTile : m_vecTile)
 	{
@@ -87,42 +112,33 @@ void CTileMgr::Release()
 
 void CTileMgr::Picking(POINT pt, bool bState)
 {
-	float pfX(0.f);
-	float pfY(0.f);
-	float pfCX(0.f);
-	float pfCY(0.f);
-
 	for (auto& pTile : m_vecTile)
 	{
 		if (!pTile)
 			continue;
 
-		pfX = pTile->Get_Info()->fX;
-		pfY = pTile->Get_Info()->fY;
-		pfCX = pTile->Get_Info()->fCX;
-		pfCY = pTile->Get_Info()->fCY;
-
-		// 해당 타일 x 좌표 안에 마우스 좌표가 위치할 떄
-		if ((pt.x >= pfX - pfCX / 2.f) && (pt.x <= pfX + pfCX / 2.f))
+		if (PtInRect(pTile->Get_Rect(), pt))
 		{
-			// 타일 y 범위 안에 마우스가 위치할 때
-			if ((pt.y >= pfY - pfCY / 2.f) && (pt.y <= pfY + pfCY / 2.f))
-			{
-				dynamic_cast<CTile*>(pTile)->Set_Tile_State(bState);
-			}
-			else
-				continue;
+			dynamic_cast<CTile*>(pTile)->Set_Tile_State(bState);
+			break;
 		}
 	}
 
 }
 
-void CTileMgr::Add_Tile(float fX, float fY)
+void CTileMgr::Add_Tile(float fX, float fY, const TCHAR* pFrameKey)
 {
-	CObj* pTile = CAbstractFactory<CTile>::Create_Obj(fX, fY, L"STAGE01_PLATFORM02");
-	dynamic_cast<CTile*>(pTile)->Set_Tile_State(true);
-	m_vecTile.push_back(pTile);
+	if (!pFrameKey)
+		return;
 
+	// 요청 - 매개변수로 프레임 키를 인자로 받아서 해당 플랫폼 프레임 키로 생성 후 저장
+	CObj* pTile = CAbstractFactory<CTile>::Create_Obj(
+		fX, fY, CDataMgr::Get_Instance()->Get_ImageData(pFrameKey));
+	if (pTile)
+	{
+		dynamic_cast<CTile*>(pTile)->Set_Tile_State(true);
+		m_vecTile.push_back(pTile);
+	}
 	pTile = nullptr;
 }
 
@@ -201,5 +217,32 @@ void CTileMgr::Load_Tile()
 	}
 
 	CloseHandle(hFile);
-	//MessageBox(g_hWnd, L"Load Success", _T("SUCCESS"), MB_OK);
+}
+
+
+void	CTileMgr::Delete_Tile(POINT pt)
+{
+	for (auto iter = m_vecTile.begin(); iter != m_vecTile.end(); ++iter)
+	{
+		if (!(*iter))
+			continue;
+
+		if (PtInRect((*iter)->Get_Rect(), pt))
+		{
+			if (wcsstr((*iter)->Get_FrameKey(), L"PLATFORM02"))
+			{
+				Safe_Delete(*iter);
+				m_vecTile.erase(iter);
+				break;
+			}
+		}
+	}
+}
+
+void	CTileMgr::Add_Tile_By_Obj(CTile* pTile)
+{
+	if (pTile)
+	{
+		m_vecTile.push_back(pTile);
+	}
 }

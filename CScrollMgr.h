@@ -20,7 +20,10 @@ public:
 private:
 	float		m_fScrollX;
 	float		m_fScrollY;
+	float		m_fStageWidth;
 
+public:
+	void		Set_StageWidth(float fWidth) { m_fStageWidth = fWidth; }	// 스테이지 너비 설정 함수 추가
 
 public:
 	static CScrollMgr* Get_Instance()

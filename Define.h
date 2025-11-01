@@ -11,26 +11,14 @@
 
 #define		VK_MAX				0xff
 
-#define		GC					1500.f			// 중력 상수 ( Gravitational Constant : 9.81f) 
+#define		GC					981.f			// 중력 상수 ( Gravitational Constant : 9.81f) 
 #define		PI					3.141592f
 #define		INV_SQRT2			0.70710678f		// 1.0f / sqrtf(2.0f) : 1 / 루트 2 
 
-#define		BOUNDARY_LEFT		0.f
-#define		BOUNDARY_TOP		0.f
-#define		BOUNDARY_RIGHT		5457.f
 #define		BOUNDARY_BOTTOM		720.f
-
-#define		INFINITY			numeric_limits<float>::infinity()
-
-#define		STAGE01_SIZE		5457.f
-
 #define		TILEX				44
 
-#define		TILECX				124
-#define		TILECY				140
-
-
-
+#define JUMP_APEX_TIME			0.30f;
 
 extern HWND g_hWnd;
 
@@ -52,8 +40,9 @@ typedef struct tagInfo
 
 typedef struct tagPlayerInfo
 {
-	float fHp;
-	float fScore;
+	float	fHp;
+	long	lScore;
+	long	lCoin;
 }PLAYERINFO;
 
 template<typename T>
@@ -70,29 +59,30 @@ enum OBJID
 {
 	PLATFORM,
 	PLAYER,
-	BUTTON,
+	UI_OBJECT,
 	OBSTACLE,
 	JELLY,
-	GBJELLY,
-	COIN,
 	ITEM,
 	PET,
 	OBJ_END
 };
+
+
+
+// LOGO 씬 - Intro / Lobby 씬 - MainBGM / 스테이지 씬 - STAGE01, STAGE02 ... 각 BGM / 
+// 플레이어 점프, 슬라이드, 오브젝트와의 상호작용 사운드 등 존재 
+enum SOUND_CHANNEL { SOUND_BGM, SOUND_EFFECT, SOUND_PLAYER_JUMP, SOUND_PLAYER_SLIDE, SOUND_UI, MAX_CHANNEL };
+
 
 enum RENDERID
 {
 	BACKGROUND, TILE, GAMEOBJECT, EFFECT, UI, RENDER_END
 };
 
-enum BUTTON_TYPE 
-{ 
-	JUMP, SLIDE, BT_END 
-};
 
 enum SCENEID 
 { 
-	SC_LOGO, SC_MENU, SC_EDIT, SC_STAGE, SC_END
+	SC_LOGO, SC_LOBBY, SC_EDIT, SC_STAGE, SC_END
 };
 
 typedef struct tagFrame
@@ -100,9 +90,6 @@ typedef struct tagFrame
 	int		iStart;
 	int		iEnd;
 	int		iMotion;
-	DWORD	dwSpeed;
-	DWORD	dwTime;
-	DWORD	dwStateLock;
 
 	float       frameElapsedSec = 0.0f;  // 현재 프레임 누적 경과시간
 	float       frameIntervalSec = 0.2f;  // 한 프레임이 넘어갈 간격(예: 0.2s = 200ms)
@@ -121,32 +108,114 @@ typedef struct tagLinePoint
 
 }LINEPOINT;
 
-typedef struct tagLine
+enum BUTTON_TYPE
 {
-	tagLine() { ZeroMemory(this, sizeof(tagLine)); }
+	JUMP, SLIDE, PAUSE, BT_END
+};
 
-	tagLine(LINEPOINT& tLeftPoint, LINEPOINT& tRightPoint)
-		: tLeft(tLeftPoint), tRight(tRightPoint)
+enum PLATFORM_TYPE
+{
+	FIRST_PLATFORM,
+	SECOND_PLATFORM,
+	PT_END
+};
+
+enum OBSTACLE_TYPE
+{
+	SMALL_OBSTACLE01,
+	SMALL_OBSTACLE02,
+	BIG_OBSTACLE01,
+	BIG_OBSTACLE02,
+	BIG_OBSTACLE03,
+	BIG_OBSTACLE04,
+	OT_END
+};
+
+enum JELLY_TYPE
+{
+	JELLY_JELLYBEAN,
+	JELLY_BEAR_PINK,
+	JELLY_BEAR_YELLOW,
+	JELLY_BEAR_BIG,
+	JELLY_SILVERCOIN,
+	JELLY_SILVERCOIN_BIG,
+	JELLY_GOLDCOIN,
+	JELLY_GOLDCOIN_BIG,
+	JELLY_ALPHABET,
+	JT_END
+};
+
+enum ITEM_TYPE
+{
+	ITEM_ENERGY,
+	ITEM_ENERGY_BIG,
+	ITEM_BOOST,
+	ITEM_BIGGEST,
+	ITEM_MAGNET,
+	ITEM_COIN,
+	ITEM_JELLY,
+	IT_END
+};
+
+enum STAGE_TYPE
+{
+	STAGE01,
+	STAGE02,
+	STAGE03,
+	ST_END,
+};
+
+enum UI_TYPE
+{
+	BUTTON,
+	HP_BAR,
+	SCORE_BOARD,
+	ICON,
+	IMG_TXT,
+	IMG_FONT,
+	UT_END
+};
+
+typedef struct tagImageData
+{
+	wstring		pFrameKey;
+	wstring		ImagePath;
+	OBJID		eID;
+	INFO		tInfo;
+
+	tagImageData()
+		: eID(OBJ_END)
 	{
-		if (tLeft.fX != tRight.fX)
-		{
-			tfRadian = (float)atan2((tRight.fY - tLeft.fY), (tRight.fX - tLeft.fX));
-			tfTilt = tanf(tfRadian);
-			tfYInter = tLeft.fY - tfTilt * (tLeft.fX);
-		}
-		else
-		{
-			tfRadian = (float)atan2((tRight.fY - tLeft.fY), (tRight.fX - tLeft.fX));
-			tfTilt = INFINITY;
-			tfYInter = 0;
-		}
+		ZeroMemory(&tInfo, sizeof(INFO));
 	}
 
-	LINEPOINT		tLeft;
-	LINEPOINT		tRight;
+	tagImageData(float fCX, float fCY)
+	{
+		tInfo.fCX = fCX;
+		tInfo.fCY = fCY;
+	}
 
-	float			tfTilt;		// 기울기
-	float			tfYInter;	// y 절편 ( x가 0일 때의 y값 )
-	float			tfRadian;
+	tagImageData(OBJID eID, float fCX, float fCY)
+	{
+		eID = eID;
+		tInfo.fCX = fCX;
+		tInfo.fCY = fCY;
+	}
 
-}LINE;
+	tagImageData(OBJID eID, float fCX, float fCY, float fHitCX, float fHitCY )
+	{
+		eID = eID;
+		tInfo.fCX = fCX;
+		tInfo.fCY = fCY;
+		tInfo.fHitCX = fHitCX;
+		tInfo.fHitCY = fHitCY;
+	}
+
+}IMAGEDATA;
+
+typedef struct tagJellyInfo
+{
+	int iScore;
+	int iCoin;
+}JELLYINFO;
+

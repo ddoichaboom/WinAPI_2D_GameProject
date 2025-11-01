@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CLogo.h"
-#include "CMenu.h"
+#include "CLobby.h"
 #include "CStage.h"
 #include "CEdit.h"
 
@@ -14,8 +14,8 @@ private:
 
 public:
 	void	Scene_Change(SCENEID eScene);
-	void	Update();
-	void	Late_Update();
+	void	Update(float fDeltaTime);
+	void	Late_Update(float fDeltaTime);
 	void	Render(HDC hDC);
 	void	Release();
 

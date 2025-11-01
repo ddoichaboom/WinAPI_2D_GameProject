@@ -2,7 +2,7 @@
 #include "CObj.h"
 
 CObj::CObj()
-	: m_fSpeed(0.f), m_bDead(false), m_bOnGround(false),
+	: m_fSpeed(0.f), m_bDead(false), m_bOnGround(true),
 	m_fJumpSpeed(0.f), m_fVy(0.f), m_fVx(0.f), m_bPrevOnGround(false)
 {
 	ZeroMemory(&m_tInfo, sizeof(INFO));
@@ -16,7 +16,7 @@ CObj::~CObj()
 
 }
 
-void	CObj::Update_Rect()
+void	CObj::Update_Rect(OBJID eID)
 {
 	m_tRect.left = long(m_tInfo.fX - (m_tInfo.fCX / 2.f));
 	m_tRect.top = long(m_tInfo.fY - (m_tInfo.fCY / 2.f));
@@ -24,6 +24,11 @@ void	CObj::Update_Rect()
 	m_tRect.bottom = long(m_tInfo.fY + (m_tInfo.fCY / 2.f));
 
 	// 히트박스 좌표 매핑
+	if (eID == PLAYER)
+		Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
+	else
+		Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY);
+
 	m_tHitRect.left = long(m_tInfo.fHitX - (m_tInfo.fHitCX / 2.f));
 	m_tHitRect.top = long(m_tInfo.fHitY - (m_tInfo.fHitCY / 2.f));
 	m_tHitRect.right = long(m_tInfo.fHitX + (m_tInfo.fHitCX / 2.f));

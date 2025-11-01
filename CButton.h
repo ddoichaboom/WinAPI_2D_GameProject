@@ -1,8 +1,8 @@
 #pragma once
-#include "CObj.h"
+#include "CUi.h"
 
 class CButton 
-	: public CObj
+	: public CUi
 {
 public:
 	CButton();

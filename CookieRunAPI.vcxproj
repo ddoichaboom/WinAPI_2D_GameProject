@@ -108,11 +108,18 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)FMOD_SDK\core\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)FMOD_SDK\core\lib\x64;$(SolutionDir)FMOD_SDK\studio\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;fmodstudioL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)FMOD_SDK\core\lib\x64\fmodL.dll" "$(TargetDir)"
+xcopy /y /d "$(SolutionDir)FMOD_SDK\studio\lib\x64\fmodstudioL.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -128,7 +135,13 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>fmod_vc.lib;fmodstudio_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)FMOD_SDK\core\lib\x64;$(SolutionDir)FMOD_SDK\studio\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)FMOD_SDK\core\lib\x64\fmod.dll" "$(TargetDir)"
+xcopy /y /d "$(SolutionDir)FMOD_SDK\studio\lib\x64\fmodstudio.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CAbstractFactory.h" />
@@ -136,13 +149,15 @@
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CChunkMgr.h" />
     <ClInclude Include="CCollisionMgr.h" />
+    <ClInclude Include="CDataMgr.h" />
     <ClInclude Include="CEdit.h" />
+    <ClInclude Include="CHpBar.h" />
+    <ClInclude Include="CItem.h" />
+    <ClInclude Include="CJelly.h" />
     <ClInclude Include="CKeyMgr.h" />
-    <ClInclude Include="CLine.h" />
-    <ClInclude Include="CLineMgr.h" />
     <ClInclude Include="CLogo.h" />
     <ClInclude Include="CMainGame.h" />
-    <ClInclude Include="CMenu.h" />
+    <ClInclude Include="CLobby.h" />
     <ClInclude Include="CMyBmp.h" />
     <ClInclude Include="CObj.h" />
     <ClInclude Include="CObjMgr.h" />
@@ -151,8 +166,13 @@
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CSceneMgr.h" />
+    <ClInclude Include="CScore.h" />
     <ClInclude Include="CScrollMgr.h" />
+    <ClInclude Include="CSoundMgr.h" />
     <ClInclude Include="CStage.h" />
+    <ClInclude Include="CTimeMgr.h" />
+    <ClInclude Include="CUi.h" />
+    <ClInclude Include="CUiMgr.h" />
     <ClInclude Include="TcharIO.h" />
     <ClInclude Include="CTile.h" />
     <ClInclude Include="CTileMgr.h" />
@@ -167,13 +187,15 @@
     <ClCompile Include="CButton.cpp" />
     <ClCompile Include="CChunkMgr.cpp" />
     <ClCompile Include="CCollisionMgr.cpp" />
+    <ClCompile Include="CDataMgr.cpp" />
     <ClCompile Include="CEdit.cpp" />
+    <ClCompile Include="CHpBar.cpp" />
+    <ClCompile Include="CItem.cpp" />
+    <ClCompile Include="CJelly.cpp" />
     <ClCompile Include="CKeyMgr.cpp" />
-    <ClCompile Include="CLine.cpp" />
-    <ClCompile Include="CLineMgr.cpp" />
     <ClCompile Include="CLogo.cpp" />
     <ClCompile Include="CMainGame.cpp" />
-    <ClCompile Include="CMenu.cpp" />
+    <ClCompile Include="CLobby.cpp" />
     <ClCompile Include="CMyBmp.cpp" />
     <ClCompile Include="CObj.cpp" />
     <ClCompile Include="CObjMgr.cpp" />
@@ -182,8 +204,13 @@
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CSceneMgr.cpp" />
+    <ClCompile Include="CScore.cpp" />
     <ClCompile Include="CScrollMgr.cpp" />
+    <ClCompile Include="CSoundMgr.cpp" />
     <ClCompile Include="CStage.cpp" />
+    <ClCompile Include="CTimeMgr.cpp" />
+    <ClCompile Include="CUi.cpp" />
+    <ClCompile Include="CUiMgr.cpp" />
     <ClCompile Include="TcharIO.cpp" />
     <ClCompile Include="CTile.cpp" />
     <ClCompile Include="CTileMgr.cpp" />

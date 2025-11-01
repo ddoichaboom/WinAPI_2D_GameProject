@@ -1,6 +1,5 @@
 #pragma once
 #include "CObj.h"
-#include "CLine.h"
 
 class CPlayer :
     public CObj
@@ -21,14 +20,20 @@ public:
         ST_END };
 
 public:
-    void Initialize() override;
-    int	 Update(float deltaTime) override;
-    void Late_Update(float deltaTime) override;
-    void Render(HDC hDC) override;
-    void Release() override;
+    void            Initialize() override;
+    int	            Update(float deltaTime) override;
+    void            Late_Update(float deltaTime) override;
+    void            Render(HDC hDC) override;
+    void            Release() override;
+
+    void            On_Hit();
+    void            Add_Score(int iScore);     
+    void            Add_Coin(int iCoin);
+    void            Take_Damage(float fDamage);
+    const           PLAYERINFO* Get_PlayerInfo() const { return &m_tPlayerInfo; }
+    bool            Is_Invincible() const { return m_bInvincible; }
 
 private:
-    void	Rect_Col_Movement();
     void	Collision_Border_Line();
     void    Key_Input();
     void    Offset(float deltaTime);
@@ -36,10 +41,9 @@ private:
     void    State_Check(float deltaTime);
 
 private:
-    CLine*          m_pTargetLine;
-    CLine*          m_pVerticalLine;
     int             m_iMaxJumpCount;
     int             m_iJumpCount;
+    float           m_fJumpTimer;       // 점프 체공 시간 제어용 타이머
 
     STATE			m_ePreMotion;
     STATE			m_eCurMotion;
@@ -48,6 +52,12 @@ private:
 
     bool            m_bWantJump;
     bool            m_bWantSlide;
+
+    bool            m_bInvincible;
+    bool            m_bDecelerated;
+    float           m_fInvincibleTime;      // 무적 지속 시간 타이머 
+    float           m_fDecelerationTime;    
+    float           m_fBlinkTime;           // 깜박임효과 타이머 
 
 
 

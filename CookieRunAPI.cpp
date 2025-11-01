@@ -6,6 +6,8 @@
 #include "CookieRunAPI.h"
 #include "Define.h"
 #include "CMainGame.h"
+#include "CTimeMgr.h"
+
 
 #define MAX_LOADSTRING 100
 
@@ -60,7 +62,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     CMainGame       MainGame;
     MainGame.Initialize();
 
-    DWORD dwTime = GetTickCount64();
+    timeBeginPeriod(1);
+
+    LARGE_INTEGER liFrameStart = {};
 
     while (true)
     {
@@ -75,20 +79,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-
         else
         {
-            if (dwTime + 10 < GetTickCount64())
-            {
-                MainGame.Update();
-                MainGame.Late_Update();
-                MainGame.Render();
-
-                dwTime = GetTickCount64();
-            }
+            QueryPerformanceCounter(&liFrameStart);
+             MainGame.Update();
+             MainGame.Render();
+             CTimeMgr::Get_Instance()->WaitForFrame(liFrameStart);
         }
     }
 
+    timeEndPeriod(1);
 
     // 종료 직전
     GdiplusShutdown(gdiplusToken);
