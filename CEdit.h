@@ -8,7 +8,13 @@ public:
     virtual ~CEdit();
 
 public:
-    enum EDIT_TYPE { EDIT_FIRST_PLATFORM, EDIT_SECOND_PLATFORM, EDIT_OBSTACLE, EDIT_JELLY, EDIT_ITEM, EDIT_TYPE_END};
+    enum EDIT_TYPE { 
+        EDIT_FIRST_PLATFORM,
+        EDIT_SECOND_PLATFORM,
+        EDIT_OBSTACLE,
+        EDIT_JELLY,
+        EDIT_ITEM,
+        EDIT_TYPE_END};
 
 public:
     void Initialize() override;
@@ -31,16 +37,19 @@ private:
 
 
     POINT			m_tCursor;
-    bool            m_bTestMode;
-    bool            m_bEditMode;
     bool            m_bRenderVerticalLine;
 
-    int             m_iStageType;       
+    int             m_iStageType; 
+    int             m_iPrevStageType;
     int             m_iEditType;        // 1Àº 1Ãþ ÇÃ·§Æû, 2´Â 2Ãþ ÇÃ·§Æû, 3Àº Àå¾Ö¹° 4´Â Á©¸® ¹èÄ¡ ´Ü°è 5´Â ´Ü°è ³¡
     int             m_iObstacleType;    
     int             m_iJellyType;       // 1. ±âº» Á©¸® (OBJID - JELLY), 2. °õÁ©¸® ( OBJID - GBJELLY) 3. ½Ç¹ö ÄÚÀÎ ( OBJID - SILVER_COIN ) 4. °ñµå ÄÚÀÎ ( OBJID - GOLD_COIN)
     int             m_iJellyTextType;
+    int             m_iItemType;        // 0. item_energy 1. item_energy_big, 2. item_boost 3. item_giant ...
     float		    m_fStageWidth;
     float           m_fTileCX;
+
+    int             m_iChunkIndex;
+    float           m_fChunkStartX;
 };
 

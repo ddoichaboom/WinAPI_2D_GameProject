@@ -36,7 +36,6 @@ public:
 	}
 
 	
-
 	static CObj* Create_Obj(float fX, float fY, const TCHAR* pFrameKey)
 	{
 		CObj* pObj = new T;
@@ -59,7 +58,7 @@ public:
 
 		return pObj;
 	}
-
-
 };
+
+
 

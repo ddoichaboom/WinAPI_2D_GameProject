@@ -28,14 +28,14 @@ void CButton::Initialize()
 	case JUMP:
 		m_tInfo = pJumpData->tInfo;
 		m_tInfo.fX = (m_tInfo.fCX / 2.f) + 50.f;
-		m_tInfo.fY = WINCY - ((m_tInfo.fCX / 2.f) + 50.f);
+		m_tInfo.fY = WINCY - (m_tInfo.fCX / 2.f);
 		m_pFrameKey = pJumpData->pFrameKey;
 		break;
 
 	case SLIDE:
 		m_tInfo = pSlideData->tInfo;
-		m_tInfo.fX = WINCX - (m_tInfo.fCX / 2.f) + 50.f;
-		m_tInfo.fY = WINCY - ((m_tInfo.fCX / 2.f) + 50.f);
+		m_tInfo.fX = WINCX - (m_tInfo.fCX / 2.f) - 50.f;
+		m_tInfo.fY = WINCY - (m_tInfo.fCX / 2.f);
 		m_pFrameKey = pSlideData->pFrameKey;		
 		break;
 	}

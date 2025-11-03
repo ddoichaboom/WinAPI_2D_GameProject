@@ -18,9 +18,10 @@ private:
     void    Load_Chunk_Data(const TCHAR* pFilePath);        // 청크 로딩 함수 선언 
 
 private:
-    const TCHAR* m_pStageFrameKey;
-
-    float   m_fStageWidth;
+    wstring     m_stageKey;
+    float       m_fStageWidth;
+    float       m_fWorldEndX;
+    int         m_iCurrChunkIndex;
 
 };
 

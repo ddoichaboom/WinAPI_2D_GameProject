@@ -3,51 +3,24 @@
 #include "CObjMgr.h"
 #include "CTileMgr.h"
 #include "CDataMgr.h"
+#include "Factory.h"
 #include "TcharIO.h"
 
 CChunkMgr* CChunkMgr::m_pInstance = nullptr;
 
+
 CChunkMgr::CChunkMgr()
-	: m_fMapTotalWidth(0.f), m_iCurrentChunkIndex(0)
 {
 }
 
 CChunkMgr::~CChunkMgr()
 {
-	Release();
-}
-
-void	CChunkMgr::Initialize(const list<wstring>& chunkList)
-{
-}
-
-int		CChunkMgr::Update()
-{
-
-	return 0;
 }
 
 
-void	CChunkMgr::Release()
-{
-	m_ChunkList.clear();
-}
 
-void CChunkMgr::Load_Next_Chunk()
+bool CChunkMgr::LoadChunk(const wchar_t* pFilePath, float offsetX, LoadedChunkInfo* outInfo)
 {
-}
-
-void CChunkMgr::Unload_Passed_Objects()
-{
-}
-
-void CChunkMgr::LoadChunk(const TCHAR* pFilePath)
-{
-	CObjMgr::Get_Instance()->Delete_ID(PLATFORM);
-	CObjMgr::Get_Instance()->Delete_ID(OBSTACLE);
-	CObjMgr::Get_Instance()->Delete_ID(JELLY);
-	CObjMgr::Get_Instance()->Delete_ID(ITEM);
-				// 타일 매니저의 모든 타일 삭제
 
 	HANDLE hFile = CreateFile(
 		pFilePath,
@@ -57,38 +30,92 @@ void CChunkMgr::LoadChunk(const TCHAR* pFilePath)
 
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		//MessageBox(g_hWnd, L"Chunk File Open Failed!", L"Error", MB_OK);
-		return;
+		return false;
+	}
+
+	bool ok = LoadChunkInternal(hFile, offsetX, outInfo);
+	CloseHandle(hFile);
+	return ok;
+}
+
+bool CChunkMgr::LoadChunkInternal(HANDLE hFile, float offsetX, LoadedChunkInfo* outInfo)
+{
+	CHUNK_META meta{};
+	if (!Utils::ReadPOD(hFile, meta.magic))
+		return false; 
+	if (meta.magic != 0x4B4E4843)
+		return false;
+	if (!Utils::ReadPOD(hFile, meta.version))
+		return false;
+	if (!Utils::ReadPOD(hFile, meta.ichunkIndex))
+		return false;
+	if (!Utils::ReadPOD(hFile, meta.fWorldStartX))
+		return false;
+
+	wstring stageKey;
+	if (!Utils::ReadTString(hFile, stageKey))
+		return false;
+
+	meta.stageFrameKey = stageKey;
+
+	float stageWidth = 0.f;
+	if (const IMAGEDATA* pImageData = CDataMgr::Get_Instance()->Get_ImageData(stageKey)) 
+	{
+		stageWidth = pImageData->tInfo.fCX;
+	}
+
+	if (outInfo)
+	{
+		outInfo->meta = meta;
+		outInfo->stageWidth = stageWidth;
 	}
 
 	while (true)
 	{
-		OBJID	eID;
-		INFO	tInfo;
-		wstring strFrameKey;
+		OBJID		eID;
+		INFO		tInfo;
+		wstring		frameKey;
 
 		if (!Utils::ReadPOD(hFile, eID))
 			break;
 		if (!Utils::ReadPOD(hFile, tInfo))
 			break;
-		if (!Utils::ReadTString(hFile, strFrameKey))
+		if (!Utils::ReadTString(hFile, frameKey))
 			break;
 
-		const IMAGEDATA* pImageData = CDataMgr::Get_Instance()->Get_ImageData(strFrameKey.c_str());
+		tInfo.fX += offsetX;
+
+		const IMAGEDATA* pImageData = CDataMgr::Get_Instance()->Get_ImageData(frameKey);
 
 		if (!pImageData)
 			continue;
 
-		
 		CObj* pObj = Create_Object_By_ID(eID, tInfo.fX, tInfo.fY, pImageData);
-
 		if (pObj)
-		{
 			CObjMgr::Get_Instance()->Add_Object(eID, pObj);
-		}
-		
 	}
 
-	CloseHandle(hFile);
+	return true;
+}
+
+void CChunkMgr::ClearSequence()
+{
+	m_queue.clear();
+}
+
+void CChunkMgr::Enqueue(const wstring& path)
+{
+	m_queue.push_back(path);
+}
+
+bool CChunkMgr::LoadNext(float WorldStartX, LoadedChunkInfo* outInfo)
+{
+	if (m_queue.empty())
+		return false;
+
+	wstring path = m_queue.front();
+	m_queue.pop_front();
+
+	return LoadChunk(path.c_str(), WorldStartX, outInfo);
 }
 

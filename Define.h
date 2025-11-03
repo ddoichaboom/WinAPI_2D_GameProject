@@ -18,7 +18,7 @@
 #define		BOUNDARY_BOTTOM		720.f
 #define		TILEX				44
 
-#define JUMP_APEX_TIME			0.30f;
+#define		JUMP_APEX_TIME		0.28f;				// 최고점 도달 시간 
 
 extern HWND g_hWnd;
 
@@ -40,6 +40,7 @@ typedef struct tagInfo
 
 typedef struct tagPlayerInfo
 {
+	float	fMaxHp;
 	float	fHp;
 	long	lScore;
 	long	lCoin;
@@ -150,10 +151,12 @@ enum ITEM_TYPE
 	ITEM_ENERGY,
 	ITEM_ENERGY_BIG,
 	ITEM_BOOST,
-	ITEM_BIGGEST,
+	ITEM_BIGGER,
 	ITEM_MAGNET,
 	ITEM_COIN,
 	ITEM_JELLY,
+	ITEM_FEVER,
+	ITEM_FEVER_BIG,
 	IT_END
 };
 
@@ -218,4 +221,15 @@ typedef struct tagJellyInfo
 	int iScore;
 	int iCoin;
 }JELLYINFO;
+
+struct CHUNK_META
+{
+	uint32_t magic		= 0x4B4E4843;	// 'CHNK'
+	uint32_t version	= 1;
+
+	std::wstring stageFrameKey;
+
+	int ichunkIndex			= 1;
+	float fWorldStartX		= 0.f;
+};
 

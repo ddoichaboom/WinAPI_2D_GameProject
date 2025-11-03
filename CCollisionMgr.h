@@ -16,5 +16,8 @@ public:
 
 	static void Collision_Collect(list<CObj*>& Dst, list<CObj*>& Src);
 	static bool Collision_Obstacle(list<CObj*>& Dst, list<CObj*>& Src);
+
+	static void Collision_Item(list<CObj*>& Dst, list<CObj*>& Src);
+	
 };
 

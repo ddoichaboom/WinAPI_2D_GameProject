@@ -1,6 +1,12 @@
 #pragma once
 #include "Define.h"
 
+struct LoadedChunkInfo
+{
+	CHUNK_META meta;
+	float stageWidth = 0.f;
+};
+
 class CChunkMgr
 {
 
@@ -9,14 +15,14 @@ private:
 	~CChunkMgr();
 
 public:
-	void	Initialize(const list<wstring>& chunkList);
-	int		Update();
-	void	Release();
-	void	LoadChunk(const TCHAR* pFilePath);
+	bool	LoadChunk(const wchar_t* pFilePath, float offsetX, LoadedChunkInfo* outInfo);
+
+	void	ClearSequence();
+	void	Enqueue(const std::wstring& path);
+	bool	LoadNext(float fWorldStartX, LoadedChunkInfo* outInfo);
 
 private:
-	void	Load_Next_Chunk();
-	void	Unload_Passed_Objects();
+	bool LoadChunkInternal(HANDLE hFile, float offsetX, LoadedChunkInfo* outInfo);
 
 public:
 	static CChunkMgr* Get_Instance()
@@ -40,10 +46,9 @@ public:
 
 private:
 	static CChunkMgr* m_pInstance;
+	deque<std::wstring> m_queue;
+	
 
-	list<wstring>		m_ChunkList;
-	float				m_fMapTotalWidth;
-	int					m_iCurrentChunkIndex;
 
 };
 

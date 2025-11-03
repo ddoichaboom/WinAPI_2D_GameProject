@@ -11,7 +11,7 @@ private:
 	~CObjMgr();
 
 public:
-	enum Method { CIRCLE = 0, RECT, LINE, COLLECT, OBSTACLE };
+	enum Method { CIRCLE = 0, RECT, LINE, OBSTACLE, COLLECT_JELLY, COLLECT_ITEM };
 	void	Check_Collision(OBJID Dst, OBJID Src, Method eMethod);
 
 
@@ -20,7 +20,8 @@ public:
 	CObj*			Get_Target(OBJID eID);
 
 	list<CObj*>&	Get_ObjList(OBJID eID) { return m_ObjList[eID]; };
-
+	void			Cull_Left_Of(float WorldX);
+	
 public:
 	void	Add_Object(OBJID eID, CObj* pObj);
 	void	Update(float deltaTime = 0.f);

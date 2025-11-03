@@ -115,6 +115,15 @@
     <Filter Include="02. Design\12. UiMgr\06. Ui\03. BonusTime">
       <UniqueIdentifier>{423a10a6-6c75-46a2-b899-4a1da14b435a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Obj\04. Item\00. Item_Energy">
+      <UniqueIdentifier>{f3d5d356-b340-4537-8369-2716ded71291}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\04. Item\01. Item_Boost">
+      <UniqueIdentifier>{7cfdc662-d2a2-4f8c-a229-51364f620861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\04. Item\02. Item_Giant">
+      <UniqueIdentifier>{931398bc-a297-49fe-a844-fd06cf131dbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -228,6 +237,21 @@
     <ClInclude Include="CScore.h">
       <Filter>02. Design\12. UiMgr\06. Ui\02. Score</Filter>
     </ClInclude>
+    <ClInclude Include="CEnergy.h">
+      <Filter>01. Obj\04. Item\00. Item_Energy</Filter>
+    </ClInclude>
+    <ClInclude Include="CBoost.h">
+      <Filter>01. Obj\04. Item\01. Item_Boost</Filter>
+    </ClInclude>
+    <ClInclude Include="CGiant.h">
+      <Filter>01. Obj\04. Item\02. Item_Giant</Filter>
+    </ClInclude>
+    <ClInclude Include="Factory.h">
+      <Filter>02. Design\00. AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="CBonusTime.h">
+      <Filter>02. Design\12. UiMgr\06. Ui\03. BonusTime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CookieRunAPI.cpp">
@@ -325,6 +349,18 @@
     </ClCompile>
     <ClCompile Include="CScore.cpp">
       <Filter>02. Design\12. UiMgr\06. Ui\02. Score</Filter>
+    </ClCompile>
+    <ClCompile Include="CEnergy.cpp">
+      <Filter>01. Obj\04. Item\00. Item_Energy</Filter>
+    </ClCompile>
+    <ClCompile Include="CBoost.cpp">
+      <Filter>01. Obj\04. Item\01. Item_Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="CGiant.cpp">
+      <Filter>01. Obj\04. Item\02. Item_Giant</Filter>
+    </ClCompile>
+    <ClCompile Include="CBonusTime.cpp">
+      <Filter>02. Design\12. UiMgr\06. Ui\03. BonusTime</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

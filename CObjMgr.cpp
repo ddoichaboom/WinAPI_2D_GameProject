@@ -26,9 +26,7 @@ void CObjMgr::Check_Collision(OBJID Dst, OBJID Src, Method eMethod)
 	case CObjMgr::RECT:
 		CCollisionMgr::Collision_Rect(m_ObjList[Dst], m_ObjList[Src]);
 		break;
-	case CObjMgr::COLLECT:
-		CCollisionMgr::Collision_Collect(m_ObjList[Dst], m_ObjList[Src]);
-		break;
+
 	case CObjMgr::OBSTACLE:
 		if (!m_ObjList[Dst].empty())
 		{
@@ -39,11 +37,21 @@ void CObjMgr::Check_Collision(OBJID Dst, OBJID Src, Method eMethod)
 				if (CCollisionMgr::Collision_Obstacle(m_ObjList[Dst], m_ObjList[Src]))
 				{
 					pPlayer->On_Hit();
-					pPlayer->Take_Damage(10.f);
+					pPlayer->Take_Damage(30.f);
 				}
 			}
 		}
 		break;
+
+	case CObjMgr::COLLECT_JELLY:
+		CCollisionMgr::Collision_Collect(m_ObjList[Dst], m_ObjList[Src]);
+		break;
+	
+
+	case CObjMgr::COLLECT_ITEM:
+		CCollisionMgr::Collision_Item(m_ObjList[Dst], m_ObjList[Src]);
+		break;
+
 	case CObjMgr::LINE:
 		break;
 	}
@@ -172,16 +180,24 @@ void CObjMgr::Render(HDC hDC)
 			{
 				int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
 				const auto* pRect = pObj->Get_Rect();
-				HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 255, 0));
-				HPEN hOldPen = (HPEN)SelectObject(hDC, hPen);
+				const auto* pHitRect = pObj->Get_HitRect();
 
 				HBRUSH hOldBrush = (HBRUSH)SelectObject(hDC, GetStockObject(NULL_BRUSH));
 
+				HPEN hGreenPen = CreatePen(PS_SOLID, 2, RGB(0, 255, 0));
+				HPEN hOldPen = (HPEN)SelectObject(hDC, hGreenPen);
 				Rectangle(hDC, pRect->left + iScrollX, pRect->top, pRect->right + iScrollX, pRect->bottom);
 
+				HPEN hYellowPen = CreatePen(PS_SOLID, 2, RGB(255, 255, 0));
+				SelectObject(hDC, hYellowPen);
+				DeleteObject(hGreenPen);
+				 
+				Rectangle(hDC, pHitRect->left + iScrollX, pHitRect->top, pHitRect->right + iScrollX, pHitRect->bottom);
+
 				SelectObject(hDC, hOldPen);
+				DeleteObject(hYellowPen);
+
 				SelectObject(hDC, hOldBrush);
-				DeleteObject(hPen);
 			}
 		}
 
@@ -223,4 +239,26 @@ bool CObjMgr::Is_Culling(CObj* pObj)
 	}
 
 	return false;		// 컬링 대상이 아님 ( 화면에 보임 )
+}
+
+void	CObjMgr::Cull_Left_Of(float WorldX)
+{
+	auto cullList = [&](list<CObj*>& L)
+		{
+			for (auto iter = L.begin(); iter != L.end(); )
+			{
+				CObj* p = (*iter);
+				if (p && p->Get_Info()->fX + p->Get_Info()->fCX < WorldX)
+				{
+					Safe_Delete(p);
+					iter = L.erase(iter);
+				}
+				else
+					++iter;
+			}
+		};
+	for (int id = 0; id < OBJ_END; ++id)
+	{
+		cullList(m_ObjList[id]);
+	}
 }

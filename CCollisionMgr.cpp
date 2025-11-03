@@ -3,6 +3,10 @@
 #include "CTile.h"
 #include "CPlayer.h"
 #include "CJelly.h"
+#include "CItem.h"
+#include "CEnergy.h"
+#include "CBoost.h"
+#include "CGiant.h"
 
 void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 {
@@ -251,4 +255,30 @@ bool CCollisionMgr::Collision_Obstacle(list<CObj*>& Dst, list<CObj*>& Src)
 	}
 
 	return false;
+}
+
+void CCollisionMgr::Collision_Item(list<CObj*>& Dst, list<CObj*>& Src)
+{
+	if (Dst.empty() || Src.empty())
+		return;
+
+	CPlayer* pPlayer = static_cast<CPlayer*>(Dst.front());
+
+	for (auto& pItemObj : Src)
+	{
+		if (pItemObj->Get_Dead())
+			continue;
+
+		RECT rc {};
+		if (IntersectRect(&rc, pPlayer->Get_HitRect(), pItemObj->Get_HitRect()))
+		{
+			CItem* pItem = dynamic_cast<CItem*>(pItemObj);
+
+			if (pItem)
+			{
+				pItem->Apply_Effect(pPlayer);
+			}
+			pItemObj->Set_Dead();
+		}
+	}
 }

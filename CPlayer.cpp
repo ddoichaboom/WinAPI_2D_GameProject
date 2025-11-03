@@ -12,10 +12,15 @@ CPlayer::CPlayer()
     : m_iMaxJumpCount(2),
     m_ePreMotion(ST_END), m_eCurMotion(RUN), m_iJumpCount(0),
     m_bWantJump(false), m_bWantSlide(false), m_fJumpTimer(0.f),
-    m_bInvincible(false), m_fInvincibleTime(0.f), m_fBlinkTime(0.f),
-    m_fDecelerationTime(0.f), m_bDecelerated(false)
+    m_fInvincibleTime(0.f), m_fBlinkTime(0.f),
+    m_fDecelerationTime(0.f), m_bDecelerated(false),
+    m_bBlinkMode(false), m_fBoostTime(0.f), m_bBoostMode(false),
+    m_fTargetScale(1.f), m_fGiantTime(0.f),
+    m_fCurrentScale(1.f), m_fScaleSpeed(2.f), m_eScaleState(IDLE), 
+    m_bGiantMode(false)
 {
     ZeroMemory(&m_tPlayerInfo, sizeof(PLAYERINFO));
+    ZeroMemory(&m_tRenderInfo, sizeof(INFO));
 }
 
 CPlayer::~CPlayer()
@@ -27,7 +32,7 @@ void CPlayer::Initialize()
 {
     m_fSpeed = 500.0f;
     m_fVx = m_fSpeed;
-    m_fJumpSpeed = 550.f;
+    m_fJumpSpeed = 700.f;
     m_bOnGround = true;
     m_bPrevOnGround = true;
     m_eRender = GAMEOBJECT;
@@ -36,16 +41,17 @@ void CPlayer::Initialize()
 
     if (!lstrcmp(m_pFrameKey.c_str(), L"GINGER_BRAVE_COOKIE"))
     {
-        m_tPlayerInfo.fHp = 100.f;
+        m_tPlayerInfo.fMaxHp = 150.f;
+        m_tPlayerInfo.fHp = m_tPlayerInfo.fMaxHp;
         m_tPlayerInfo.lScore = 0.f;
     }
+
+    m_tRenderInfo = m_tInfo;
 
 }
 
 int CPlayer::Update(float deltaTime)
 {
-
-
     Key_Input();
 
     if (m_fVy < 0.f)
@@ -64,13 +70,10 @@ int CPlayer::Update(float deltaTime)
         m_fVy = 0;
     }
 
-    
-    
     m_tInfo.fY += m_fVy * deltaTime;
     m_tInfo.fX += m_fVx * deltaTime;
     
     
-
     Update_Rect(PLAYER);
 
     m_bOnGround = false;
@@ -81,36 +84,84 @@ int CPlayer::Update(float deltaTime)
 
 void CPlayer::Late_Update(float deltaTime) 
 {
-    if (m_bInvincible)
+    if (m_eCurMotion == DEAD)
     {
-        m_fInvincibleTime -= deltaTime;
-        m_fBlinkTime += deltaTime;
+        Motion_Change();
 
-        if (m_fInvincibleTime <= 0.f)
+        Update_Rect(PLAYER);
+        Offset(deltaTime);
+
+        Move_Frame(deltaTime);
+
+        m_bPrevOnGround = m_bOnGround;
+
+
+        // 사망 애니메이션이 끝나면 게임 오버
+        if (!m_tFrame.bLoop && (m_tFrame.iStart == m_tFrame.iEnd))
         {
-            m_bInvincible = false;
-            m_fInvincibleTime = 0.f;
-            m_fBlinkTime = 0.f;
+            // TODO : 게임 오버 씬 전환 
+            // Set_Dead();      // 필요하면 적용
         }
+        return;
     }
 
-    if (m_bDecelerated)
+    Time_Check(deltaTime);
+
+    if ((m_eScaleState != SCALE_STATE::IDLE) && m_bGiantMode)
     {
-        m_fDecelerationTime -= deltaTime;
-        m_fVx = m_fSpeed - 150.f;
-
-        if (m_fDecelerationTime <= 0.f)
+        // 커지는 중
+        if (m_eScaleState == SCALE_STATE::SCALING_UP)
         {
-            m_bDecelerated = false;
-            m_fDecelerationTime = 0.f;
-            m_fVx = m_fSpeed;
+            m_fCurrentScale += m_fScaleSpeed * deltaTime;
+            if (m_fCurrentScale >= m_fTargetScale)
+            {
+                m_fCurrentScale = m_fTargetScale;
+                m_eScaleState = SCALE_STATE::GIANT;
+            }
         }
-    }
+        // 거대화 지속 
+        else if (m_eScaleState == SCALE_STATE::GIANT)
+        {
+            m_fGiantTime -= deltaTime;
+            if (m_fGiantTime <= 0.f)
+            {
+                m_fGiantTime = 0.f;
+                m_eScaleState = SCALE_STATE::SCALING_DOWN;
 
+            }
+        }
+        // 작아지는 중
+        else if (m_eScaleState == SCALE_STATE::SCALING_DOWN)
+        {
+            m_fCurrentScale -= m_fScaleSpeed * deltaTime;
+            if (m_fCurrentScale <= 1.f)
+            {
+                m_fCurrentScale = 1.f;
+                m_eScaleState = SCALE_STATE::IDLE;
+                m_bGiantMode = false;
+            }
+        }
+
+    }
 
     State_Check(deltaTime);
 
     Motion_Change();
+
+    m_tInfo.fCX = m_tRenderInfo.fCX;
+    m_tInfo.fCY = m_tRenderInfo.fCY;
+    m_tInfo.fHitCX = m_tRenderInfo.fHitCX;
+    m_tInfo.fHitCY = m_tRenderInfo.fHitCY;
+
+
+    if (m_fCurrentScale != 1.f)
+    {
+        m_tInfo.fCX *= m_fCurrentScale;
+        m_tInfo.fCY *= m_fCurrentScale;
+        m_tInfo.fHitCX *= m_fCurrentScale;
+        m_tInfo.fHitCY *= m_fCurrentScale;
+
+    }
 
     Update_Rect(PLAYER);
 
@@ -120,18 +171,17 @@ void CPlayer::Late_Update(float deltaTime)
 
     m_bPrevOnGround = m_bOnGround;
 
-
 }
 
 void CPlayer::Render(HDC hDC)
 {
-    int 		iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
-    int 		iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
+    int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
+    int iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
-    int srcX = (int)m_tInfo.fCX * m_tFrame.iStart;
-    int srcY = (int)m_tInfo.fCY * m_tFrame.iMotion;
-    int srcW = (int)m_tInfo.fCX;
-    int srcH = (int)m_tInfo.fCY;
+    int srcX = (int)m_tRenderInfo.fCX * m_tFrame.iStart;
+    int srcY = (int)m_tRenderInfo.fCY * m_tFrame.iMotion;
+    int srcW = (int)m_tRenderInfo.fCX;
+    int srcH = (int)m_tRenderInfo.fCY;
 
     int dstX = (int)m_tRect.left + iScrollX;
     int dstY = (int)m_tRect.top + iScrollY;
@@ -140,17 +190,9 @@ void CPlayer::Render(HDC hDC)
     
     BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-    if (m_bInvincible)
-    {
-        if (fmod(m_fBlinkTime, 0.2f) > 0.1f)
-        {
-            bf.SourceConstantAlpha = 128; // 반투명 
-        }
-        else
-        {
-            bf.SourceConstantAlpha = 255;
-        }
-    }
+    if (m_bBlinkMode && fmod(m_fBlinkTime, 0.2f) > 0.1f)
+        bf.SourceConstantAlpha = 128; // 반투명 
+        
 
     HDC hPlayerDC = CBmpMgr::Get_Instance()->Find_Image(Get_FrameKey());
 
@@ -178,9 +220,10 @@ void CPlayer::Release()
 
 
 
-// 맵 제작 전 임시로 사용
+// TODO : 부스트모드 true일 때 타일 - 1층 플랫폼의 HitRect.top을 기준점으로 안떨어지게 설정해야함 
 void CPlayer::Collision_Border_Line()
 {
+
     if (m_tHitRect.bottom >= BOUNDARY_BOTTOM )
     {
         m_tInfo.fY = BOUNDARY_BOTTOM - (m_tInfo.fCY / 2.f);
@@ -226,8 +269,8 @@ void    CPlayer::Motion_Change()
         switch (m_eCurMotion)
         {
         case RUN:
-            m_tInfo.fHitCX = 120.f;
-            m_tInfo.fHitCY = 133.f;
+            m_tRenderInfo.fHitCX = 120.f;
+            m_tRenderInfo.fHitCY = 133.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 3;
             m_tFrame.iMotion = 0;
@@ -238,8 +281,8 @@ void    CPlayer::Motion_Change()
             break;
 
         case JUMP:
-            m_tInfo.fHitCX = 124.f;
-            m_tInfo.fHitCY = 113.f;
+            m_tRenderInfo.fHitCX = 124.f;
+            m_tRenderInfo.fHitCY = 113.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 1;
             m_tFrame.iMotion = 1;
@@ -250,8 +293,8 @@ void    CPlayer::Motion_Change()
             break;
 
         case DOUBLE_JUMP_INTRO:
-            m_tInfo.fHitCX = 120.f;
-            m_tInfo.fHitCY = 145.f;
+            m_tRenderInfo.fHitCX = 120.f;
+            m_tRenderInfo.fHitCY = 145.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 0;
             m_tFrame.iMotion = 2;
@@ -262,8 +305,8 @@ void    CPlayer::Motion_Change()
             break;
 
         case DOUBLE_JUMP_TURN:
-            m_tInfo.fHitCX = 117.f;
-            m_tInfo.fHitCY = 117.f;
+            m_tRenderInfo.fHitCX = 117.f;
+            m_tRenderInfo.fHitCY = 117.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 2;
             m_tFrame.iMotion = 3;
@@ -274,8 +317,8 @@ void    CPlayer::Motion_Change()
             break;
 
         case DOUBLE_JUMP_OUTRO:
-            m_tInfo.fHitCX = 110.f;
-            m_tInfo.fHitCY = 120.f;
+            m_tRenderInfo.fHitCX = 110.f;
+            m_tRenderInfo.fHitCY = 120.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 0;
             m_tFrame.iMotion = 4;
@@ -286,8 +329,8 @@ void    CPlayer::Motion_Change()
             break;
 
         case FALLING:
-            m_tInfo.fHitCX = 77.f;
-            m_tInfo.fHitCY = 144.f;
+            m_tRenderInfo.fHitCX = 77.f;
+            m_tRenderInfo.fHitCY = 144.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 0;
             m_tFrame.iMotion = 5;
@@ -299,8 +342,8 @@ void    CPlayer::Motion_Change()
 
 
         case LANDING:
-            m_tInfo.fHitCX = 113.f;
-            m_tInfo.fHitCY = 112.f;
+            m_tRenderInfo.fHitCX = 113.f;
+            m_tRenderInfo.fHitCY = 112.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 0;
             m_tFrame.iMotion = 6;
@@ -312,8 +355,8 @@ void    CPlayer::Motion_Change()
 
 
         case SLIDE:
-            m_tInfo.fHitCX = 168.f;
-            m_tInfo.fHitCY = 66.f;
+            m_tRenderInfo.fHitCX = 168.f;
+            m_tRenderInfo.fHitCY = 66.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 1;
             m_tFrame.iMotion = 7;
@@ -378,13 +421,13 @@ void    CPlayer::Motion_Change()
             break;
 
         case BOOST:
-            m_tInfo.fHitCX = 122.f;
-            m_tInfo.fHitCY = 140.f;
+            m_tRenderInfo.fHitCX = 122.f;
+            m_tRenderInfo.fHitCY = 140.f;
             m_tFrame.iStart = 0;
             m_tFrame.iEnd = 3;
             m_tFrame.iMotion = 13;
             m_tFrame.frameElapsedSec = 0.0f;
-            m_tFrame.frameIntervalSec = 0.20f;   // 200ms
+            m_tFrame.frameIntervalSec = 0.10f;   // 200ms
             m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
             m_tFrame.bLoop = true;    // 루프
             break;
@@ -416,7 +459,7 @@ void    CPlayer::Motion_Change()
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
             m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
-            m_tFrame.bLoop = true;    // 루프
+            m_tFrame.bLoop = false;    // 루프
             break;
 
         }
@@ -428,11 +471,13 @@ void    CPlayer::Motion_Change()
 void    CPlayer::State_Check(float deltaTime)
 {
 
+
     if (m_tFrame.stateLockRemainSec > 0.0f)
     {
-        m_bWantJump = false;
+        //m_bWantJump = false;
         return;
     }
+
 
     // 0에 근접할 정도로 작은 소수를 판단하기 위함
     const float eps = 1e-3f;
@@ -452,7 +497,7 @@ void    CPlayer::State_Check(float deltaTime)
         {
             m_bOnGround = false;
             m_fVy = -m_fJumpSpeed;
-            m_fJumpTimer = 0.35f;
+            m_fJumpTimer = JUMP_APEX_TIME;
             m_eCurMotion = (m_iJumpCount == 0) ? JUMP : DOUBLE_JUMP_INTRO;
 
             ++m_iJumpCount;
@@ -491,7 +536,10 @@ void    CPlayer::State_Check(float deltaTime)
 
     if (fabsf(m_fVy) < eps)
     {
-        m_eCurMotion = RUN;
+        if (m_bBoostMode)
+            m_eCurMotion = BOOST;
+        else
+            m_eCurMotion = RUN;
         return;
     }
 
@@ -499,11 +547,11 @@ void    CPlayer::State_Check(float deltaTime)
 
 void    CPlayer::On_Hit()
 {
-    if (m_bInvincible)
+    if (Is_Invincible())
         return;
 
-    m_bInvincible = true;
     m_bDecelerated = true;
+    m_bBlinkMode = true;
     m_fInvincibleTime = 2.0f;       
     m_fDecelerationTime = 1.f;
     m_eCurMotion = HIT;
@@ -522,9 +570,84 @@ void    CPlayer::Add_Coin(int iCoin)
 
 void    CPlayer::Take_Damage(float fDamage)
 {
-    m_tPlayerInfo.fHp -= fDamage;
-    if (m_tPlayerInfo.fHp < 0.f)
-        m_tPlayerInfo.fHp = 0.f;
+    if (m_eCurMotion == DEAD)
+        return;
 
-    //TODO :  게임 오버 처리 로직 추가
+    m_tPlayerInfo.fHp -= fDamage;
+
+    if (m_tPlayerInfo.fHp <= 0.f)
+    {
+        m_tPlayerInfo.fHp = 0.f;
+        m_eCurMotion = DEAD;
+        m_fVx = 0.f;
+    }
+}
+
+void   CPlayer::Restore_Hp(float fHealAmount)
+{
+    m_tPlayerInfo.fHp += fHealAmount;
+
+    if (m_tPlayerInfo.fHp > m_tPlayerInfo.fMaxHp)
+        m_tPlayerInfo.fHp = m_tPlayerInfo.fMaxHp;
+}
+
+// 시간 체크해주는 기능들 모아놓을 함수 
+void   CPlayer::Time_Check(float deltaTime)
+{
+    if (m_bBlinkMode)
+    {
+        m_fInvincibleTime -= deltaTime;
+        m_fBlinkTime += deltaTime;
+
+        if (m_fInvincibleTime <= 0.f)
+        {
+            m_bBlinkMode = false;
+            m_fInvincibleTime = 0.f;
+            m_fBlinkTime = 0.f;
+        }
+    }
+
+    if (m_bBoostMode)
+    {
+        m_fBoostTime -= deltaTime;
+
+        if (m_fBoostTime > 0.f)
+        {
+            m_fVx = m_fSpeed + 400.f;
+        }
+        else
+        {
+            m_bBoostMode = false;
+            m_fVx = m_fSpeed;
+            m_fBoostTime = 0.f;
+        }
+    }
+
+    if (m_bDecelerated)
+    {
+        m_fDecelerationTime -= deltaTime;
+        m_fVx = m_fSpeed - 150.f;
+
+        if (m_fDecelerationTime <= 0.f)
+        {
+            m_bDecelerated = false;
+            m_fDecelerationTime = 0.f;
+            m_fVx = m_fSpeed;
+        }
+    }
+}
+
+void    CPlayer::Activate_Giant(float fTargetScale, float fDuration)
+{
+    if (m_eScaleState == SCALE_STATE::IDLE)
+    {
+        m_bGiantMode = true;
+        m_eScaleState = SCALE_STATE::SCALING_UP;
+        m_fTargetScale = fTargetScale;
+        m_fGiantTime = fDuration;
+    }
+    else if (m_eScaleState == SCALE_STATE::GIANT)
+    {
+        m_fGiantTime += fDuration;
+    }
 }

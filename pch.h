@@ -34,6 +34,7 @@
 
 #include <string>
 #include <algorithm>
+#include <deque>
 #include <cwctype>     // std::towlower
 #include <cwchar>      // _wcsicmp (MSVC)
 #include <list>

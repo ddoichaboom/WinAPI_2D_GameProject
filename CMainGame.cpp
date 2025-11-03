@@ -12,6 +12,7 @@
 #include "CTimeMgr.h"
 #include "CDataMgr.h"
 #include "CUiMgr.h"
+#include "CChunkMgr.h"
 
 CMainGame::CMainGame()
 	: m_dwTime(GetTickCount64()), m_iFPS(0)
@@ -112,14 +113,15 @@ void CMainGame::Release()
 {
 	ReleaseDC(g_hWnd, m_hDC);
 
-	CDataMgr::Get_Instance()->Destroy_Instance();
-	CTimeMgr::Get_Instance()->Destroy_Instance();
+	CDataMgr::Destroy_Instance();
+	CTimeMgr::Destroy_Instance();
 	CSoundMgr::Destroy_Instance();
 	CTileMgr::Destroy_Instance();
+	CChunkMgr::Destroy_Instance();
 	CSceneMgr::Destroy_Instance();
 	CBmpMgr::Destroy_Instance();
 	CKeyMgr::Destroy_Instance();
 	CScrollMgr::Destroy_Instance();
 	CObjMgr::Destroy_Instance();
-	CUiMgr::Get_Instance()->Destroy_Instance();
+	CUiMgr::Destroy_Instance();
 }

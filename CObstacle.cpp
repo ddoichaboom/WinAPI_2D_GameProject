@@ -17,13 +17,47 @@ void CObstacle::Initialize()
 {
     m_eRender = GAMEOBJECT;
 
+	if (wcsstr(m_pFrameKey.c_str(), L"STAGE02"))
+	{
+		if (wcsstr(m_pFrameKey.c_str(), L"OBSTACLE01"))
+		{
+			m_tFrame.iStart = 0;
+			m_tFrame.iEnd = 1;
+			m_tFrame.iMotion = 0;
+			m_tFrame.frameElapsedSec = 0.0f;
+			m_tFrame.frameIntervalSec = 0.50f;
+			m_tFrame.stateLockRemainSec = 0.0f;
+			m_tFrame.bLoop = false;    // 风橇
+		}
+		else if (wcsstr(m_pFrameKey.c_str(), L"OBSTACLE02")|| wcsstr(m_pFrameKey.c_str(), L"OBSTACLE03"))
+		{
+			m_tFrame.iStart = 0;
+			m_tFrame.iEnd = 2;
+			m_tFrame.iMotion = 0;
+			m_tFrame.frameElapsedSec = 0.0f;
+			m_tFrame.frameIntervalSec = 0.2f;
+			m_tFrame.stateLockRemainSec = 0.0f;
+			m_tFrame.bLoop = true;    // 风橇
+		}
+		else if (wcsstr(m_pFrameKey.c_str(), L"OBSTACLE04") || wcsstr(m_pFrameKey.c_str(), L"OBSTACLE05"))
+		{
+			m_tFrame.iStart = 0;
+			m_tFrame.iEnd = 0;
+			m_tFrame.iMotion = 0;
+			m_tFrame.frameElapsedSec = 0.0f;
+			m_tFrame.frameIntervalSec = 0.00f;
+			m_tFrame.stateLockRemainSec = 0.0f;
+			m_tFrame.bLoop = false;    // 风橇
+		}
+	}
+
 	m_tFrame.iStart = 0;
 	m_tFrame.iEnd = 0;
 	m_tFrame.iMotion = 0;
 	m_tFrame.frameElapsedSec = 0.0f;
 	m_tFrame.frameIntervalSec = 0.00f;
 	m_tFrame.stateLockRemainSec = 0.0f;
-	m_tFrame.bLoop = true;    // 风橇
+	m_tFrame.bLoop = false;    // 风橇
 }
 
 int CObstacle::Update(float deltaTime)
@@ -62,26 +96,14 @@ void CObstacle::Render(HDC hDC)
 
 	BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-	if (m_tFrame.iEnd == 0)
-	{
-		AlphaBlend(hDC,
-			dstX, dstY,
-			dstW, dstH,
-			hObstacleDC,
-			0, 0,
-			dstW, dstH,
-			bf);
-	}
-	else
-	{
-		AlphaBlend(hDC,
-			dstX, dstY,
-			dstW, dstH,
-			hObstacleDC,
-			srcX, srcY,
-			srcW, srcH,
-			bf);
-	}
+
+	AlphaBlend(hDC,
+		dstX, dstY,
+		dstW, dstH,
+		hObstacleDC,
+		srcX, srcY,
+		srcW, srcH,
+		bf);
 }
 
 void CObstacle::Release()

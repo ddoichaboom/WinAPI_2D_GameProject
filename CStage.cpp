@@ -13,15 +13,16 @@
 #include "CTile.h"
 #include "CTileMgr.h"
 #include "CDataMgr.h"
-#include "TcharIO.h"
 #include "CChunkMgr.h"
 #include "CUiMgr.h"
 #include "CHpBar.h"
 #include "CScore.h"
+#include "Factory.h"
+#include "CBonusTime.h"
 
 
 CStage::CStage()
-	:m_fStageWidth(0.f), m_pStageFrameKey(nullptr)
+	:m_fStageWidth(0.f)
 {
 }
 
@@ -32,17 +33,21 @@ CStage::~CStage()
 
 void CStage::Initialize()
 {
-	m_pStageFrameKey = L"STAGE01";
+	CChunkMgr::Get_Instance()->ClearSequence();
+	CChunkMgr::Get_Instance()->Enqueue(L"./Data/Stage01_Chunk_01.dat");
+	CChunkMgr::Get_Instance()->Enqueue(L"./Data/Stage02_Chunk_01.dat");
 
-	const IMAGEDATA* pStageData = CDataMgr::Get_Instance()->Get_ImageData(m_pStageFrameKey);
+	LoadedChunkInfo info{};
+	const float firstStartX = 0.f;
 
-	if (pStageData)
-	{
-		m_fStageWidth = pStageData->tInfo.fCX;
-		CScrollMgr::Get_Instance()->Set_StageWidth(m_fStageWidth);
-	}
+	if (!CChunkMgr::Get_Instance()->LoadNext(firstStartX, &info))
+		MessageBox(g_hWnd, L"First Chunk Load Failed", L"Error", MB_OK);
 
-	CChunkMgr::Get_Instance()->LoadChunk(L"./Data/Stage01_Chunk_01.dat");
+	m_stageKey = info.meta.stageFrameKey.empty() ? L"STAGE01" : info.meta.stageFrameKey;
+	m_iCurrChunkIndex = info.meta.ichunkIndex;
+	m_fStageWidth = info.stageWidth > 0.f ? info.stageWidth : 0.f;
+	CScrollMgr::Get_Instance()->Set_StageWidth(m_fStageWidth);
+	m_fWorldEndX = m_fStageWidth;
 
 	// 플레이어 생성
 	float fPlayerPosX = -CScrollMgr::Get_Instance()->Get_ScrollX() + 400.f;
@@ -58,6 +63,9 @@ void CStage::Initialize()
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CHpBar>::Create_Obj()));
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CScore>::Create_Obj()));
 
+	// 보너스타임 이미지 리소스 편집 후 재 구현 
+	//CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CBonusTime>::Create_Obj()));
+
 }
 
 void CStage::Update(float fDeltaTime)
@@ -70,11 +78,37 @@ void CStage::Update(float fDeltaTime)
 
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, PLATFORM, CObjMgr::RECT);
 
-	CObjMgr::Get_Instance()->Check_Collision(PLAYER, JELLY, CObjMgr::COLLECT);
+	CObjMgr::Get_Instance()->Check_Collision(PLAYER, JELLY, CObjMgr::COLLECT_JELLY);
 
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, OBSTACLE, CObjMgr::OBSTACLE);
 
+	CObjMgr::Get_Instance()->Check_Collision(PLAYER, ITEM, CObjMgr::COLLECT_ITEM);
 
+
+	CObj* pPlayer = CObjMgr::Get_Instance()->Get_Target(PLAYER);
+
+	if (pPlayer)
+	{
+		const float px = pPlayer->Get_Info()->fX;
+		const float preloadThreshold = 300.f;		// 끝에서 300px 남았을 때 미리 로드 
+
+		if (px > (m_fWorldEndX - preloadThreshold))
+		{
+			LoadedChunkInfo next{};
+
+			if (CChunkMgr::Get_Instance()->LoadNext(m_fWorldEndX, &next))
+			{
+				m_stageKey = next.meta.stageFrameKey.empty() ? m_stageKey : next.meta.stageFrameKey;
+
+				const float nextStageWidth = next.stageWidth > 0.f ? next.stageWidth : m_fStageWidth;
+				m_fWorldEndX += nextStageWidth;
+
+				CScrollMgr::Get_Instance()->Set_StageWidth((int)m_fWorldEndX);
+			}
+		}
+	}
+
+	
 }
 
 void CStage::Late_Update(float fDeltaTime)
@@ -94,14 +128,11 @@ void CStage::Render(HDC hDC)
 	int		iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
 
-	//CLineMgr::Get_Instance()->Render(hDC);
-
-
-	HDC     hGroundDC = CBmpMgr::Get_Instance()->Find_Image(L"STAGE01");
+	HDC     hGroundDC = CBmpMgr::Get_Instance()->Find_Image(m_stageKey.c_str());
 
 	BitBlt(hDC,
 		iScrollX, iScrollY,
-		m_fStageWidth, WINCY,
+		(int)m_fStageWidth, WINCY,
 		hGroundDC,
 		0, 0,
 		SRCCOPY);
