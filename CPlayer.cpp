@@ -6,6 +6,7 @@
 #include "CTileMgr.h"
 #include "CCollisionMgr.h"
 #include "CDataMgr.h"
+#include "CSoundMgr.h"
 
 
 CPlayer::CPlayer()
@@ -17,7 +18,7 @@ CPlayer::CPlayer()
     m_bBlinkMode(false), m_fBoostTime(0.f), m_bBoostMode(false),
     m_fTargetScale(1.f), m_fGiantTime(0.f),
     m_fCurrentScale(1.f), m_fScaleSpeed(2.f), m_eScaleState(IDLE), 
-    m_bGiantMode(false)
+    m_bGiantMode(false), m_strJumpSoundPath(L""), m_strSlideSoundPath(L"")
 {
     ZeroMemory(&m_tPlayerInfo, sizeof(PLAYERINFO));
     ZeroMemory(&m_tRenderInfo, sizeof(INFO));
@@ -30,7 +31,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::Initialize()
 {
-    m_fSpeed = 500.0f;
+    m_fSpeed = 550.0f;
     m_fVx = m_fSpeed;
     m_fJumpSpeed = 700.f;
     m_bOnGround = true;
@@ -39,7 +40,7 @@ void CPlayer::Initialize()
     m_fVy = 0.f;
     m_fJumpTimer = 0.f;
 
-    if (!lstrcmp(m_pFrameKey.c_str(), L"GINGER_BRAVE_COOKIE"))
+    if (!lstrcmp(m_pFrameKey.c_str(), L"Cookie0001"))
     {
         m_tPlayerInfo.fMaxHp = 150.f;
         m_tPlayerInfo.fHp = m_tPlayerInfo.fMaxHp;
@@ -47,6 +48,16 @@ void CPlayer::Initialize()
     }
 
     m_tRenderInfo = m_tInfo;
+
+    m_strJumpSoundPath = L"./Sound/Effect/";
+    m_strJumpSoundPath += Get_FrameKey();
+    m_strJumpSoundPath += L"_Jump.wav";
+
+    m_strSlideSoundPath = L"./Sound/Effect/";
+    m_strSlideSoundPath += Get_FrameKey();
+    m_strSlideSoundPath += L"_Slide.wav";
+
+
 
 }
 
@@ -63,8 +74,16 @@ int CPlayer::Update(float deltaTime)
     {
         m_fVy = m_fJumpSpeed;
     }
+    //if ((fabsf(m_fVy) < eps) && m_fVy < 0.f)
+    //{
+    //    m_fVy = m_fJumpSpeed;
+    //}
 
-    if (m_bOnGround)
+    if (!m_bOnGround)
+    {
+        m_fVy += GC * deltaTime;
+    }
+    else if (m_bOnGround)
     {
         m_iJumpCount = 0;
         m_fVy = 0;
@@ -107,8 +126,11 @@ void CPlayer::Late_Update(float deltaTime)
 
     Time_Check(deltaTime);
 
+    const float prevBottom = m_tInfo.fY + (m_tInfo.fCY * 0.5f);
+
     if ((m_eScaleState != SCALE_STATE::IDLE) && m_bGiantMode)
     {
+
         // 커지는 중
         if (m_eScaleState == SCALE_STATE::SCALING_UP)
         {
@@ -153,15 +175,21 @@ void CPlayer::Late_Update(float deltaTime)
     m_tInfo.fHitCX = m_tRenderInfo.fHitCX;
     m_tInfo.fHitCY = m_tRenderInfo.fHitCY;
 
-
     if (m_fCurrentScale != 1.f)
     {
-        m_tInfo.fCX *= m_fCurrentScale;
-        m_tInfo.fCY *= m_fCurrentScale;
-        m_tInfo.fHitCX *= m_fCurrentScale;
-        m_tInfo.fHitCY *= m_fCurrentScale;
-
+        m_tInfo.fCX     *= m_fCurrentScale;
+        m_tInfo.fCY     *= m_fCurrentScale;
+        m_tInfo.fHitCX  *= m_fCurrentScale;
+        m_tInfo.fHitCY  *= m_fCurrentScale;
     }
+
+    if ((m_eScaleState != SCALE_STATE::IDLE) && m_bGiantMode)
+    {
+        const float newBottom   = m_tInfo.fY + (m_tInfo.fCY * 0.5f);
+        const float diff        = prevBottom - newBottom;
+        m_tInfo.fY += diff;
+    }
+
 
     Update_Rect(PLAYER);
 
@@ -249,15 +277,17 @@ void CPlayer::Key_Input()
 
 void CPlayer::Offset(float deltaTime)
 {
-    int     iOffSetX = 400;
+    //int     iOffSetX = 400;
 
-    int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
+    //int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
 
 
-    if (iOffSetX < m_tInfo.fX + iScrollX)
-    {
-        CScrollMgr::Get_Instance()->Set_ScrollX(-m_fVx * deltaTime);
-    }
+    //if (iOffSetX  < m_tInfo.fX + iScrollX )
+    //{
+    //    CScrollMgr::Get_Instance()->Set_ScrollX(-m_fVx * deltaTime);
+    //}
+
+    CScrollMgr::Get_Instance()->FollowX(m_tInfo.fX, 400.f);
 
 }
 
@@ -275,7 +305,7 @@ void    CPlayer::Motion_Change()
             m_tFrame.iEnd = 3;
             m_tFrame.iMotion = 0;
             m_tFrame.frameElapsedSec = 0.0f;
-            m_tFrame.frameIntervalSec = 0.05f;   // 200ms
+            m_tFrame.frameIntervalSec = 0.025f;   // 200ms
             m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
             m_tFrame.bLoop = true;    // 루프
             break;
@@ -364,6 +394,7 @@ void    CPlayer::Motion_Change()
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
             m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
             m_tFrame.bLoop = true;    // 루프
+
 
             break;
 
@@ -478,8 +509,6 @@ void    CPlayer::State_Check(float deltaTime)
         return;
     }
 
-
-    // 0에 근접할 정도로 작은 소수를 판단하기 위함
     const float eps = 1e-3f;
 
     // 막 착지 했는지에 대한 여부 체크
@@ -487,7 +516,11 @@ void    CPlayer::State_Check(float deltaTime)
 
     if (m_bWantSlide && m_bOnGround && (fabsf(m_fVy) < eps))
     {
-        m_eCurMotion = SLIDE;
+        if (m_eCurMotion != SLIDE)
+        {
+            m_eCurMotion = SLIDE;
+            CSoundMgr::Get_Instance()->PlaySound(m_strSlideSoundPath.c_str(), SOUND_PLAYER_SLIDE, 0.8f);
+        }
         return;
     }
 
@@ -499,6 +532,12 @@ void    CPlayer::State_Check(float deltaTime)
             m_fVy = -m_fJumpSpeed;
             m_fJumpTimer = JUMP_APEX_TIME;
             m_eCurMotion = (m_iJumpCount == 0) ? JUMP : DOUBLE_JUMP_INTRO;
+
+            if (!m_bGiantMode)
+                CSoundMgr::Get_Instance()->PlaySound(m_strJumpSoundPath.c_str(), SOUND_PLAYER_JUMP, 0.8f);
+            else
+                CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Giant_Jump.wav", SOUND_PLAYER_JUMP, 0.8f);
+
 
             ++m_iJumpCount;
         }
@@ -530,6 +569,9 @@ void    CPlayer::State_Check(float deltaTime)
 
     if (bLanded && ((m_eCurMotion == FALLING) || (m_eCurMotion == JUMP)))
     {
+        
+        if (m_bGiantMode)
+            CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Giant_Land.wav", SOUND_LAND, 0.8f);
         m_eCurMotion = LANDING;
         return;
     }

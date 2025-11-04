@@ -16,8 +16,12 @@ public:
 
 private:
     void    Load_Chunk_Data(const TCHAR* pFilePath);        // 청크 로딩 함수 선언 
+    void    Render_Backgrounds_Segmented(HDC hDC);
 
 private:
+    vector<STAGE_SEGMENT> m_segments;
+
+    wstring     m_PrevstageKey;
     wstring     m_stageKey;
     float       m_fStageWidth;
     float       m_fWorldEndX;

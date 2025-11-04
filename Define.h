@@ -12,13 +12,14 @@
 #define		VK_MAX				0xff
 
 #define		GC					981.f			// 중력 상수 ( Gravitational Constant : 9.81f) 
-#define		PI					3.141592f
+#define		PI					3.141592
 #define		INV_SQRT2			0.70710678f		// 1.0f / sqrtf(2.0f) : 1 / 루트 2 
 
 #define		BOUNDARY_BOTTOM		720.f
 #define		TILEX				44
 
-#define		JUMP_APEX_TIME		0.28f;				// 최고점 도달 시간 
+#define		JUMP_APEX_TIME		0.35f;				// 최고점 도달 시간 
+
 
 extern HWND g_hWnd;
 
@@ -72,7 +73,8 @@ enum OBJID
 
 // LOGO 씬 - Intro / Lobby 씬 - MainBGM / 스테이지 씬 - STAGE01, STAGE02 ... 각 BGM / 
 // 플레이어 점프, 슬라이드, 오브젝트와의 상호작용 사운드 등 존재 
-enum SOUND_CHANNEL { SOUND_BGM, SOUND_EFFECT, SOUND_PLAYER_JUMP, SOUND_PLAYER_SLIDE, SOUND_UI, MAX_CHANNEL };
+enum SOUND_CHANNEL 
+{ SOUND_INTRO, SOUND_BGM, SOUND_EFFECT, SOUND_PLAYER_JUMP, SOUND_PLAYER_SLIDE, SOUND_LAND, SOUND_UI, MAX_CHANNEL };
 
 
 enum RENDERID
@@ -233,3 +235,10 @@ struct CHUNK_META
 	float fWorldStartX		= 0.f;
 };
 
+struct STAGE_SEGMENT
+{
+	float	startX	= 0.f;
+	float	width	= 0.f;
+
+	wstring stageKey;
+};

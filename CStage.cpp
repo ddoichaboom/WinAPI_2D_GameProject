@@ -19,6 +19,7 @@
 #include "CScore.h"
 #include "Factory.h"
 #include "CBonusTime.h"
+#include "CSoundMgr.h"
 
 
 CStage::CStage()
@@ -33,6 +34,9 @@ CStage::~CStage()
 
 void CStage::Initialize()
 {
+	CSoundMgr::Get_Instance()->StopSound(SOUND_BGM);
+	CSoundMgr::Get_Instance()->PlayBGM(L"./Sound/STAGE01_BGM.mp3");
+
 	CChunkMgr::Get_Instance()->ClearSequence();
 	CChunkMgr::Get_Instance()->Enqueue(L"./Data/Stage01_Chunk_01.dat");
 	CChunkMgr::Get_Instance()->Enqueue(L"./Data/Stage02_Chunk_01.dat");
@@ -44,32 +48,56 @@ void CStage::Initialize()
 		MessageBox(g_hWnd, L"First Chunk Load Failed", L"Error", MB_OK);
 
 	m_stageKey = info.meta.stageFrameKey.empty() ? L"STAGE01" : info.meta.stageFrameKey;
+	m_PrevstageKey = m_stageKey;
 	m_iCurrChunkIndex = info.meta.ichunkIndex;
-	m_fStageWidth = info.stageWidth > 0.f ? info.stageWidth : 0.f;
+
+	// ì²« ë²ˆì§¸ ì„¸ê·¸ë¨¼íŠ¸ë„ ì •ìˆ˜ë¡œ ì •ë ¬
+	m_fStageWidth = floorf((info.stageWidth > 0.f ? info.stageWidth : 0.f) + 0.5f);
 	CScrollMgr::Get_Instance()->Set_StageWidth(m_fStageWidth);
 	m_fWorldEndX = m_fStageWidth;
 
-	// ÇÃ·¹ÀÌ¾î »ı¼º
+	m_segments.clear();
+	if (!m_stageKey.empty() && m_fStageWidth > 0.f) {
+		STAGE_SEGMENT s;
+		s.startX = 0.f;
+		s.width = m_fStageWidth;
+		s.stageKey = m_stageKey;
+		m_segments.push_back(std::move(s));
+	}
+
 	float fPlayerPosX = -CScrollMgr::Get_Instance()->Get_ScrollX() + 400.f;
 	CObjMgr::Get_Instance()->Add_Object(PLAYER,
 		CAbstractFactory<CPlayer>::Create_Obj(
 			fPlayerPosX, 398.f,
-			CDataMgr::Get_Instance()->Get_ImageData(L"GINGER_BRAVE_COOKIE")));
+			CDataMgr::Get_Instance()->Get_ImageData(L"Cookie0001")));
 
-	// UI ¹öÆ° »ı¼º
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CButton>::Create_Obj(JUMP)));
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CButton>::Create_Obj(SLIDE)));
 
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CHpBar>::Create_Obj()));
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CScore>::Create_Obj()));
 
-	// º¸³Ê½ºÅ¸ÀÓ ÀÌ¹ÌÁö ¸®¼Ò½º ÆíÁı ÈÄ Àç ±¸Çö 
 	//CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CBonusTime>::Create_Obj()));
 
 }
 
 void CStage::Update(float fDeltaTime)
 {
+	if (m_PrevstageKey != m_stageKey)
+	{
+		CSoundMgr::Get_Instance()->StopSound(SOUND_BGM);
+
+		wstring strSoundKeyPath = L"./Sound/";
+		strSoundKeyPath += m_stageKey;
+		strSoundKeyPath += L"_BGM.mp3";
+
+		CSoundMgr::Get_Instance()->PlayBGM(strSoundKeyPath.c_str(), 0.5f);
+
+		m_PrevstageKey = m_stageKey;
+	}
+
+	CSoundMgr::Get_Instance()->Update();
+
 	if (CKeyMgr::Get_Instance()->Key_Down(VK_F1))
 		CKeyMgr::g_bDebugRender = !CKeyMgr::g_bDebugRender;
 
@@ -90,7 +118,7 @@ void CStage::Update(float fDeltaTime)
 	if (pPlayer)
 	{
 		const float px = pPlayer->Get_Info()->fX;
-		const float preloadThreshold = 300.f;		// ³¡¿¡¼­ 300px ³²¾ÒÀ» ¶§ ¹Ì¸® ·Îµå 
+		const float preloadThreshold = 300.f;		 
 
 		if (px > (m_fWorldEndX - preloadThreshold))
 		{
@@ -101,9 +129,22 @@ void CStage::Update(float fDeltaTime)
 				m_stageKey = next.meta.stageFrameKey.empty() ? m_stageKey : next.meta.stageFrameKey;
 
 				const float nextStageWidth = next.stageWidth > 0.f ? next.stageWidth : m_fStageWidth;
-				m_fWorldEndX += nextStageWidth;
+
+				// float ì˜¤ì°¨ ë°©ì§€ë¥¼ ìœ„í•´ ì •ìˆ˜ë¡œ ë°˜ì˜¬ë¦¼
+				const float segStartX = floorf(m_fWorldEndX + 0.5f);
+				const float segWidth = floorf(nextStageWidth + 0.5f);
+
+				m_fWorldEndX = segStartX + segWidth;  // ì •ìˆ˜ ì •ë ¬ëœ ê°’ìœ¼ë¡œ ëˆ„ì 
 
 				CScrollMgr::Get_Instance()->Set_StageWidth((int)m_fWorldEndX);
+
+				STAGE_SEGMENT s;
+				s.startX = segStartX;
+				s.width = segWidth;
+				s.stageKey = m_stageKey;
+				m_segments.push_back(move(s));
+
+
 			}
 		}
 	}
@@ -113,34 +154,24 @@ void CStage::Update(float fDeltaTime)
 
 void CStage::Late_Update(float fDeltaTime)
 {
-	CObjMgr::Get_Instance()->Late_Update(fDeltaTime);
 	CUiMgr::Get_Instance()->Late_Update(fDeltaTime);
 
+	CObjMgr::Get_Instance()->Late_Update(fDeltaTime);
 
 	CScrollMgr::Get_Instance()->Scroll_Lock();
-
 }
 
 void CStage::Render(HDC hDC)
 {
+	int  iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
+	int  iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
-	int		iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
-	int		iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
-
-
-	HDC     hGroundDC = CBmpMgr::Get_Instance()->Find_Image(m_stageKey.c_str());
-
-	BitBlt(hDC,
-		iScrollX, iScrollY,
-		(int)m_fStageWidth, WINCY,
-		hGroundDC,
-		0, 0,
-		SRCCOPY);
+	Render_Backgrounds_Segmented(hDC);
 
 	CObjMgr::Get_Instance()->Render(hDC);
 	CUiMgr::Get_Instance()->Render(hDC);
 
-	// µğ¹ö±ë ¿ë - ÇÃ·¹ÀÌ¾î ÁÂÇ¥ ÃßÀû  
+
 	//if (CObjMgr::Get_Instance()->Get_Target(PLAYER))
 	//{
 	//	wchar_t szPlayer[64] = L"";
@@ -203,3 +234,43 @@ void    CStage::Load_Chunk_Data(const TCHAR* pFilePath)
 	CloseHandle(hFile);
 }
 
+void CStage::Render_Backgrounds_Segmented(HDC hDC)
+{
+	const int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
+	const int iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
+
+	// ì¹´ë©”ë¼(í™”ë©´) ìœ„ì¹˜ëŠ” ì •ìˆ˜ ê¸°ì¤€
+	const int camL = -iScrollX;
+	const int camR = camL + WINCX;
+
+	for (const auto& seg : m_segments)
+	{
+		if (seg.width <= 0.f || seg.stageKey.empty())
+			continue;
+
+		// ì„¸ê·¸ë¨¼íŠ¸ ê²½ê³„ëŠ” ì´ë¯¸ ì •ìˆ˜ë¡œ ì •ë ¬ë˜ì–´ ìˆìŒ
+		const int segL = (int)(seg.startX + 0.5f);
+		const int segR = (int)(seg.startX + seg.width + 0.5f);
+
+		// ê²¹ì¹˜ëŠ” ì˜ì—­ ê³„ì‚° (ì •ìˆ˜ ì—°ì‚°)
+		const int overlapL = max(camL, segL);
+		const int overlapR = min(camR, segR);
+		if (overlapR <= overlapL)
+			continue;
+
+		const int drawW = overlapR - overlapL;
+		const int destX = overlapL + iScrollX;  // í™”ë©´ì¢Œí‘œ
+		const int destY = iScrollY;
+
+		// ì„¸ê·¸ë¨¼íŠ¸ ë‚´ë¶€ ì†ŒìŠ¤ ì˜¤í”„ì…‹ (ì •ìˆ˜ ì—°ì‚°)
+		const int srcX = overlapL - segL;
+		const int srcY = 0;
+
+		HDC hBG = CBmpMgr::Get_Instance()->Find_Image(seg.stageKey.c_str());
+		if (!hBG) continue;
+
+		BitBlt(hDC, destX, destY, drawW, WINCY, hBG, srcX, srcY, SRCCOPY);
+	}
+
+
+}

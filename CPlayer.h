@@ -75,6 +75,8 @@ private:
     float           m_fBlinkTime;           // 깜박임효과 타이머 
 
     INFO            m_tRenderInfo;
+    wstring         m_strJumpSoundPath;
+    wstring         m_strSlideSoundPath;
 
     // 아이템에 사용할 변수들
     bool            m_bBoostMode;           //  부스트 모드 
@@ -85,5 +87,6 @@ private:
     float           m_fTargetScale;
     float           m_fScaleSpeed;
     bool            m_bGiantMode;
+    
 };
 

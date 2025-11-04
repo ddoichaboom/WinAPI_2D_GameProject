@@ -40,9 +40,6 @@
     <Filter Include="03. Scene\00. Logo">
       <UniqueIdentifier>{a6f51294-ddbb-48ec-93a3-78993d8f97c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Scene\01. Menu">
-      <UniqueIdentifier>{e7248d68-9b69-434c-a135-89a5185badd5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Scene\02. Edit">
       <UniqueIdentifier>{a846b9cc-8230-4b36-81de-f590f67e9de7}</UniqueIdentifier>
     </Filter>
@@ -124,6 +121,9 @@
     <Filter Include="01. Obj\04. Item\02. Item_Giant">
       <UniqueIdentifier>{931398bc-a297-49fe-a844-fd06cf131dbe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Scene\01. Lobby">
+      <UniqueIdentifier>{e7248d68-9b69-434c-a135-89a5185badd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -181,7 +181,7 @@
       <Filter>03. Scene\00. Logo</Filter>
     </ClInclude>
     <ClInclude Include="CLobby.h">
-      <Filter>03. Scene\01. Menu</Filter>
+      <Filter>03. Scene\01. Lobby</Filter>
     </ClInclude>
     <ClInclude Include="CEdit.h">
       <Filter>03. Scene\02. Edit</Filter>
@@ -294,7 +294,7 @@
       <Filter>03. Scene\00. Logo</Filter>
     </ClCompile>
     <ClCompile Include="CLobby.cpp">
-      <Filter>03. Scene\01. Menu</Filter>
+      <Filter>03. Scene\01. Lobby</Filter>
     </ClCompile>
     <ClCompile Include="CEdit.cpp">
       <Filter>03. Scene\02. Edit</Filter>

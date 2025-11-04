@@ -14,6 +14,7 @@
 #include "CChunkMgr.h"
 #include "CItem.h"
 #include "Factory.h"
+#include "CSoundMgr.h"
 
 CEdit::CEdit()
 	:  m_iEditType(EDIT_FIRST_PLATFORM),
@@ -33,6 +34,8 @@ CEdit::~CEdit()
 
 void CEdit::Initialize()
 {
+	CSoundMgr::Get_Instance()->StopSound(SOUND_BGM);
+
 	m_pStageFrameKey = L"STAGE01";
 	m_pTileFrameKey = L"STAGE01_PLATFORM01";
 
@@ -48,8 +51,6 @@ void CEdit::Initialize()
 
 	if (pTileData)
 		m_fTileCX = pTileData->tInfo.fCX;
-	
-
  }
 
 void CEdit::Update(float fDeltaTime)
