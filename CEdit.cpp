@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CEdit.h"
 #include "CBmpMgr.h"
 #include "CKeyMgr.h"
@@ -15,14 +15,15 @@
 #include "CItem.h"
 #include "Factory.h"
 #include "CSoundMgr.h"
+#include "CTimeMgr.h"
 
 CEdit::CEdit()
 	:  m_iEditType(EDIT_FIRST_PLATFORM),
 	m_bRenderVerticalLine(false), m_iJellyType(0), m_pFrameKey(nullptr),
 	m_iObstacleType(0), m_iJellyTextType(0), m_iStageType(STAGE01),
-	m_pStageFrameKey(nullptr), m_fStageWidth(0.f), m_fTileCX(0.f),
+	m_pStageFrameKey(nullptr), m_fTileCX(0.f),
 	m_iItemType(ITEM_ENERGY), m_iPrevStageType(ST_END),
-	m_iChunkIndex(1), m_fChunkStartX(0.f)
+	m_iCurrentChunkIndex(0), m_fBgTileWidth(0.f), m_fEditorScrollX(0.f)
 {
 	ZeroMemory(&m_tCursor, sizeof(POINT));
 }
@@ -43,9 +44,10 @@ void CEdit::Initialize()
 
 	if (pStageData)
 	{
-		m_fStageWidth = pStageData->tInfo.fCX;
-		CScrollMgr::Get_Instance()->Set_StageWidth(m_fStageWidth);
+		m_fBgTileWidth = pStageData->tInfo.fCX;
 	}
+
+	CScrollMgr::Get_Instance()->Set_StageWidth(100000.f);
 
 	const IMAGEDATA* pTileData = CDataMgr::Get_Instance()->Get_ImageData(m_pTileFrameKey);
 
@@ -87,14 +89,20 @@ void CEdit::Update(float fDeltaTime)
 
 	if (pStageData)
 	{
-		m_fStageWidth = pStageData->tInfo.fCX;
-		CScrollMgr::Get_Instance()->Set_StageWidth(m_fStageWidth);
+		m_fBgTileWidth = pStageData->tInfo.fCX;
 	}
 
 	const IMAGEDATA* pTileData = CDataMgr::Get_Instance()->Get_ImageData(m_pTileFrameKey);
 
 	if (pTileData)
 		m_fTileCX = pTileData->tInfo.fCX;
+
+	// í˜„ì¬ ìŠ¤í¬ë¡¤ ìœ„ì¹˜ ê¸°ë°˜ ì²­í¬ ì¸ë±ìŠ¤ ì‹¤ì‹œê°„ ê³„ì‚°
+	if (m_fBgTileWidth > 0.f)
+	{
+		float currentWorldX = -CScrollMgr::Get_Instance()->Get_ScrollX();
+		m_iCurrentChunkIndex = (int)(currentWorldX / m_fBgTileWidth);
+	}
 
 	GetCursorPos(&m_tCursor);
 	ScreenToClient(g_hWnd, &m_tCursor);
@@ -391,29 +399,51 @@ void CEdit::Render(HDC hDC)
 
 	HDC     hGroundDC = CBmpMgr::Get_Instance()->Find_Image(m_pStageFrameKey);
 
-	BitBlt(hDC,
-		iScrollX, iScrollY,
-		m_fStageWidth, WINCY,
-		hGroundDC,
-		0, 0,
-		SRCCOPY);
-
-	CTileMgr::Get_Instance()->Render(hDC);
-
-
-	// ¼öÁ÷¼± »ı¼º
-	if (m_bRenderVerticalLine)
+	if (hGroundDC)
 	{
-		for (int i = 0; i < (int)m_fStageWidth / m_fTileCX ; i++)
+		const int camWorldX = -iScrollX;
+		const int tileWidth = (int)m_fBgTileWidth;
+		const int firstTileIdx = camWorldX / tileWidth;
+		const int tilesNeeded = (WINCX / tileWidth) + 2;
+
+		for (int i = 0; i < tilesNeeded; ++i)
 		{
-			MoveToEx(hDC, i * m_fTileCX + iScrollX, 0, nullptr);
-			LineTo(hDC, i * m_fTileCX + iScrollX, WINCY);
+			const int tileIdx = firstTileIdx + i;
+			const int tileWorldX = tileIdx * tileWidth;
+			const int tileScreenX = tileWorldX + iScrollX;
+
+			if ((tileScreenX + tileWidth < 0) || (tileScreenX > WINCX))
+				continue;
+
+			BitBlt(hDC,
+				tileScreenX, iScrollY,
+				tileWidth, WINCY,
+				hGroundDC,
+				0, 0,
+				SRCCOPY);
 		}
 	}
 
-	// ¸¶¿ì½º À§Ä¡¿¡ µÎ¹øÂ° ÇÃ·§ÆûÀÌ µû¶ó´Ù´Ï¸ç ·»´õ¸µ µÇ¾î¾ß ÇÔ
-	
-		
+
+	CTileMgr::Get_Instance()->Render(hDC);
+
+	// ìˆ˜ì§ì„  ìƒì„±
+	if (m_bRenderVerticalLine)
+	{
+		const int camWorldX = -iScrollX;
+		const int firstLineIdx = camWorldX / (int)m_fTileCX;
+		const int linesNeeded = (WINCX / (int)m_fTileCX) + 2;
+
+		for (int i = 0; i < (int)linesNeeded; i++)
+		{
+			const int lineIdx = firstLineIdx + i;
+			const int lineX = lineIdx * (int)m_fTileCX + iScrollX;
+
+			MoveToEx(hDC, lineX, 0, nullptr);
+			LineTo(hDC, lineX, WINCY);
+		}
+	}
+
 	if (m_pFrameKey)
 	{
 		const IMAGEDATA* pImageData = CDataMgr::Get_Instance()->Get_ImageData(m_pFrameKey);
@@ -427,7 +457,7 @@ void CEdit::Render(HDC hDC)
 			int iHeight = pImageData->tInfo.fCY;
 
 
-			// ¹İÅõ¸í ¼³Á¤ - (Åõ¸íµµ 50%)
+			// ë°˜íˆ¬ëª… ì„¤ì • - (íˆ¬ëª…ë„ 50%)
 			BLENDFUNCTION bf = { AC_SRC_OVER, 0, 128, AC_SRC_ALPHA };
 
 			AlphaBlend(hDC,
@@ -445,7 +475,7 @@ void CEdit::Render(HDC hDC)
 	CObjMgr::Get_Instance()->Render(hDC);
 
 
-	// ¸ğµå & ¸¶¿ì½º ÁÂÇ¥ Ãâ·Â
+	// ëª¨ë“œ & ë§ˆìš°ìŠ¤ ì¢Œí‘œ ì¶œë ¥
 	Edit_State(hDC);
 }
 
@@ -465,10 +495,14 @@ void CEdit::Key_Input()
 	pt.y -= (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
 	if (CKeyMgr::Get_Instance()->Key_Pressing('A'))
-		CScrollMgr::Get_Instance()->Set_ScrollX(10.f);
+	{
+		CScrollMgr::Get_Instance()->Set_ScrollX(30.f);
+	}
 
 	if (CKeyMgr::Get_Instance()->Key_Pressing('D'))
-		CScrollMgr::Get_Instance()->Set_ScrollX(-10.f);
+	{
+		CScrollMgr::Get_Instance()->Set_ScrollX(-30.f);
+	}
 
 	if (CKeyMgr::Get_Instance()->Key_Down(VK_LBUTTON))
 	{
@@ -690,19 +724,29 @@ void CEdit::Key_Input()
 	if (CKeyMgr::Get_Instance()->Key_Down('M'))
 	{
 		if (m_iStageType < ST_END - 1)
+		{
 			m_iStageType++;
+			CTileMgr::Get_Instance()->Release();
+			CObjMgr::Get_Instance()->Delete_ID(OBSTACLE);
+			CObjMgr::Get_Instance()->Delete_ID(JELLY);
+			CObjMgr::Get_Instance()->Delete_ID(ITEM);
+		}
 		else
 			m_iStageType = STAGE01;
 	}
 
 	if (CKeyMgr::Get_Instance()->Key_Down('S'))
 	{
-		if (m_iStageType == STAGE01)
-			Save_Chunk_Data(L"./Data/Stage01_Chunk_01.dat");
-		else if (m_iStageType == STAGE02)
-			Save_Chunk_Data(L"./Data/Stage02_Chunk_01.dat");
-		else if (m_iStageType == STAGE03)
-			Save_Chunk_Data(L"./Data/Stage03_Chunk_01.dat");
+		// í˜„ì¬ ìŠ¤í¬ë¡¤ ìœ„ì¹˜ì—ì„œ ì²­í¬ ì¸ë±ìŠ¤ ê³„ì‚°
+		float currentWorldX = -CScrollMgr::Get_Instance()->Get_ScrollX();
+		m_iCurrentChunkIndex = (int)(currentWorldX / m_fBgTileWidth);
+
+		// ì²­í¬ íŒŒì¼ ê²½ë¡œ ìƒì„±
+		wchar_t szChunkPath[128] = L"";
+		swprintf_s(szChunkPath, L"./Data/Stage0%d_Chunk_%02d.dat",
+			m_iStageType + 1, m_iCurrentChunkIndex + 1);
+
+		Save_Chunk_Data(szChunkPath);
 	}		
 
 
@@ -773,8 +817,8 @@ void CEdit::Edit_State(HDC hDC)
 	int iScrollY = CScrollMgr::Get_Instance()->Get_ScrollY();
 
 
-	// È­¸é °íÁ¤ ÅØ½ºÆ® ¿É¼Ç
-// POINT screenPt = m_tCursor; // ¿ùµåÁÂÇ¥ ¡æ È­¸éÁÂÇ¥
+	// í™”ë©´ ê³ ì • í…ìŠ¤íŠ¸ ì˜µì…˜
+// POINT screenPt = m_tCursor; // ì›”ë“œì¢Œí‘œ â†’ í™”ë©´ì¢Œí‘œ
 	POINT screenPt;
 	screenPt.x = (LONG)(m_tCursor.x + iScrollX);
 	screenPt.y = (LONG)(m_tCursor.y + iScrollY);
@@ -787,7 +831,7 @@ void CEdit::Edit_State(HDC hDC)
 		L"ptMouse.x: %ld   ptMouse.y: %ld",
 		(long)m_tCursor.x, (long)m_tCursor.y);
 
-	// Ä¿¼­ ±ÙÃ³¿¡ ¶óº§·Î Ç¥½Ã
+	// ì»¤ì„œ ê·¼ì²˜ì— ë¼ë²¨ë¡œ í‘œì‹œ
 	RECT rc = { 10, 50, 300, 80 };
 	DrawTextW(hDC, szCursor, -1, &rc, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOCLIP);
 
@@ -797,11 +841,12 @@ void CEdit::Edit_State(HDC hDC)
 
 
 	swprintf_s(szEditState, _countof(szEditState),
-		L"¼öÁ÷¼± (R) : %s  ÆíÁı ´Ü°è (E) : %d Àå¾Ö¹° Å¸ÀÔ (O) : %d \n Á©¸® Å¸ÀÔ (J) :  %d Á©¸® ±ÛÀÚ Å¸ÀÔ (T) : %d ¾ÆÀÌÅÛ Å¸ÀÔ (I) : %d",
-		VerticalLineMode, m_iEditType,m_iObstacleType, m_iJellyType, m_iJellyTextType, m_iItemType);
+		L"ê·¸ë¦¬ë“œ (R) : %s  í¸ì§‘ ë‹¨ê³„ (E) : %d ì¥ì• ë¬¼ íƒ€ì… (O) : %d \n ì ¤ë¦¬ íƒ€ì… (J) :  %d ì ¤ë¦¬ ë¬¸ì íƒ€ì… (T) : %d ì•„ì´í…œ íƒ€ì… (I) : %d\ní˜„ì¬ ì²­í¬: %02d",
+		+VerticalLineMode, m_iEditType, m_iObstacleType, m_iJellyType, m_iJellyTextType, m_iItemType,
+		+m_iCurrentChunkIndex + 1);  // 1ë¶€í„° ì‹œì‘í•˜ëŠ” ì¸ë±ìŠ¤ í‘œì‹œ
 	DrawTextW(hDC, szEditState, -1, &rcState, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_NOCLIP);
 
-	// (¼±ÅÃ) ½ÊÀÚ¼± ¸¶Ä¿
+	// (ì„ íƒ) ì‹­ìì„  ë§ˆì»¤
 	MoveToEx(hDC, screenPt.x - 5, screenPt.y, nullptr);
 	LineTo(hDC, screenPt.x + 5, screenPt.y);
 	MoveToEx(hDC, screenPt.x, screenPt.y - 5, nullptr);
@@ -831,8 +876,8 @@ void CEdit::Save_Chunk_Data(const TCHAR* pFilePath)
 	CHUNK_META meta;
 	meta.version = 1;
 	meta.stageFrameKey = m_pStageFrameKey ? m_pStageFrameKey : L"STAGE01";
-	meta.ichunkIndex = m_iChunkIndex;
-	meta.fWorldStartX = m_fChunkStartX;
+	meta.ichunkIndex = m_iCurrentChunkIndex + 1;		// 1ë¶€í„° ì‹œì‘
+	meta.fWorldStartX = m_iCurrentChunkIndex * m_fBgTileWidth;	// ì²­í¬ ì‹œì‘ ìœ„ì¹˜
 
 	Utils::WritePOD(hFile, meta.magic);
 	Utils::WritePOD(hFile, meta.version);
@@ -840,16 +885,28 @@ void CEdit::Save_Chunk_Data(const TCHAR* pFilePath)
 	Utils::WritePOD(hFile, meta.fWorldStartX);
 	Utils::WriteTString(hFile, meta.stageFrameKey.c_str());
 
+	const float chunkStartX = m_iCurrentChunkIndex * m_fBgTileWidth;
+	const float chunkEndX = chunkStartX + m_fBgTileWidth;
+
 	const vector<CObj*>& vecTiles = CTileMgr::Get_Instance()->Get_vecTile();
 
 	for (const auto& pTile : vecTiles)
 	{
 		if (static_cast<CTile*>(pTile)->Get_Tile_State())
 		{
+			float objX = pTile->Get_Info()->fX;
+			// ì²­í¬ ë²”ìœ„ ì²´í¬
+			if ((objX < chunkStartX) || (objX >= chunkEndX))
+				continue;
+
 			OBJID eID = PLATFORM;
-			Utils::WritePOD(hFile, eID);					// 1. °´Ã¼ ID ÀúÀå
-			Utils::WritePOD(hFile, *pTile->Get_Info());		// 2. °´Ã¼ Info ±¸Á¶Ã¼ ÀúÀå
-			Utils::WriteTString(hFile, pTile->Get_FrameKey());	// 3. °´Ã¼ FrameKey ÀúÀå
+			Utils::WritePOD(hFile, eID);
+
+			// ì²­í¬ ë¡œì»¬ ì¢Œí‘œë¡œ ë³€í™˜í•˜ì—¬ ì €ì¥
+			INFO localInfo = *pTile->Get_Info();
+			localInfo.fX -= chunkStartX;					// ì›”ë“œ ì¢Œí‘œ -> ë¡œì»¬ ì¢Œí‘œ 
+			Utils::WritePOD(hFile, localInfo);
+			Utils::WriteTString(hFile, pTile->Get_FrameKey());	// 3. ê°ì²´ FrameKey ì €ì¥
 		}
 	}
 
@@ -857,30 +914,61 @@ void CEdit::Save_Chunk_Data(const TCHAR* pFilePath)
 
 	for (const auto& pObj : listObstacles)
 	{
+		float objX = pObj->Get_Info()->fX;
+		// ì²­í¬ ë²”ìœ„ ì²´í¬
+		if ((objX < chunkStartX) || (objX >= chunkEndX))
+			continue;
+
 		OBJID eID = OBSTACLE;
-		Utils::WritePOD(hFile, eID);					// 1. °´Ã¼ ID ÀúÀå
-		Utils::WritePOD(hFile, *pObj->Get_Info());		// 2. °´Ã¼ Info ±¸Á¶Ã¼ ÀúÀå
-		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. °´Ã¼ FrameKey ÀúÀå
+		Utils::WritePOD(hFile, eID);
+
+		// ì²­í¬ ë¡œì»¬ ì¢Œí‘œë¡œ ë³€í™˜í•˜ì—¬ ì €ì¥
+		INFO localInfo = *pObj->Get_Info();
+		localInfo.fX -= chunkStartX;					// ì›”ë“œ ì¢Œí‘œ -> ë¡œì»¬ ì¢Œí‘œ 
+		Utils::WritePOD(hFile, localInfo);
+		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. ê°ì²´ FrameKey ì €ì¥
 	}
 
 	const list<CObj*>& listJellies = CObjMgr::Get_Instance()->Get_ObjList(JELLY);
 	for (const auto& pObj : listJellies)
 	{
+		float objX = pObj->Get_Info()->fX;
+		// ì²­í¬ ë²”ìœ„ ì²´í¬
+		if ((objX < chunkStartX) || (objX >= chunkEndX))
+			continue;
+
 		OBJID eID = JELLY;
-		Utils::WritePOD(hFile, eID);					// 1. °´Ã¼ ID ÀúÀå
-		Utils::WritePOD(hFile, *pObj->Get_Info());		// 2. °´Ã¼ Info ±¸Á¶Ã¼ ÀúÀå
-		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. °´Ã¼ FrameKey ÀúÀå
+		Utils::WritePOD(hFile, eID);
+
+		// ì²­í¬ ë¡œì»¬ ì¢Œí‘œë¡œ ë³€í™˜í•˜ì—¬ ì €ì¥
+		INFO localInfo = *pObj->Get_Info();
+		localInfo.fX -= chunkStartX;					// ì›”ë“œ ì¢Œí‘œ -> ë¡œì»¬ ì¢Œí‘œ 
+		Utils::WritePOD(hFile, localInfo);
+		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. ê°ì²´ FrameKey ì €ì¥
 	}
 
 	const list<CObj*>& listItems = CObjMgr::Get_Instance()->Get_ObjList(ITEM);
 	for (const auto& pObj : listItems)
 	{
+		float objX = pObj->Get_Info()->fX;
+		// ì²­í¬ ë²”ìœ„ ì²´í¬
+		if ((objX < chunkStartX) || (objX >= chunkEndX))
+			continue;
+
 		OBJID eID = ITEM;
-		Utils::WritePOD(hFile, eID);					// 1. °´Ã¼ ID ÀúÀå
-		Utils::WritePOD(hFile, *pObj->Get_Info());		// 2. °´Ã¼ Info ±¸Á¶Ã¼ ÀúÀå
-		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. °´Ã¼ FrameKey ÀúÀå
+		Utils::WritePOD(hFile, eID);
+
+		// ì²­í¬ ë¡œì»¬ ì¢Œí‘œë¡œ ë³€í™˜í•˜ì—¬ ì €ì¥
+		INFO localInfo = *pObj->Get_Info();
+		localInfo.fX -= chunkStartX;					// ì›”ë“œ ì¢Œí‘œ -> ë¡œì»¬ ì¢Œí‘œ 
+		Utils::WritePOD(hFile, localInfo);
+		Utils::WriteTString(hFile, pObj->Get_FrameKey());	// 3. ê°ì²´ FrameKey ì €ì¥
 	}
 
 	CloseHandle(hFile);
-	MessageBox(g_hWnd, L"Chunk Save Success!", L"Success", MB_OK);
+
+	wchar_t szMsg[128] = L"";
+	+swprintf_s(szMsg, L"Chunk %02d Saved!", m_iCurrentChunkIndex + 1);
+	+MessageBox(g_hWnd, szMsg, L"Save Success", MB_OK);
+
 }

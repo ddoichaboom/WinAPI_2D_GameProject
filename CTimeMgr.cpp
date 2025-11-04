@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CTimeMgr.h"
 #include <profileapi.h>
 
@@ -23,14 +23,14 @@ CTimeMgr::~CTimeMgr()
 
 void CTimeMgr::Initialize()
 {
-	// CPUÀÇ Å¬·° ¼ö ( ÃÊ´ç Áøµ¿ ¼ö )
+	// CPUì˜ í´ëŸ­ ìˆ˜ ( ì´ˆë‹¹ ì§„ë™ ìˆ˜ )
 	QueryPerformanceFrequency(&m_liFrequency);
 
-	// °íÁ¤µÈ ¾÷µ¥ÀÌÆ® °£°İÀ» ¼³Á¤ 
-	// ÀÌ °ªÀ¸·Î ¸ğµç ¹°¸® ¾÷µ¥ÀÌÆ®°¡ µ¿ÀÏÇÑ ½Ã°£ °£°İÀ¸·Î ¼öÇàµÈ´Ù.
+	// ê³ ì •ëœ ì—…ë°ì´íŠ¸ ê°„ê²©ì„ ì„¤ì • 
+	// ì´ ê°’ìœ¼ë¡œ ëª¨ë“  ë¬¼ë¦¬ ì—…ë°ì´íŠ¸ê°€ ë™ì¼í•œ ì‹œê°„ ê°„ê²©ìœ¼ë¡œ ìˆ˜í–‰ëœë‹¤.
 	m_fFixedDeltaTime = 1.f / 60.f;
-	m_fTargetDeltaTime = 1.f / m_fFrameRateCap;		// ¸ñÇ¥ ÇÁ·¹ÀÓ ½Ã°£ °è»ê
-	QueryPerformanceCounter(&m_liPrevCounter); // Ãß°¡
+	m_fTargetDeltaTime = 1.f / m_fFrameRateCap;		// ëª©í‘œ í”„ë ˆì„ ì‹œê°„ ê³„ì‚°
+	QueryPerformanceCounter(&m_liPrevCounter); // ì¶”ê°€
 
 }
 
@@ -40,7 +40,7 @@ void CTimeMgr::Update_DeltaTime()
 	LARGE_INTEGER liCurCount;
 	QueryPerformanceCounter(&liCurCount);
 
-	// ÀÌÀü ÇÁ·¹ÀÓ°ú ÇöÀç ÇÁ·¹ÀÓÀÇ Å¬·° ¼ö Â÷ÀÌ¸¦ °è»êÇÑ´Ù.
+	// ì´ì „ í”„ë ˆì„ê³¼ í˜„ì¬ í”„ë ˆì„ì˜ í´ëŸ­ ìˆ˜ ì°¨ì´ë¥¼ ê³„ì‚°í•œë‹¤.
 	float fDeltaTime = float(liCurCount.QuadPart - m_liPrevCounter.QuadPart) / m_liFrequency.QuadPart;
 
 

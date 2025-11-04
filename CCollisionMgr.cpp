@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "CCollisionMgr.h"
 #include "CTile.h"
 #include "CPlayer.h"
@@ -10,27 +10,27 @@
 
 void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 {
-	// «œ∞≠ ¡ﬂ ªÛ∏Èø°∏∏ æÒ»˜¥¬ ±‘ƒ¢ + "∞°¿Â ∞°±ÓøÓ ªÛ∏È" «œ≥™∏∏ º±≈√
+	// ÌïòÍ∞ï Ï§ë ÏÉÅÎ©¥ÏóêÎßå ÏñπÌûàÎäî Í∑úÏπô + "Í∞ÄÏû• Í∞ÄÍπåÏö¥ ÏÉÅÎ©¥" ÌïòÎÇòÎßå ÏÑ†ÌÉù
 	for (auto& pDst : Dst)
 	{
 		const float vy = pDst->Get_Y_Axis_Speed();
 		if (vy < 0.f) {
-			// ªÛΩ¬ ¡ﬂø°¥¬ ªÛ-«œ ∫∏¡§ æ¯¿Ω
+			// ÏÉÅÏäπ Ï§ëÏóêÎäî ÏÉÅ-Ìïò Î≥¥Ï†ï ÏóÜÏùå
 			//pDst->Set_OnGround(false);
 			continue;
 		}
 
-		// »ƒ∫∏ ≈Ωªˆ(1∆–Ω∫)
+		// ÌõÑÎ≥¥ ÌÉêÏÉâ(1Ìå®Ïä§)
 		CObj* pBestSrc = nullptr;
-		float   bestPenY = FLT_MAX;   // √÷º“ yƒß≈ı∑Æ(fHeight)
+		float   bestPenY = FLT_MAX;   // ÏµúÏÜå yÏπ®Ìà¨Îüâ(fHeight)
 		float   tmpW = 0.f, tmpH = 0.f;
 
-		// ºˆ∆Ú ∞„ƒß «„øÎ √÷º“ ∆¯(«»ºø): πﬂ ∏º≠∏Æø°º≠ '¬Ô' ∞…∏Æ¥¬ ∞Õ øœ»≠
+		// ÏàòÌèâ Í≤πÏπ® ÌóàÏö© ÏµúÏÜå Ìè≠(ÌîΩÏÖÄ): Î∞ú Î™®ÏÑúÎ¶¨ÏóêÏÑú 'Ï∞ç' Í±∏Î¶¨Îäî Í≤É ÏôÑÌôî
 		const float kMinOverlapX = 2.f;
 
 		for (auto& pSrc : Src)
 		{
-			// 1) ºˆ∆Ú ∞„ƒß √º≈© (AABB »˜∆Æºæ≈Õ/∆¯ »∞øÎ)
+			// 1) ÏàòÌèâ Í≤πÏπ® Ï≤¥ÌÅ¨ (AABB ÌûàÌä∏ÏÑºÌÑ∞/Ìè≠ ÌôúÏö©)
 			const INFO* d = pDst->Get_Info();
 			const INFO* s = pSrc->Get_Info();
 
@@ -43,47 +43,47 @@ void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 			if (overlapX < kMinOverlapX)
 				continue;
 
-			// 2) Dst∞° ¿ß, Src∞° æ∆∑°(ªÛ-«œ »ƒ∫∏∏∏)
+			// 2) DstÍ∞Ä ÏúÑ, SrcÍ∞Ä ÏïÑÎûò(ÏÉÅ-Ìïò ÌõÑÎ≥¥Îßå)
 			if (d->fHitY >= s->fHitY)
 				continue;
 
-			// 3) AABB ƒß≈ı∑Æ ∞ËªÍ
+			// 3) AABB Ïπ®Ìà¨Îüâ Í≥ÑÏÇ∞
 			float penW = 0.f, penH = 0.f;
 			if (!Check_Rect(pDst, pSrc, &penW, &penH))
 				continue;
 
-			// 4) "ºº∑Œ √Êµπ"∏∏(ªÛ°§«œ) √§≈√
+			// 4) "ÏÑ∏Î°ú Ï∂©Îèå"Îßå(ÏÉÅ¬∑Ìïò) Ï±ÑÌÉù
 			if (penW <= penH)
 				continue;
 
-			// 5) √÷º“ yƒß≈ı∑Æ¿ª ∞Æ¥¬ ªÛ∏È «œ≥™∏∏ º±≈√
+			// 5) ÏµúÏÜå yÏπ®Ìà¨ÎüâÏùÑ Í∞ñÎäî ÏÉÅÎ©¥ ÌïòÎÇòÎßå ÏÑ†ÌÉù
 			if (penH < bestPenY) {
 				bestPenY = penH;
 				pBestSrc = pSrc;
 			}
 		}
 
-		// ∫∏¡§(2∆–Ω∫): «œ≥™∏∏ √≥∏Æ
+		// Î≥¥Ï†ï(2Ìå®Ïä§): ÌïòÎÇòÎßå Ï≤òÎ¶¨
 		if (pBestSrc)
 		{
-			// ¡ÔΩ√ y√‡ ∫∏¡§: "ºº∑Œ ƒß≈ı∑Æ"∏∏≈≠ ¿ß∑Œ ø√∏≤
+			// Ï¶âÏãú yÏ∂ï Î≥¥Ï†ï: "ÏÑ∏Î°ú Ïπ®Ìà¨Îüâ"ÎßåÌÅº ÏúÑÎ°ú Ïò¨Î¶º
 			pDst->Set_PosY(-bestPenY);
 
-			// ¡ÔΩ√ ¡§¡ˆ: ∆¶/∞¸≈Î πÊ¡ˆ
+			// Ï¶âÏãú Ï†ïÏßÄ: Ìäê/Í¥ÄÌÜµ Î∞©ÏßÄ
 			pDst->Set_Y_Axis_Speed(0.f);
 
-			// ¡ˆ∏È ªÛ≈¬ ºº∆√
+			// ÏßÄÎ©¥ ÏÉÅÌÉú ÏÑ∏ÌåÖ
 			pDst->Set_OnGround(true);
 
-			// »˜∆Æ¡ﬂΩ… ¿Á¡§∑ƒ
+			// ÌûàÌä∏Ï§ëÏã¨ Ïû¨Ï†ïÎ†¨
 			const INFO* d = pDst->Get_Info();
 			pDst->Set_Hit_Pos(d->fX, d->fY + (d->fCY - d->fHitCY) * 0.5f);
 
-			// «— ∞≥∏∏ √≥∏Æ«œ∞Ì ¡æ∑·(¥Ÿ¡ﬂ ∫∏¡§ ±›¡ˆ)
+			// Ìïú Í∞úÎßå Ï≤òÎ¶¨ÌïòÍ≥† Ï¢ÖÎ£å(Îã§Ï§ë Î≥¥Ï†ï Í∏àÏßÄ)
 			continue;
 		}
 
-		// »ƒ∫∏∞° «œ≥™µµ æ¯¿∏∏È ∞¯¡ﬂ
+		// ÌõÑÎ≥¥Í∞Ä ÌïòÎÇòÎèÑ ÏóÜÏúºÎ©¥ Í≥µÏ§ë
 		pDst->Set_OnGround(false);
 	}
 }
@@ -128,31 +128,31 @@ void CCollisionMgr::Collision_RectEx(list<CObj*> Dst, list<CObj*> Src)
 		{
 			if (Check_Rect(Dst, Src, &fWidth, &fHeight))
 			{
-				// ªÛ «œ √Êµπ
+				// ÏÉÅ Ìïò Ï∂©Îèå
 				if (fWidth > fHeight)
 				{
-					// ªÛ √Êµπ
+					// ÏÉÅ Ï∂©Îèå
 					if (Dst->Get_Info()->fY < Src->Get_Info()->fY)
 					{
 						Dst->Set_PosY(-fHeight);
 					}
 
-					// «œ √Êµπ
+					// Ìïò Ï∂©Îèå
 					else
 					{
 						Dst->Set_PosY(fHeight);
 					}
 				}
 
-				else // ¡¬øÏ √Êµπ
+				else // Ï¢åÏö∞ Ï∂©Îèå
 				{
-					// ¡¬ √Êµπ
+					// Ï¢å Ï∂©Îèå
 					if (Dst->Get_Info()->fX < Src->Get_Info()->fX)
 					{
 						Dst->Set_PosX(-fWidth);
 					}
 
-					// øÏ √Êµπ
+					// Ïö∞ Ï∂©Îèå
 					else
 					{
 						Dst->Set_PosX(fWidth);

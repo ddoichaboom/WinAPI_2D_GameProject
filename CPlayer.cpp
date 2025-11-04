@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CPlayer.h"
 #include "CKeyMgr.h"
 #include "CScrollMgr.h"
@@ -115,11 +115,11 @@ void CPlayer::Late_Update(float deltaTime)
         m_bPrevOnGround = m_bOnGround;
 
 
-        // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³ª¸é °ÔÀÓ ¿À¹ö
+        // ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚˜ë©´ ê²Œì„ ì˜¤ë²„
         if (!m_tFrame.bLoop && (m_tFrame.iStart == m_tFrame.iEnd))
         {
-            // TODO : °ÔÀÓ ¿À¹ö ¾À ÀüÈ¯ 
-            // Set_Dead();      // ÇÊ¿äÇÏ¸é Àû¿ë
+            // TODO : ê²Œì„ ì˜¤ë²„ ì”¬ ì „í™˜ 
+            // Set_Dead();      // í•„ìš”í•˜ë©´ ì ìš©
         }
         return;
     }
@@ -131,7 +131,7 @@ void CPlayer::Late_Update(float deltaTime)
     if ((m_eScaleState != SCALE_STATE::IDLE) && m_bGiantMode)
     {
 
-        // Ä¿Áö´Â Áß
+        // ì»¤ì§€ëŠ” ì¤‘
         if (m_eScaleState == SCALE_STATE::SCALING_UP)
         {
             m_fCurrentScale += m_fScaleSpeed * deltaTime;
@@ -141,7 +141,7 @@ void CPlayer::Late_Update(float deltaTime)
                 m_eScaleState = SCALE_STATE::GIANT;
             }
         }
-        // °Å´ëÈ­ Áö¼Ó 
+        // ê±°ëŒ€í™” ì§€ì† 
         else if (m_eScaleState == SCALE_STATE::GIANT)
         {
             m_fGiantTime -= deltaTime;
@@ -152,7 +152,7 @@ void CPlayer::Late_Update(float deltaTime)
 
             }
         }
-        // ÀÛ¾ÆÁö´Â Áß
+        // ì‘ì•„ì§€ëŠ” ì¤‘
         else if (m_eScaleState == SCALE_STATE::SCALING_DOWN)
         {
             m_fCurrentScale -= m_fScaleSpeed * deltaTime;
@@ -219,12 +219,12 @@ void CPlayer::Render(HDC hDC)
     BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
     if (m_bBlinkMode && fmod(m_fBlinkTime, 0.2f) > 0.1f)
-        bf.SourceConstantAlpha = 128; // ¹İÅõ¸í 
+        bf.SourceConstantAlpha = 128; // ë°˜íˆ¬ëª… 
         
 
     HDC hPlayerDC = CBmpMgr::Get_Instance()->Find_Image(Get_FrameKey());
 
-     //È÷Æ®¹Ú½º Ã¼Å©¿ë
+     //íˆíŠ¸ë°•ìŠ¤ ì²´í¬ìš©
     //Rectangle(
     //    hDC,
     //    (int)m_tHitRect.left + iScrollX,
@@ -248,7 +248,7 @@ void CPlayer::Release()
 
 
 
-// TODO : ºÎ½ºÆ®¸ğµå trueÀÏ ¶§ Å¸ÀÏ - 1Ãş ÇÃ·§ÆûÀÇ HitRect.topÀ» ±âÁØÁ¡À¸·Î ¾È¶³¾îÁö°Ô ¼³Á¤ÇØ¾ßÇÔ 
+// TODO : ë¶€ìŠ¤íŠ¸ëª¨ë“œ trueì¼ ë•Œ íƒ€ì¼ - 1ì¸µ í”Œë«í¼ì˜ HitRect.topì„ ê¸°ì¤€ì ìœ¼ë¡œ ì•ˆë–¨ì–´ì§€ê²Œ ì„¤ì •í•´ì•¼í•¨ 
 void CPlayer::Collision_Border_Line()
 {
 
@@ -306,8 +306,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 0;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.025f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
             break;
 
         case JUMP:
@@ -318,7 +318,7 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 1;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.10f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.00f;    // ¶ô ¾øÀ½
+            m_tFrame.stateLockRemainSec = 0.00f;    // ë½ ì—†ìŒ
             m_tFrame.bLoop = true;
             break;
 
@@ -392,8 +392,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 7;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
 
 
             break;
@@ -406,7 +406,7 @@ void    CPlayer::Motion_Change()
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.10f;   // 200ms
             m_tFrame.stateLockRemainSec = 0.00f;    // 500ms
-            m_tFrame.bLoop = false;    // ·çÇÁ
+            m_tFrame.bLoop = false;    // ë£¨í”„
             break;
 
 
@@ -417,7 +417,7 @@ void    CPlayer::Motion_Change()
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.10f;   // 100ms
             m_tFrame.stateLockRemainSec = 0.50f;    
-            m_tFrame.bLoop = false;    // ·çÇÁ
+            m_tFrame.bLoop = false;    // ë£¨í”„
 
             break;
 
@@ -437,8 +437,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 11;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
             break;
 
         case BONUS_TIME_OUTRO:
@@ -447,8 +447,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 12;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
             break;
 
         case BOOST:
@@ -459,8 +459,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 13;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.10f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
             break;
 
         case CLEAR:
@@ -469,8 +469,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 14;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
             break;
 
         case EXHAUST:
@@ -479,8 +479,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 15;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = true;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = true;    // ë£¨í”„
             break;
 
         case DEAD:
@@ -489,8 +489,8 @@ void    CPlayer::Motion_Change()
             m_tFrame.iMotion = 16;
             m_tFrame.frameElapsedSec = 0.0f;
             m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // ¶ô ¾øÀ½
-            m_tFrame.bLoop = false;    // ·çÇÁ
+            m_tFrame.stateLockRemainSec = 0.0f;    // ë½ ì—†ìŒ
+            m_tFrame.bLoop = false;    // ë£¨í”„
             break;
 
         }
@@ -511,7 +511,7 @@ void    CPlayer::State_Check(float deltaTime)
 
     const float eps = 1e-3f;
 
-    // ¸· ÂøÁö Çß´ÂÁö¿¡ ´ëÇÑ ¿©ºÎ Ã¼Å©
+    // ë§‰ ì°©ì§€ í–ˆëŠ”ì§€ì— ëŒ€í•œ ì—¬ë¶€ ì²´í¬
     const bool bLanded = (!m_bPrevOnGround && m_bOnGround);
 
     if (m_bWantSlide && m_bOnGround && (fabsf(m_fVy) < eps))
@@ -633,7 +633,7 @@ void   CPlayer::Restore_Hp(float fHealAmount)
         m_tPlayerInfo.fHp = m_tPlayerInfo.fMaxHp;
 }
 
-// ½Ã°£ Ã¼Å©ÇØÁÖ´Â ±â´Éµé ¸ğ¾Æ³õÀ» ÇÔ¼ö 
+// ì‹œê°„ ì²´í¬í•´ì£¼ëŠ” ê¸°ëŠ¥ë“¤ ëª¨ì•„ë†“ì„ í•¨ìˆ˜ 
 void   CPlayer::Time_Check(float deltaTime)
 {
     if (m_bBlinkMode)

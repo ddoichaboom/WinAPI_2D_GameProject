@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CButton.h"
 #include "CBmpMgr.h"
 #include "CScrollMgr.h"
@@ -59,7 +59,7 @@ void CButton::Late_Update(float deltaTime)
 
 void CButton::Render(HDC hDC)
 {
-	// ¹öÆ° ½ºÇÁ¶óÀÌÆ® ½ÃÆ®ÀÇ ÇÑ ÇÁ·¹ÀÓ ¿µ¿ª °è»ê
+	// ë²„íŠ¼ ìŠ¤í”„ë¼ì´íŠ¸ ì‹œíŠ¸ì˜ í•œ í”„ë ˆìž„ ì˜ì—­ ê³„ì‚°
 	int srcX = m_iDrawID * (int)m_tInfo.fCX;
 	int srcY = 0;
 	int srcW = (int)m_tInfo.fCX;
@@ -72,14 +72,14 @@ void CButton::Render(HDC hDC)
 
 	BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-	// UI´Â È­¸é ÁÂÇ¥ °íÁ¤(½ºÅ©·Ñ ´õÇÏÁö ¾ÊÀ½)
+	// UIëŠ” í™”ë©´ ì¢Œí‘œ ê³ ì •(ìŠ¤í¬ë¡¤ ë”í•˜ì§€ ì•ŠìŒ)
 	int dstX = (int)(m_tRect.left);
 	int dstY = (int)(m_tRect.top);
 	int dstW = (int)(m_tInfo.fCX);
 	int dstH = (int)(m_tInfo.fCY);
 
-	// ¼Ò½º À§Ä¡¸¦ ¿Å±â·Á¸é (½ÃÆ® ³» ÇÁ·¹ÀÓ ¼±ÅÃ) -> Source DC¸¦ ÇÁ·¹ÀÓ ½ÃÀÛÁ¡À¸·Î ¿ÀÇÁ¼ÂÇÑ º¸Á¶ DC¸¦ ¾²°Å³ª
-	// AlphaBlendÀÇ Sx,Sy¿¡ srcX,srcY¸¦ ÁöÁ¤ÇÏ¸é µÊ
+	// ì†ŒìŠ¤ ìœ„ì¹˜ë¥¼ ì˜®ê¸°ë ¤ë©´ (ì‹œíŠ¸ ë‚´ í”„ë ˆìž„ ì„ íƒ) -> Source DCë¥¼ í”„ë ˆìž„ ì‹œìž‘ì ìœ¼ë¡œ ì˜¤í”„ì…‹í•œ ë³´ì¡° DCë¥¼ ì“°ê±°ë‚˜
+	// AlphaBlendì˜ Sx,Syì— srcX,srcYë¥¼ ì§€ì •í•˜ë©´ ë¨
 	AlphaBlend(hDC,
 		dstX, dstY,
 		dstW, dstH,

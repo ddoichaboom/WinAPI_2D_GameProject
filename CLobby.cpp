@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CLobby.h"
 #include "CBmpMgr.h"
 #include "CAbstractFactory.h"
@@ -42,8 +42,8 @@ void CLobby::Render(HDC hDC)
 
 	BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-	// ¼Ò½º À§Ä¡¸¦ ¿Å±â·Á¸é (½ÃÆ® ³» ÇÁ·¹ÀÓ ¼±ÅÃ) -> Source DC¸¦ ÇÁ·¹ÀÓ ½ÃÀÛÁ¡À¸·Î ¿ÀÇÁ¼ÂÇÑ º¸Á¶ DC¸¦ ¾²°Å³ª
-	// AlphaBlendÀÇ Sx,Sy¿¡ srcX,srcY¸¦ ÁöÁ¤ÇÏ¸é µÊ
+	// ì†ŒìŠ¤ ìœ„ì¹˜ë¥¼ ì˜®ê¸°ë ¤ë©´ (ì‹œíŠ¸ ë‚´ í”„ë ˆìž„ ì„ íƒ) -> Source DCë¥¼ í”„ë ˆìž„ ì‹œìž‘ì ìœ¼ë¡œ ì˜¤í”„ì…‹í•œ ë³´ì¡° DCë¥¼ ì“°ê±°ë‚˜
+	// AlphaBlendì˜ Sx,Syì— srcX,srcYë¥¼ ì§€ì •í•˜ë©´ ë¨
 	AlphaBlend(hDC,
 		0, 0,
 		WINCX, WINCY,

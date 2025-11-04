@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CObstacle.h"
 #include "CScrollMgr.h"
 #include "CBmpMgr.h"
@@ -27,7 +27,7 @@ void CObstacle::Initialize()
 			m_tFrame.frameElapsedSec = 0.0f;
 			m_tFrame.frameIntervalSec = 0.50f;
 			m_tFrame.stateLockRemainSec = 0.0f;
-			m_tFrame.bLoop = false;    // ·çÇÁ
+			m_tFrame.bLoop = false;    // ë£¨í”„
 		}
 		else if (wcsstr(m_pFrameKey.c_str(), L"OBSTACLE02")|| wcsstr(m_pFrameKey.c_str(), L"OBSTACLE03"))
 		{
@@ -37,7 +37,7 @@ void CObstacle::Initialize()
 			m_tFrame.frameElapsedSec = 0.0f;
 			m_tFrame.frameIntervalSec = 0.2f;
 			m_tFrame.stateLockRemainSec = 0.0f;
-			m_tFrame.bLoop = true;    // ·çÇÁ
+			m_tFrame.bLoop = true;    // ë£¨í”„
 		}
 		else if (wcsstr(m_pFrameKey.c_str(), L"OBSTACLE04") || wcsstr(m_pFrameKey.c_str(), L"OBSTACLE05"))
 		{
@@ -47,7 +47,7 @@ void CObstacle::Initialize()
 			m_tFrame.frameElapsedSec = 0.0f;
 			m_tFrame.frameIntervalSec = 0.00f;
 			m_tFrame.stateLockRemainSec = 0.0f;
-			m_tFrame.bLoop = false;    // ·çÇÁ
+			m_tFrame.bLoop = false;    // ë£¨í”„
 		}
 	}
 
@@ -57,7 +57,7 @@ void CObstacle::Initialize()
 	m_tFrame.frameElapsedSec = 0.0f;
 	m_tFrame.frameIntervalSec = 0.00f;
 	m_tFrame.stateLockRemainSec = 0.0f;
-	m_tFrame.bLoop = false;    // ·çÇÁ
+	m_tFrame.bLoop = false;    // ë£¨í”„
 }
 
 int CObstacle::Update(float deltaTime)

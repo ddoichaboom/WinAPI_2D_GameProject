@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CObj.h"
 
 CObj::CObj()
@@ -23,7 +23,7 @@ void	CObj::Update_Rect(OBJID eID)
 	m_tRect.right = long(m_tInfo.fX + (m_tInfo.fCX / 2.f));
 	m_tRect.bottom = long(m_tInfo.fY + (m_tInfo.fCY / 2.f));
 
-	// È÷Æ®¹Ú½º ÁÂÇ¥ ¸ÅÇÎ
+	// ížˆíŠ¸ë°•ìŠ¤ ì¢Œí‘œ ë§¤í•‘
 	if ((eID == PLAYER) || (eID == OBSTACLE))
 		Set_Hit_Pos(m_tInfo.fX, m_tInfo.fY + (m_tInfo.fCY - m_tInfo.fHitCY) / 2.f);
 	else
@@ -37,24 +37,24 @@ void	CObj::Update_Rect(OBJID eID)
 
 void	CObj::Move_Frame(float deltaTime)
 {
-	// »óÅÂ ¶ô (ÃÊ) Ä«¿îÆ® ´Ù¿î
+	// ìƒíƒœ ë½ (ì´ˆ) ì¹´ìš´íŠ¸ ë‹¤ìš´
 	if (m_tFrame.stateLockRemainSec > 0.0f) {
 		m_tFrame.stateLockRemainSec -= deltaTime;
 		if (m_tFrame.stateLockRemainSec < 0.0f)
 			m_tFrame.stateLockRemainSec = 0.0f;
 	}
 
-	// ¾Ö´Ï¸ÞÀÌ¼Ç ÇÁ·¹ÀÓ ÁøÇà (ÃÊ)
+	// ì• ë‹ˆë©”ì´ì…˜ í”„ë ˆìž„ ì§„í–‰ (ì´ˆ)
 	m_tFrame.frameElapsedSec += deltaTime;
 
-	// intervalÀÌ 0ÀÌ¸é ¾ÈÀüÀåÄ¡
+	// intervalì´ 0ì´ë©´ ì•ˆì „ìž¥ì¹˜
 	const float interval = (m_tFrame.frameIntervalSec > 0.0f) ? m_tFrame.frameIntervalSec : 0.001f;
 
 	while (m_tFrame.frameElapsedSec >= interval)
 	{
 		m_tFrame.frameElapsedSec -= interval;
 
-		// ÇÁ·¹ÀÓ ÀüÁø
+		// í”„ë ˆìž„ ì „ì§„
 		++m_tFrame.iStart;
 
 		if (m_tFrame.iStart > m_tFrame.iEnd) 
@@ -65,7 +65,7 @@ void	CObj::Move_Frame(float deltaTime)
 			}
 			else 
 			{
-				m_tFrame.iStart = m_tFrame.iEnd;		// 1¼¦¸¸ ÁøÇàÇÏ°í ¸¶Áö¸· ÇÁ·¹ÀÓ À¯Áö
+				m_tFrame.iStart = m_tFrame.iEnd;		// 1ìƒ·ë§Œ ì§„í–‰í•˜ê³  ë§ˆì§€ë§‰ í”„ë ˆìž„ ìœ ì§€
 				break;
 			}
 		}

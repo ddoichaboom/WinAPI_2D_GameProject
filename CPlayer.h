@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "CObj.h"
 
 class CPlayer :
@@ -36,7 +36,7 @@ public:
     bool   Is_Invincible() const { return m_bBoostMode || m_bBlinkMode || m_bGiantMode; }
     void   Time_Check(float deltaTime);
 
-// ¾ÆÀÌÅÛ¿¡¼­ »ç¿ëÇÒ ÇÔ¼öµé
+// ì•„ì´í…œì—ì„œ ì‚¬ìš©í•  í•¨ìˆ˜ë“¤
 public:     
     void   Set_Boost_Mode(float fBoostTime) 
     { 
@@ -58,7 +58,7 @@ private:
 private:
     int             m_iMaxJumpCount;
     int             m_iJumpCount;
-    float           m_fJumpTimer;       // Á¡ÇÁ Ã¼°ø ½Ã°£ Á¦¾î¿ë Å¸ÀÌ¸Ó
+    float           m_fJumpTimer;       // ì í”„ ì²´ê³µ ì‹œê°„ ì œì–´ìš© íƒ€ì´ë¨¸
 
     STATE			m_ePreMotion;
     STATE			m_eCurMotion;
@@ -70,17 +70,17 @@ private:
 
     bool            m_bBlinkMode;
     bool            m_bDecelerated;
-    float           m_fInvincibleTime;      // ¹«Àû Áö¼Ó ½Ã°£ Å¸ÀÌ¸Ó 
+    float           m_fInvincibleTime;      // ë¬´ì  ì§€ì† ì‹œê°„ íƒ€ì´ë¨¸ 
     float           m_fDecelerationTime;    
-    float           m_fBlinkTime;           // ±ô¹ÚÀÓÈ¿°ú Å¸ÀÌ¸Ó 
+    float           m_fBlinkTime;           // ê¹œë°•ì„íš¨ê³¼ íƒ€ì´ë¨¸ 
 
     INFO            m_tRenderInfo;
     wstring         m_strJumpSoundPath;
     wstring         m_strSlideSoundPath;
 
-    // ¾ÆÀÌÅÛ¿¡ »ç¿ëÇÒ º¯¼öµé
-    bool            m_bBoostMode;           //  ºÎ½ºÆ® ¸ğµå 
-    float           m_fBoostTime;          //  ºÎ½ºÆ® ¸ğµå Áö¼Ó½Ã°£ Å¸ÀÌ¸Ó
+    // ì•„ì´í…œì— ì‚¬ìš©í•  ë³€ìˆ˜ë“¤
+    bool            m_bBoostMode;           //  ë¶€ìŠ¤íŠ¸ ëª¨ë“œ 
+    float           m_fBoostTime;          //  ë¶€ìŠ¤íŠ¸ ëª¨ë“œ ì§€ì†ì‹œê°„ íƒ€ì´ë¨¸
     SCALE_STATE     m_eScaleState;
     float           m_fGiantTime;
     float           m_fCurrentScale;

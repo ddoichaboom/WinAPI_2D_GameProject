@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CLogo.h"
 #include "CBmpMgr.h"
 #include "CKeyMgr.h"
@@ -16,7 +16,6 @@ CLogo::~CLogo()
 
 void CLogo::Initialize()
 {
-	CBmpMgr::Get_Instance()->Insert_Bmp(L"./Image/Logo/Logo.bmp", L"Logo");
 
 	CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Intro.mp3", SOUND_INTRO, 0.5f);
 	 
@@ -38,7 +37,7 @@ void CLogo::Late_Update(float fDeltaTime)
 
 void CLogo::Render(HDC hDC)
 {
-	HDC     hMemDC = CBmpMgr::Get_Instance()->Find_Image(L"Logo");
+	HDC     hMemDC = CBmpMgr::Get_Instance()->Find_Image(L"LOGO");
 
 	BitBlt(hDC, 0, 0, WINCX, WINCY, hMemDC, 0, 0, SRCCOPY);
 }

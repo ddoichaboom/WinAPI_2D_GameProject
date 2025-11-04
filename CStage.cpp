@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CStage.h"
 #include "CAbstractFactory.h"
 #include "CCollisionMgr.h"
@@ -23,7 +23,8 @@
 
 
 CStage::CStage()
-	:m_fStageWidth(0.f)
+	: m_fWorldEndX(0.f), m_fBgTileWidth(0.f), 
+	m_bPendingStageSwitch(false), m_iNextStageID(1)
 {
 }
 
@@ -34,38 +35,14 @@ CStage::~CStage()
 
 void CStage::Initialize()
 {
-	CSoundMgr::Get_Instance()->StopSound(SOUND_BGM);
-	CSoundMgr::Get_Instance()->PlayBGM(L"./Sound/STAGE01_BGM.mp3");
+	Initialize_Stage_Config(1);
 
-	CChunkMgr::Get_Instance()->ClearSequence();
-	CChunkMgr::Get_Instance()->Enqueue(L"./Data/Stage01_Chunk_01.dat");
-	CChunkMgr::Get_Instance()->Enqueue(L"./Data/Stage02_Chunk_01.dat");
+	m_fWorldEndX = 0.f;
+	CScrollMgr::Get_Instance()->Set_StageWidth(100000.f);
 
-	LoadedChunkInfo info{};
-	const float firstStartX = 0.f;
+	Load_Next_Chunk();
 
-	if (!CChunkMgr::Get_Instance()->LoadNext(firstStartX, &info))
-		MessageBox(g_hWnd, L"First Chunk Load Failed", L"Error", MB_OK);
-
-	m_stageKey = info.meta.stageFrameKey.empty() ? L"STAGE01" : info.meta.stageFrameKey;
-	m_PrevstageKey = m_stageKey;
-	m_iCurrChunkIndex = info.meta.ichunkIndex;
-
-	// 첫 번째 세그먼트도 정수로 정렬
-	m_fStageWidth = floorf((info.stageWidth > 0.f ? info.stageWidth : 0.f) + 0.5f);
-	CScrollMgr::Get_Instance()->Set_StageWidth(m_fStageWidth);
-	m_fWorldEndX = m_fStageWidth;
-
-	m_segments.clear();
-	if (!m_stageKey.empty() && m_fStageWidth > 0.f) {
-		STAGE_SEGMENT s;
-		s.startX = 0.f;
-		s.width = m_fStageWidth;
-		s.stageKey = m_stageKey;
-		m_segments.push_back(std::move(s));
-	}
-
-	float fPlayerPosX = -CScrollMgr::Get_Instance()->Get_ScrollX() + 400.f;
+	float fPlayerPosX = 400.f;
 	CObjMgr::Get_Instance()->Add_Object(PLAYER,
 		CAbstractFactory<CPlayer>::Create_Obj(
 			fPlayerPosX, 398.f,
@@ -77,23 +54,18 @@ void CStage::Initialize()
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CHpBar>::Create_Obj()));
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CScore>::Create_Obj()));
 
-	//CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CBonusTime>::Create_Obj()));
+	//	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CBonusTime>::Create_Obj()));
 
 }
 
 void CStage::Update(float fDeltaTime)
 {
-	if (m_PrevstageKey != m_stageKey)
+	// 스테이지 전환 대기 중이면 실행
+	if (m_bPendingStageSwitch)
 	{
-		CSoundMgr::Get_Instance()->StopSound(SOUND_BGM);
-
-		wstring strSoundKeyPath = L"./Sound/";
-		strSoundKeyPath += m_stageKey;
-		strSoundKeyPath += L"_BGM.mp3";
-
-		CSoundMgr::Get_Instance()->PlayBGM(strSoundKeyPath.c_str(), 0.5f);
-
-		m_PrevstageKey = m_stageKey;
+		m_bPendingStageSwitch = false;
+		Switch_Stage(m_iNextStageID);
+		return;			// 이번 프레임은 전환만 처리 
 	}
 
 	CSoundMgr::Get_Instance()->Update();
@@ -105,47 +77,19 @@ void CStage::Update(float fDeltaTime)
 	CUiMgr::Get_Instance()->Update(fDeltaTime);
 
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, PLATFORM, CObjMgr::RECT);
-
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, JELLY, CObjMgr::COLLECT_JELLY);
-
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, OBSTACLE, CObjMgr::OBSTACLE);
-
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, ITEM, CObjMgr::COLLECT_ITEM);
 
-
 	CObj* pPlayer = CObjMgr::Get_Instance()->Get_Target(PLAYER);
-
 	if (pPlayer)
 	{
 		const float px = pPlayer->Get_Info()->fX;
-		const float preloadThreshold = 300.f;		 
+		const float preloadThreshold = 500.f;				 
 
 		if (px > (m_fWorldEndX - preloadThreshold))
 		{
-			LoadedChunkInfo next{};
-
-			if (CChunkMgr::Get_Instance()->LoadNext(m_fWorldEndX, &next))
-			{
-				m_stageKey = next.meta.stageFrameKey.empty() ? m_stageKey : next.meta.stageFrameKey;
-
-				const float nextStageWidth = next.stageWidth > 0.f ? next.stageWidth : m_fStageWidth;
-
-				// float 오차 방지를 위해 정수로 반올림
-				const float segStartX = floorf(m_fWorldEndX + 0.5f);
-				const float segWidth = floorf(nextStageWidth + 0.5f);
-
-				m_fWorldEndX = segStartX + segWidth;  // 정수 정렬된 값으로 누적
-
-				CScrollMgr::Get_Instance()->Set_StageWidth((int)m_fWorldEndX);
-
-				STAGE_SEGMENT s;
-				s.startX = segStartX;
-				s.width = segWidth;
-				s.stageKey = m_stageKey;
-				m_segments.push_back(move(s));
-
-
-			}
+			Load_Next_Chunk();
 		}
 	}
 
@@ -166,7 +110,7 @@ void CStage::Render(HDC hDC)
 	int  iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
 	int  iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
-	Render_Backgrounds_Segmented(hDC);
+	Render_Background_Tiled(hDC);
 
 	CObjMgr::Get_Instance()->Render(hDC);
 	CUiMgr::Get_Instance()->Render(hDC);
@@ -191,86 +135,123 @@ void CStage::Release()
 	CObjMgr::Get_Instance()->Delete_ID(PLAYER);
 }
 
-void    CStage::Load_Chunk_Data(const TCHAR* pFilePath)
-{
-	HANDLE hFile = CreateFile(
-		pFilePath,
-		GENERIC_READ, 0,
-		nullptr, OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL, nullptr);
-
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		MessageBox(g_hWnd, L"Chunk File Open Failed!", L"Error", MB_OK);
-		return;
-	}
-
-	while (true)
-	{
-		OBJID	eID; 
-		INFO	tInfo;
-		wstring strFrameKey;
-
-		if (!Utils::ReadPOD(hFile, eID))
-			break;
-		if (!Utils::ReadPOD(hFile, tInfo))
-			break;
-		if (!Utils::ReadTString(hFile, strFrameKey))
-			break;
-
-		const IMAGEDATA* pImageData = CDataMgr::Get_Instance()->Get_ImageData(strFrameKey.c_str());
-
-		if (!pImageData)
-			continue;
-
-		CObj* pObj = Create_Object_By_ID(eID, tInfo.fX, tInfo.fY, pImageData);
-
-		if (pObj)
-		{
-			CObjMgr::Get_Instance()->Add_Object(eID, pObj);
-		}
-	}
-
-	CloseHandle(hFile);
-}
-
-void CStage::Render_Backgrounds_Segmented(HDC hDC)
+void CStage::Render_Background_Tiled(HDC hDC)
 {
 	const int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
 	const int iScrollY = (int)CScrollMgr::Get_Instance()->Get_ScrollY();
 
-	// 카메라(화면) 위치는 정수 기준
-	const int camL = -iScrollX;
-	const int camR = camL + WINCX;
+	HDC hBG = CBmpMgr::Get_Instance()->Find_Image(m_currentStage.bgTileKey.c_str());
+	if (!hBG)
+		return;
 
-	for (const auto& seg : m_segments)
+	const int camWorldX = -iScrollX;
+	const int tileWidth = (int)m_fBgTileWidth;
+
+	const int firstTileIdx = camWorldX / tileWidth;
+	const int tilesNeeded = (WINCX / tileWidth) + 2;
+
+	for (int i = 0; i < tilesNeeded; ++i)
 	{
-		if (seg.width <= 0.f || seg.stageKey.empty())
+		const int tileIdx = firstTileIdx + i;
+		const int tileWorldX = tileIdx * tileWidth;		
+		const int tileScreenX = tileWorldX + iScrollX;	
+
+		if ((tileScreenX + tileWidth < 0) || (tileScreenX > WINCX))
 			continue;
 
-		// 세그먼트 경계는 이미 정수로 정렬되어 있음
-		const int segL = (int)(seg.startX + 0.5f);
-		const int segR = (int)(seg.startX + seg.width + 0.5f);
+		BitBlt(hDC,
+			tileScreenX, iScrollY,
+			tileWidth, WINCY,
+			hBG,
+			0, 0,
+			SRCCOPY);
+	}
+}
 
-		// 겹치는 영역 계산 (정수 연산)
-		const int overlapL = max(camL, segL);
-		const int overlapR = min(camR, segR);
-		if (overlapR <= overlapL)
-			continue;
+void CStage::Initialize_Stage_Config(int stageID)
+{
+	m_currentStage.stageID = stageID;
+	m_currentStage.currentChunkIndex = 0;
 
-		const int drawW = overlapR - overlapL;
-		const int destX = overlapL + iScrollX;  // 화면좌표
-		const int destY = iScrollY;
-
-		// 세그먼트 내부 소스 오프셋 (정수 연산)
-		const int srcX = overlapL - segL;
-		const int srcY = 0;
-
-		HDC hBG = CBmpMgr::Get_Instance()->Find_Image(seg.stageKey.c_str());
-		if (!hBG) continue;
-
-		BitBlt(hDC, destX, destY, drawW, WINCY, hBG, srcX, srcY, SRCCOPY);
+	if (stageID == 1)
+	{
+		m_currentStage.bgTileKey = L"STAGE01";
+		m_currentStage.sndBgmPath = L"./Sound/STAGE01_BGM.mp3";
+		m_currentStage.chunkPaths = {
+			L"./Data/Stage01_Chunk_01.dat",
+			L"./Data/Stage01_Chunk_02.dat",
+			L"./Data/Stage01_Chunk_03.dat",
+			L"./Data/Stage01_Chunk_04.dat",
+			L"./Data/Stage01_Chunk_05.dat",
+			L"./Data/Stage01_Chunk_06.dat",
+			L"./Data/Stage01_Chunk_07.dat",
+			L"./Data/Stage01_Chunk_08.dat",
+			L"./Data/Stage01_Chunk_09.dat",
+			L"./Data/Stage01_Chunk_10.dat",
+		};
+	}
+	else if (stageID == 2)
+	{
+		m_currentStage.bgTileKey = L"STAGE02";
+		m_currentStage.sndBgmPath = L"./Sound/STAGE02_BGM.mp3";
+		m_currentStage.chunkPaths = {
+			L"./Data/Stage02_Chunk_01.dat",
+			L"./Data/Stage02_Chunk_02.dat",
+			L"./Data/Stage02_Chunk_03.dat",
+			L"./Data/Stage02_Chunk_04.dat",
+			L"./Data/Stage02_Chunk_05.dat",
+			L"./Data/Stage02_Chunk_06.dat",
+			L"./Data/Stage02_Chunk_07.dat",
+			L"./Data/Stage02_Chunk_08.dat",
+			L"./Data/Stage02_Chunk_09.dat",
+			L"./Data/Stage02_Chunk_10.dat",
+		};
 	}
 
+	const IMAGEDATA* pTileData = CDataMgr::Get_Instance()->Get_ImageData(m_currentStage.bgTileKey);
+	if (pTileData)
+	{
+		m_fBgTileWidth = pTileData->tInfo.fCX;
+		m_currentStage.bgTileWidth = m_fBgTileWidth;
+	}
 
+	CSoundMgr::Get_Instance()->StopSound(SOUND_BGM);
+	CSoundMgr::Get_Instance()->PlayBGM(m_currentStage.sndBgmPath.c_str(), 0.8f);
+}
+
+void CStage::Load_Next_Chunk()
+{
+	if (m_currentStage.currentChunkIndex >= m_currentStage.chunkPaths.size())
+		return;
+
+	wstring nextChunkPath = m_currentStage.chunkPaths[m_currentStage.currentChunkIndex];
+	m_currentStage.currentChunkIndex++;
+
+	LoadedChunkInfo info{};
+	if (CChunkMgr::Get_Instance()->LoadChunk(nextChunkPath.c_str(), m_fWorldEndX, &info))
+	{
+		m_fWorldEndX += m_fBgTileWidth;
+	}
+}
+
+void CStage::Switch_Stage(int nextStageID)
+{
+	CObjMgr::Get_Instance()->Delete_ID(PLATFORM);
+	CObjMgr::Get_Instance()->Delete_ID(OBSTACLE);
+	CObjMgr::Get_Instance()->Delete_ID(JELLY);
+	CObjMgr::Get_Instance()->Delete_ID(ITEM);
+
+	Initialize_Stage_Config(nextStageID);
+
+	m_fWorldEndX = 0.f;
+
+	Load_Next_Chunk();
+
+
+}
+
+void CStage::Request_Stage_Switch(int nextStageID)
+{
+	m_bPendingStageSwitch = true;
+	m_iNextStageID = nextStageID;
 }

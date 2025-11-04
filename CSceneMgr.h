@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CLogo.h"
 #include "CLobby.h"
@@ -18,6 +18,9 @@ public:
 	void	Late_Update(float fDeltaTime);
 	void	Render(HDC hDC);
 	void	Release();
+
+public:
+	CScene* Get_Current_Scene() { return m_pScene; }
 
 public:
 	static CSceneMgr* Get_Instance()

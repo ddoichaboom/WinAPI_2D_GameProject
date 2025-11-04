@@ -1,15 +1,15 @@
-#pragma once
+ï»¿#pragma once
 #include "pch.h"
 #include <type_traits>
 
 
 namespace Utils {
 
-    // ±æÀÌ-ÇÁ¸®ÇÈ½º(TCHAR ´ÜÀ§)·Î ¹®ÀÚ¿­ ÀúÀå/·Îµå
+    // ê¸¸ì´-í”„ë¦¬í”½ìŠ¤(TCHAR ë‹¨ìœ„)ë¡œ ë¬¸ìì—´ ì €ì¥/ë¡œë“œ
     bool WriteTString(HANDLE hFile, const TCHAR* s);
     bool ReadTString(HANDLE hFile, std::basic_string<TCHAR>& out);
 
-    // Trivially-copyable Å¸ÀÔ(POD) Àü¿ë ¹ÙÀÌ³Ê¸® I/O
+    // Trivially-copyable íƒ€ì…(POD) ì „ìš© ë°”ì´ë„ˆë¦¬ I/O
     template<typename T>
     inline bool WritePOD(HANDLE hFile, const T& v) {
         static_assert(std::is_trivially_copyable_v<T>,
@@ -23,8 +23,8 @@ namespace Utils {
         static_assert(std::is_trivially_copyable_v<T>,
             "ReadPOD requires trivially copyable type");
         DWORD dw = 0;
-        if (!::ReadFile(hFile, &v, sizeof(T), &dw, nullptr)) return false; // ¿À·ù
-        return dw == sizeof(T); // EOFÀÏ ¶© false (dw==0)·Î µ¹¾Æ¿È
+        if (!::ReadFile(hFile, &v, sizeof(T), &dw, nullptr)) return false; // ì˜¤ë¥˜
+        return dw == sizeof(T); // EOFì¼ ë• false (dw==0)ë¡œ ëŒì•„ì˜´
     }
 
 } // namespace Utils

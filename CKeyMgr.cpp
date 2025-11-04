@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CKeyMgr.h"
 
 bool CKeyMgr::g_bDebugRender = false;
@@ -21,10 +21,10 @@ bool CKeyMgr::Key_Pressing(int iKey)
 
 	return false;
 }
-// Áö±İ ¸· ´©¸£ÀÚ ¸¶ÀÚ
+// ì§€ê¸ˆ ë§‰ ëˆ„ë¥´ì ë§ˆì
 bool CKeyMgr::Key_Down(int iKey)
 {
-	// ÀÌÀü¿¡ ´©¸¥ÀûÀÌ ¾ø°í && Áö±İ ¸· ´­·¶À» ¶§
+	// ì´ì „ì— ëˆ„ë¥¸ì ì´ ì—†ê³  && ì§€ê¸ˆ ë§‰ ëˆŒë €ì„ ë•Œ
 	if ((!m_bKeyState[iKey]) && (GetAsyncKeyState(iKey) & 0x8000))
 	{
 		m_bKeyState[iKey] = !m_bKeyState[iKey];
@@ -34,7 +34,7 @@ bool CKeyMgr::Key_Down(int iKey)
 	return false;
 }
 
-// ´­·¶´Ù°¡ ¶ÂÀ» ¶§
+// ëˆŒë €ë‹¤ê°€ ë—ì„ ë•Œ
 bool CKeyMgr::Key_Up(int iKey)
 {
 	if ((m_bKeyState[iKey]) && !(GetAsyncKeyState(iKey) & 0x8000))

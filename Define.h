@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-// »çÀÌÁî¿¡ ¸Â°Ô º¯°æ
+// ì‚¬ì´ì¦ˆì— ë§ê²Œ ë³€ê²½
 #define		WINCX				1384
 #define		WINCY				720
 
@@ -11,27 +11,27 @@
 
 #define		VK_MAX				0xff
 
-#define		GC					981.f			// Áß·Â »ó¼ö ( Gravitational Constant : 9.81f) 
+#define		GC					981.f			// ì¤‘ë ¥ ìƒìˆ˜ ( Gravitational Constant : 9.81f) 
 #define		PI					3.141592
-#define		INV_SQRT2			0.70710678f		// 1.0f / sqrtf(2.0f) : 1 / ·çÆ® 2 
+#define		INV_SQRT2			0.70710678f		// 1.0f / sqrtf(2.0f) : 1 / ë£¨íŠ¸ 2 
 
 #define		BOUNDARY_BOTTOM		720.f
 #define		TILEX				44
 
-#define		JUMP_APEX_TIME		0.35f;				// ÃÖ°íÁ¡ µµ´Ş ½Ã°£ 
+#define		JUMP_APEX_TIME		0.35f;				// ìµœê³ ì  ë„ë‹¬ ì‹œê°„ 
 
 
 extern HWND g_hWnd;
 
 typedef struct tagInfo
 {
-	// Render Rect¿ë 
+	// Render Rectìš© 
 	float fX;
 	float fY;
 	float fCX;				
 	float fCY;
 
-	// HitBox Rect¿ë 
+	// HitBox Rectìš© 
 	float fHitCX;			
 	float fHitCY;			
 	float fHitX;
@@ -71,8 +71,8 @@ enum OBJID
 
 
 
-// LOGO ¾À - Intro / Lobby ¾À - MainBGM / ½ºÅ×ÀÌÁö ¾À - STAGE01, STAGE02 ... °¢ BGM / 
-// ÇÃ·¹ÀÌ¾î Á¡ÇÁ, ½½¶óÀÌµå, ¿ÀºêÁ§Æ®¿ÍÀÇ »óÈ£ÀÛ¿ë »ç¿îµå µî Á¸Àç 
+// LOGO ì”¬ - Intro / Lobby ì”¬ - MainBGM / ìŠ¤í…Œì´ì§€ ì”¬ - STAGE01, STAGE02 ... ê° BGM / 
+// í”Œë ˆì´ì–´ ì í”„, ìŠ¬ë¼ì´ë“œ, ì˜¤ë¸Œì íŠ¸ì™€ì˜ ìƒí˜¸ì‘ìš© ì‚¬ìš´ë“œ ë“± ì¡´ì¬ 
 enum SOUND_CHANNEL 
 { SOUND_INTRO, SOUND_BGM, SOUND_EFFECT, SOUND_PLAYER_JUMP, SOUND_PLAYER_SLIDE, SOUND_LAND, SOUND_UI, MAX_CHANNEL };
 
@@ -94,10 +94,10 @@ typedef struct tagFrame
 	int		iEnd;
 	int		iMotion;
 
-	float       frameElapsedSec = 0.0f;  // ÇöÀç ÇÁ·¹ÀÓ ´©Àû °æ°ú½Ã°£
-	float       frameIntervalSec = 0.2f;  // ÇÑ ÇÁ·¹ÀÓÀÌ ³Ñ¾î°¥ °£°İ(¿¹: 0.2s = 200ms)
-	float       stateLockRemainSec = 0.0f;  // »óÅÂ ¶ôÀÌ ³²Àº ½Ã°£(ÃÊ); 0ÀÌ¸é ¶ô ¾øÀ½
-	bool        bLoop = true;  // ·çÇÁ ¿©ºÎ
+	float       frameElapsedSec = 0.0f;  // í˜„ì¬ í”„ë ˆì„ ëˆ„ì  ê²½ê³¼ì‹œê°„
+	float       frameIntervalSec = 0.2f;  // í•œ í”„ë ˆì„ì´ ë„˜ì–´ê°ˆ ê°„ê²©(ì˜ˆ: 0.2s = 200ms)
+	float       stateLockRemainSec = 0.0f;  // ìƒíƒœ ë½ì´ ë‚¨ì€ ì‹œê°„(ì´ˆ); 0ì´ë©´ ë½ ì—†ìŒ
+	bool        bLoop = true;  // ë£¨í”„ ì—¬ë¶€
 
 }FRAME;
 
@@ -241,4 +241,14 @@ struct STAGE_SEGMENT
 	float	width	= 0.f;
 
 	wstring stageKey;
+};
+
+struct STAGE_CONFIG
+{
+	int stageID = 1;				
+	wstring bgTileKey;				
+	float bgTileWidth = 1000.f;
+	wstring sndBgmPath;
+	vector<wstring> chunkPaths;
+	int currentChunkIndex;
 };

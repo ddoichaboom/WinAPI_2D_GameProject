@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CJelly.h"
 #include "CScrollMgr.h"
 #include "CBmpMgr.h"
@@ -19,14 +19,14 @@ void CJelly::Initialize()
 	{
 		if (wcsstr(m_pFrameKey.c_str(), L"_JELLYBEAN"))
 		{
-			// ±âº» Á©¸® ¼¼ÆÃ
+			// ê¸°ë³¸ ì ¤ë¦¬ ì„¸íŒ…
 			m_tFrame.iStart = 0;
 			m_tFrame.iEnd = 0;
 			m_tFrame.iMotion = 0;
 			m_tFrame.frameElapsedSec = 0.0f;
 			m_tFrame.frameIntervalSec = 0.10f;
 			m_tFrame.stateLockRemainSec = 0.00f;
-			m_tFrame.bLoop = true;    // ·çÇÁ
+			m_tFrame.bLoop = true;    // ë£¨í”„
 
 			m_tJellyInfo.iScore = 1000;
 		}
@@ -34,28 +34,28 @@ void CJelly::Initialize()
 		{
 			if (wcsstr(m_pFrameKey.c_str(), L"_PINK"))
 			{
-				// ±âº» Á©¸® ¼¼ÆÃ
+				// ê¸°ë³¸ ì ¤ë¦¬ ì„¸íŒ…
 				m_tFrame.iStart = 0;
 				m_tFrame.iEnd = 0;
 				m_tFrame.iMotion = 0;
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.10f;
 				m_tFrame.stateLockRemainSec = 0.00f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iScore = 3000;
 
 			}
 			else if (wcsstr(m_pFrameKey.c_str(), L"_YELLOW"))
 			{
-				// ±âº» Á©¸® ¼¼ÆÃ
+				// ê¸°ë³¸ ì ¤ë¦¬ ì„¸íŒ…
 				m_tFrame.iStart = 0;
 				m_tFrame.iEnd = 0;
 				m_tFrame.iMotion = 0;
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.10f;
 				m_tFrame.stateLockRemainSec = 0.00f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iScore = 3000;
 
@@ -68,7 +68,7 @@ void CJelly::Initialize()
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.30f;
 				m_tFrame.stateLockRemainSec = 0.0f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iScore = 10000;
 
@@ -85,7 +85,7 @@ void CJelly::Initialize()
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.20f;
 				m_tFrame.stateLockRemainSec = 0.0f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iCoin = 100;
 				m_tJellyInfo.iScore = 3000;
@@ -98,7 +98,7 @@ void CJelly::Initialize()
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.20f;
 				m_tFrame.stateLockRemainSec = 0.0f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iCoin = 1;
 				m_tJellyInfo.iScore = 500;
@@ -114,7 +114,7 @@ void CJelly::Initialize()
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.12f;
 				m_tFrame.stateLockRemainSec = 0.0f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iCoin = 1000;
 				m_tJellyInfo.iScore = 5000;
@@ -127,7 +127,7 @@ void CJelly::Initialize()
 				m_tFrame.frameElapsedSec = 0.0f;
 				m_tFrame.frameIntervalSec = 0.12f;
 				m_tFrame.stateLockRemainSec = 0.0f;
-				m_tFrame.bLoop = true;    // ·çÇÁ
+				m_tFrame.bLoop = true;    // ë£¨í”„
 
 				m_tJellyInfo.iCoin = 50;
 				m_tJellyInfo.iScore = 1000;
@@ -135,27 +135,27 @@ void CJelly::Initialize()
 		}
 		else if (wcsstr(m_pFrameKey.c_str(), L"_ALPHABET"))
 		{
-			// ±âº» Á©¸® ¼¼ÆÃ
+			// ê¸°ë³¸ ì ¤ë¦¬ ì„¸íŒ…
 			m_tFrame.iStart = 0;
 			m_tFrame.iEnd = 0;
 			m_tFrame.iMotion = 0;
 			m_tFrame.frameElapsedSec = 0.0f;
 			m_tFrame.frameIntervalSec = 0.10f;
 			m_tFrame.stateLockRemainSec = 0.00f;
-			m_tFrame.bLoop = true;    // ·çÇÁ
+			m_tFrame.bLoop = true;    // ë£¨í”„
 
 			m_tJellyInfo.iScore = 500;
 		}
 		else if (wcsstr(m_pFrameKey.c_str(), L"_EXCLAMATION_MARK"))
 		{
-			// ±âº» Á©¸® ¼¼ÆÃ
+			// ê¸°ë³¸ ì ¤ë¦¬ ì„¸íŒ…
 			m_tFrame.iStart = 0;
 			m_tFrame.iEnd = 0;
 			m_tFrame.iMotion = 0;
 			m_tFrame.frameElapsedSec = 0.0f;
 			m_tFrame.frameIntervalSec = 0.10f;
 			m_tFrame.stateLockRemainSec = 0.00f;
-			m_tFrame.bLoop = true;    // ·çÇÁ
+			m_tFrame.bLoop = true;    // ë£¨í”„
 
 			m_tJellyInfo.iScore = 500;
 			

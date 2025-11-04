@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "TcharIO.h"
 
 namespace Utils {
@@ -13,7 +13,7 @@ namespace Utils {
 #endif
 
         tstring tmp(s);
-        uint32_t len = static_cast<uint32_t>(tmp.size()); // ≥Œ πÃ∆˜«‘
+        uint32_t len = static_cast<uint32_t>(tmp.size()); // ÎÑê ÎØ∏Ìè¨Ìï®
         DWORD dw = 0;
 
         if (!::WriteFile(hFile, &len, sizeof(len), &dw, nullptr) || dw != sizeof(len))
@@ -34,7 +34,7 @@ namespace Utils {
         uint32_t len = 0;
 
         if (!::ReadFile(hFile, &len, sizeof(len), &dw, nullptr))
-            return false;          // ø¿∑˘
+            return false;          // Ïò§Î•ò
         if (dw == 0) return false; // EOF
 
         if (dw != sizeof(len)) return false;

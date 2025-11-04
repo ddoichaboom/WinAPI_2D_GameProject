@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Define.h"
 
 class CObj
@@ -74,11 +74,11 @@ protected:
 
 
 
-	bool			m_bOnGround;			// Áö¸é ÆÇÁ¤ ( Á¡ÇÁ °¡´É À¯¹«, Áß·Â Àû¿ë À¯¹« ÆÇ´Ü ¿ëµµ - ±âÁ¸ m_bJump¶û ºñ½ÁÇÔ )
+	bool			m_bOnGround;			// ì§€ë©´ íŒì • ( ì í”„ ê°€ëŠ¥ ìœ ë¬´, ì¤‘ë ¥ ì ìš© ìœ ë¬´ íŒë‹¨ ìš©ë„ - ê¸°ì¡´ m_bJumpë‘ ë¹„ìŠ·í•¨ )
 	bool            m_bPrevOnGround;		
-	float			m_fVx;					// xÃà ÀÌµ¿ ¼Óµµ
-	float			m_fVy;					// yÃà ÀÌµ¿ ¼Óµµ
-	float			m_fJumpSpeed;			// Á¡ÇÁ ÃÊ±â ¼Óµµ
+	float			m_fVx;					// xì¶• ì´ë™ ì†ë„
+	float			m_fVy;					// yì¶• ì´ë™ ì†ë„
+	float			m_fJumpSpeed;			// ì í”„ ì´ˆê¸° ì†ë„
 	float			m_fSpeed;
 	bool			m_bDead;
 

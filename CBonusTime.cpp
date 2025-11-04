@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CBonusTime.h"
 #include "CDataMgr.h"
 #include "CBmpMgr.h"

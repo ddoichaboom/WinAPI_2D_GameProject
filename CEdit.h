@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "CScene.h"
 class CEdit :
     public CScene
@@ -32,7 +32,7 @@ private:
 private:
     const TCHAR*    m_pFrameKey;
     const TCHAR*    m_pStageFrameKey;
-    const TCHAR*    m_pTileFrameKey;        // Ã¹¹øÂ° ÇÃ·§Æû Àü¿ë ÇÁ·¹ÀÓ Å°
+    const TCHAR*    m_pTileFrameKey;        // ì²«ë²ˆì§¸ í”Œë«í¼ ì „ìš© í”„ë ˆì„ í‚¤
 
 
 
@@ -41,15 +41,14 @@ private:
 
     int             m_iStageType; 
     int             m_iPrevStageType;
-    int             m_iEditType;        // 1Àº 1Ãş ÇÃ·§Æû, 2´Â 2Ãş ÇÃ·§Æû, 3Àº Àå¾Ö¹° 4´Â Á©¸® ¹èÄ¡ ´Ü°è 5´Â ´Ü°è ³¡
+    int             m_iEditType;        // 1ì€ 1ì¸µ í”Œë«í¼, 2ëŠ” 2ì¸µ í”Œë«í¼, 3ì€ ì¥ì• ë¬¼ 4ëŠ” ì ¤ë¦¬ ë°°ì¹˜ ë‹¨ê³„ 5ëŠ” ë‹¨ê³„ ë
     int             m_iObstacleType;    
-    int             m_iJellyType;       // 1. ±âº» Á©¸® (OBJID - JELLY), 2. °õÁ©¸® ( OBJID - GBJELLY) 3. ½Ç¹ö ÄÚÀÎ ( OBJID - SILVER_COIN ) 4. °ñµå ÄÚÀÎ ( OBJID - GOLD_COIN)
+    int             m_iJellyType;       // 1. ê¸°ë³¸ ì ¤ë¦¬ (OBJID - JELLY), 2. ê³°ì ¤ë¦¬ ( OBJID - GBJELLY) 3. ì‹¤ë²„ ì½”ì¸ ( OBJID - SILVER_COIN ) 4. ê³¨ë“œ ì½”ì¸ ( OBJID - GOLD_COIN)
     int             m_iJellyTextType;
     int             m_iItemType;        // 0. item_energy 1. item_energy_big, 2. item_boost 3. item_giant ...
-    float		    m_fStageWidth;
     float           m_fTileCX;
-
-    int             m_iChunkIndex;
-    float           m_fChunkStartX;
+    int             m_iCurrentChunkIndex;       // í˜„ì¬ í¸ì§‘ ì¤‘ì¸ ì²­í¬ ì¸ë±ìŠ¤ (0ë¶€í„° ì‹œì‘)
+    float           m_fBgTileWidth;             // ë°°ê²½ íƒ€ì¼ ë„ˆë¹„ (ì²­í¬ ë„ˆë¹„)
+    float           m_fEditorScrollX;           // ì—ë””í„° ëˆ„ì  ìŠ¤í¬ë¡¤ 
 };
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CTileMgr.h"
 #include "CAbstractFactory.h"
 #include "CScrollMgr.h"
@@ -10,7 +10,7 @@ CTileMgr* CTileMgr::m_pInstance = nullptr;
 
 CTileMgr::CTileMgr()
 {
-	m_vecTile.reserve(300);
+	m_vecTile.reserve(1000);  // ë¬´í•œ ìŠ¤í¬ë¡¤ì„ ìœ„í•´ ìš©ëŸ‰ ì¦ê°€
 }
 
 CTileMgr::~CTileMgr()
@@ -33,9 +33,10 @@ void CTileMgr::Initialize(const TCHAR* pStageFrameKey)
 
 	int iTILECX = pTileData->tInfo.fCX;
 	int iTILECY = pTileData->tInfo.fCY;
-	int iTILECount = static_cast<int>(ceil(pStageData->tInfo.fCX / iTILECX));
 
-
+	// ë¬´í•œ ìŠ¤í¬ë¡¤ì„ ìœ„í•´ ì¶©ë¶„í•œ ë²”ìœ„ì˜ íƒ€ì¼ ìƒì„±
+	// 10ê°œ ì²­í¬ ëŒ€ë¹„ (10 * ë°°ê²½ íƒ€ì¼ ë„ˆë¹„)
+	int iTILECount = static_cast<int>(ceil((pStageData->tInfo.fCX * 10.f) / iTILECX));
 
 	for (int i = 0; i < iTILECount; ++i)
 	{
@@ -55,8 +56,8 @@ void CTileMgr::Initialize(const TCHAR* pStageFrameKey)
 
 int CTileMgr::Update()
 {
-	// È­¸é ¾È + ¹öÆÛ ¾ÕºÎºĞ¿¡ ÀÖ´Â °Íµé¸¸ ¾÷µ¥ÀÌÆ® ÇÏ´Â ÄÃ¸µ 
-	// ÀÌÈÄ ObjMgr¿¡ Àû¿ë ÇØ¾ßÇÔ.
+	// í™”ë©´ ì•ˆ + ë²„í¼ ì•ë¶€ë¶„ì— ìˆëŠ” ê²ƒë“¤ë§Œ ì—…ë°ì´íŠ¸ í•˜ëŠ” ì»¬ë§ 
+	// ì´í›„ ObjMgrì— ì ìš© í•´ì•¼í•¨.
 
 	float fScrollX = CScrollMgr::Get_Instance()->Get_ScrollX();
 	float fBuffer = 100.f;
@@ -131,7 +132,7 @@ void CTileMgr::Add_Tile(float fX, float fY, const TCHAR* pFrameKey)
 	if (!pFrameKey)
 		return;
 
-	// ¿äÃ» - ¸Å°³º¯¼ö·Î ÇÁ·¹ÀÓ Å°¸¦ ÀÎÀÚ·Î ¹Ş¾Æ¼­ ÇØ´ç ÇÃ·§Æû ÇÁ·¹ÀÓ Å°·Î »ı¼º ÈÄ ÀúÀå
+	// ìš”ì²­ - ë§¤ê°œë³€ìˆ˜ë¡œ í”„ë ˆì„ í‚¤ë¥¼ ì¸ìë¡œ ë°›ì•„ì„œ í•´ë‹¹ í”Œë«í¼ í”„ë ˆì„ í‚¤ë¡œ ìƒì„± í›„ ì €ì¥
 	CObj* pTile = CAbstractFactory<CTile>::Create_Obj(
 		fX, fY, CDataMgr::Get_Instance()->Get_ImageData(pFrameKey));
 	if (pTile)
@@ -144,13 +145,13 @@ void CTileMgr::Add_Tile(float fX, float fY, const TCHAR* pFrameKey)
 
 void CTileMgr::Save_Tile(const TCHAR* pFilePath)
 {
-	HANDLE	hFile = CreateFile(pFilePath, // ÆÄÀÏÀÌ¸§ÀÌ Æ÷ÇÔµÈ °æ·Î
-		GENERIC_WRITE,	// ÆÄÀÏ Á¢±Ù ¸ğµå(¾²±â Àü¿ë), GENERIC_READ(ÀĞ±â Àü¿ë)
-		NULL,			// °øÀ¯ ¹æ½Ä(ÆÄÀÏÀÌ ¿­·Á ÀÖ´Â »óÅÂ¿¡¼­ ´Ù¸¥ ÇÁ·Î¼¼½º°¡ ¿ÀÇÂÇÏ°íÀÚ ÇÒ ¶§ Çã°¡ÇÒ °ÍÀÎ°¡)
-		NULL,			// º¸¾È ¸ğµå ¼³Á¤
-		CREATE_ALWAYS,		// »ı¼º ¹æ½Ä CREATE_ALWAYS(¾²±â Àü¿ë), OPEN_EXISTING(ÆÄÀÏÀÌ ÀÖ´Â °æ¿ì¸¸ ¿­±â)
-		FILE_ATTRIBUTE_NORMAL,	// ÆÄÀÏ ¼Ó¼º(ÀĞ±â Àü¿ë, ¼û±è ÆÄÀÏ µîµî), ¾Æ¹«·± ¼Ó¼ºÀÌ ¾ø´Â ÀÏ¹İ ÆÄÀÏ
-		NULL);				// »ı¼ºµÉ ÆÄÀÏÀÇ ¼Ó¼ºÀ» Á¦°øÇÒ ÅÛÇÃ¸´ ÆÄÀÏ
+	HANDLE	hFile = CreateFile(pFilePath, // íŒŒì¼ì´ë¦„ì´ í¬í•¨ëœ ê²½ë¡œ
+		GENERIC_WRITE,	// íŒŒì¼ ì ‘ê·¼ ëª¨ë“œ(ì“°ê¸° ì „ìš©), GENERIC_READ(ì½ê¸° ì „ìš©)
+		NULL,			// ê³µìœ  ë°©ì‹(íŒŒì¼ì´ ì—´ë ¤ ìˆëŠ” ìƒíƒœì—ì„œ ë‹¤ë¥¸ í”„ë¡œì„¸ìŠ¤ê°€ ì˜¤í”ˆí•˜ê³ ì í•  ë•Œ í—ˆê°€í•  ê²ƒì¸ê°€)
+		NULL,			// ë³´ì•ˆ ëª¨ë“œ ì„¤ì •
+		CREATE_ALWAYS,		// ìƒì„± ë°©ì‹ CREATE_ALWAYS(ì“°ê¸° ì „ìš©), OPEN_EXISTING(íŒŒì¼ì´ ìˆëŠ” ê²½ìš°ë§Œ ì—´ê¸°)
+		FILE_ATTRIBUTE_NORMAL,	// íŒŒì¼ ì†ì„±(ì½ê¸° ì „ìš©, ìˆ¨ê¹€ íŒŒì¼ ë“±ë“±), ì•„ë¬´ëŸ° ì†ì„±ì´ ì—†ëŠ” ì¼ë°˜ íŒŒì¼
+		NULL);				// ìƒì„±ë  íŒŒì¼ì˜ ì†ì„±ì„ ì œê³µí•  í…œí”Œë¦¿ íŒŒì¼
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
@@ -177,13 +178,13 @@ void CTileMgr::Save_Tile(const TCHAR* pFilePath)
 
 void CTileMgr::Load_Tile()
 {
-	HANDLE	hFile = CreateFile(L"./Data/Stage01_Tile.dat", // ÆÄÀÏÀÌ¸§ÀÌ Æ÷ÇÔµÈ °æ·Î
-		GENERIC_READ,	// ÆÄÀÏ Á¢±Ù ¸ğµå(¾²±â Àü¿ë), GENERIC_READ(ÀĞ±â Àü¿ë)
-		NULL,			// °øÀ¯ ¹æ½Ä(ÆÄÀÏÀÌ ¿­·Á ÀÖ´Â »óÅÂ¿¡¼­ ´Ù¸¥ ÇÁ·Î¼¼½º°¡ ¿ÀÇÂÇÏ°íÀÚ ÇÒ ¶§ Çã°¡ÇÒ °ÍÀÎ°¡)
-		NULL,			// º¸¾È ¸ğµå ¼³Á¤
-		OPEN_EXISTING,		// »ı¼º ¹æ½Ä CREATE_ALWAYS(¾²±â Àü¿ë), OPEN_EXISTING(ÆÄÀÏÀÌ ÀÖ´Â °æ¿ì¸¸ ¿­±â)
-		FILE_ATTRIBUTE_NORMAL,	// ÆÄÀÏ ¼Ó¼º(ÀĞ±â Àü¿ë, ¼û±è ÆÄÀÏ µîµî), ¾Æ¹«·± ¼Ó¼ºÀÌ ¾ø´Â ÀÏ¹İ ÆÄÀÏ
-		NULL);				// »ı¼ºµÉ ÆÄÀÏÀÇ ¼Ó¼ºÀ» Á¦°øÇÒ ÅÛÇÃ¸´ ÆÄÀÏ
+	HANDLE	hFile = CreateFile(L"./Data/Stage01_Tile.dat", // íŒŒì¼ì´ë¦„ì´ í¬í•¨ëœ ê²½ë¡œ
+		GENERIC_READ,	// íŒŒì¼ ì ‘ê·¼ ëª¨ë“œ(ì“°ê¸° ì „ìš©), GENERIC_READ(ì½ê¸° ì „ìš©)
+		NULL,			// ê³µìœ  ë°©ì‹(íŒŒì¼ì´ ì—´ë ¤ ìˆëŠ” ìƒíƒœì—ì„œ ë‹¤ë¥¸ í”„ë¡œì„¸ìŠ¤ê°€ ì˜¤í”ˆí•˜ê³ ì í•  ë•Œ í—ˆê°€í•  ê²ƒì¸ê°€)
+		NULL,			// ë³´ì•ˆ ëª¨ë“œ ì„¤ì •
+		OPEN_EXISTING,		// ìƒì„± ë°©ì‹ CREATE_ALWAYS(ì“°ê¸° ì „ìš©), OPEN_EXISTING(íŒŒì¼ì´ ìˆëŠ” ê²½ìš°ë§Œ ì—´ê¸°)
+		FILE_ATTRIBUTE_NORMAL,	// íŒŒì¼ ì†ì„±(ì½ê¸° ì „ìš©, ìˆ¨ê¹€ íŒŒì¼ ë“±ë“±), ì•„ë¬´ëŸ° ì†ì„±ì´ ì—†ëŠ” ì¼ë°˜ íŒŒì¼
+		NULL);				// ìƒì„±ë  íŒŒì¼ì˜ ì†ì„±ì„ ì œê³µí•  í…œí”Œë¦¿ íŒŒì¼
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
@@ -199,7 +200,7 @@ void CTileMgr::Load_Tile()
 	while (true)
 	{
 		bool bTileState{};
-		if (!Utils::ReadPOD(hFile, bTileState)) break;  // EOF or error -> Á¾·á
+		if (!Utils::ReadPOD(hFile, bTileState)) break;  // EOF or error -> ì¢…ë£Œ
 		std::basic_string<TCHAR> pFrameKey;
 		if (!Utils::ReadTString(hFile, pFrameKey)) break;
 		INFO tinfo{};

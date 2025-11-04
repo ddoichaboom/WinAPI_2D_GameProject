@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CGiant.h"
 
 CGiant::CGiant()
@@ -19,7 +19,7 @@ void CGiant::Initialize()
 	m_tFrame.frameElapsedSec = 0.0f;
 	m_tFrame.frameIntervalSec = 0.50f;
 	m_tFrame.stateLockRemainSec = 0.00f;
-	m_tFrame.bLoop = true;    // ·çÇÁ
+	m_tFrame.bLoop = true;    // ë£¨í”„
 }
 void CGiant::Apply_Effect(CPlayer* pPlayer)
 {

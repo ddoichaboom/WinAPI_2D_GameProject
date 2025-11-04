@@ -124,6 +124,9 @@
     <Filter Include="03. Scene\01. Lobby">
       <UniqueIdentifier>{e7248d68-9b69-434c-a135-89a5185badd5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Obj\04. Item\03. Item_Magnet">
+      <UniqueIdentifier>{dc4c9a61-7a2f-488a-b0c8-be2825d2a9e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -252,6 +255,9 @@
     <ClInclude Include="CBonusTime.h">
       <Filter>02. Design\12. UiMgr\06. Ui\03. BonusTime</Filter>
     </ClInclude>
+    <ClInclude Include="CMagnet.h">
+      <Filter>01. Obj\04. Item\03. Item_Magnet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CookieRunAPI.cpp">
@@ -361,6 +367,9 @@
     </ClCompile>
     <ClCompile Include="CBonusTime.cpp">
       <Filter>02. Design\12. UiMgr\06. Ui\03. BonusTime</Filter>
+    </ClCompile>
+    <ClCompile Include="CMagnet.cpp">
+      <Filter>01. Obj\04. Item\03. Item_Magnet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

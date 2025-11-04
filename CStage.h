@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CScene.h"
 class CStage :
     public CScene
@@ -14,18 +14,26 @@ public:
     void Render(HDC hDC) override;
     void Release() override;
 
-private:
-    void    Load_Chunk_Data(const TCHAR* pFilePath);        // ûũ �ε� �Լ� ���� 
-    void    Render_Backgrounds_Segmented(HDC hDC);
+public:
+    void            Switch_Stage(int nextStageID);
+    STAGE_CONFIG    Get_Current_Stage()  const { return m_currentStage; }
+    void            Request_Stage_Switch(int nextStageID);
 
 private:
-    vector<STAGE_SEGMENT> m_segments;
+    void    Render_Background_Tiled(HDC hDC);
+    void    Load_Next_Chunk();
+    void    Initialize_Stage_Config(int stageID);
 
-    wstring     m_PrevstageKey;
-    wstring     m_stageKey;
-    float       m_fStageWidth;
-    float       m_fWorldEndX;
-    int         m_iCurrChunkIndex;
+private:
+
+    STAGE_CONFIG    m_currentStage;
+    float           m_fWorldEndX;
+    float           m_fBgTileWidth;
+    
+    bool            m_bPendingStageSwitch;      // 전환 대기 플래그
+    int             m_iNextStageID;             // 전환할 스테이지 ID
+
+    int             m_iCurrChunkIndex;
 
 };
 

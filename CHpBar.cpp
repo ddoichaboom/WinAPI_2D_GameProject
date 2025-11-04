@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CHpBar.h"
 #include "CDataMgr.h"
 #include "CBmpMgr.h"
@@ -65,7 +65,7 @@ void    CHpBar::Render(HDC hDC)
 	float	bgRenderY = m_tInfo.fY - (m_tInfo.fCY / 2.f);
 
 
-	// Ã¼·Â ¹Ù ¹é±×¶ó¿îµå ÀÌ¹ÌÁö Ãâ·Â 
+	// ì²´ë ¥ ë°” ë°±ê·¸ë¼ìš´ë“œ ì´ë¯¸ì§€ ì¶œë ¥ 
 	AlphaBlend(hDC,
 		(int)bgRenderX, (int)bgRenderY,
 		(int)m_tInfo.fCX, (int)m_tInfo.fCY,

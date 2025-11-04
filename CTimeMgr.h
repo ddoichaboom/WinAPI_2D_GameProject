@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class CTimeMgr
 {
@@ -25,20 +25,20 @@ public:
 public:
 	void	Initialize();
 	void	Update_DeltaTime();
-	void	WaitForFrame(LARGE_INTEGER liFrameStart);			// ÇÁ·¹ÀÓ Á¦ÇÑÀ» À§ÇÑ ÇÔ¼ö Ãß°¡ 
+	void	WaitForFrame(LARGE_INTEGER liFrameStart);			// í”„ë ˆì„ ì œí•œì„ ìœ„í•œ í•¨ìˆ˜ ì¶”ê°€ 
 	float	Get_DeltaTime() const { return m_fFixedDeltaTime; }
 	float	Get_RealDeltaTime() const { return m_fRealDeltaTime; }
 private:
 	static CTimeMgr*	m_pInstance;
 
-	LARGE_INTEGER		m_liFrequency;		// CPU Å¬·° ¼ö
-	LARGE_INTEGER		m_liPrevCounter;		// ÀÌÀü ÇÁ·¹ÀÓÀÇ Å¬·° ¼ö
+	LARGE_INTEGER		m_liFrequency;		// CPU í´ëŸ­ ìˆ˜
+	LARGE_INTEGER		m_liPrevCounter;		// ì´ì „ í”„ë ˆì„ì˜ í´ëŸ­ ìˆ˜
 	float				m_fRealDeltaTime;
 
-	float				m_fFixedDeltaTime;		// °íÁ¤µÈ ½Ã°£ °£°İ ( ¹°¸® ¾÷µ¥ÀÌÆ® ¿ëµµ )
-	float				m_fAccumulator;			// ½ÇÁ¦ ½Ã°£À» ´©ÀûÇÏ´Â º¯¼ö 
-	float				m_fFrameRateCap;		// ¸ñÇ¥ ÇÁ·¹ÀÓ (65.f)
-	float				m_fTargetDeltaTime;		// ¸ñÇ¥ ÇÁ·¹ÀÓÀÇ ½Ã°£ °£°İ
+	float				m_fFixedDeltaTime;		// ê³ ì •ëœ ì‹œê°„ ê°„ê²© ( ë¬¼ë¦¬ ì—…ë°ì´íŠ¸ ìš©ë„ )
+	float				m_fAccumulator;			// ì‹¤ì œ ì‹œê°„ì„ ëˆ„ì í•˜ëŠ” ë³€ìˆ˜ 
+	float				m_fFrameRateCap;		// ëª©í‘œ í”„ë ˆì„ (65.f)
+	float				m_fTargetDeltaTime;		// ëª©í‘œ í”„ë ˆì„ì˜ ì‹œê°„ ê°„ê²©
 
 
 friend class CMainGame;

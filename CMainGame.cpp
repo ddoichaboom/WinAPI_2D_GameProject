@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CMainGame.h"
 #include "CAbstractFactory.h"
 #include "CSceneMgr.h"
@@ -34,7 +34,7 @@ void CMainGame::Initialize()
 	CDataMgr::Get_Instance()->Initialize();
 
 	CTimeMgr::Get_Instance()->Initialize();
-	CBmpMgr::Get_Instance()->Insert_Bmp(L"./Image/Back.bmp", L"Back");
+	CBmpMgr::Get_Instance()->Insert_Bmp(L"./Image/Logo/Logo.bmp", L"LOGO");
 	CSoundMgr::Get_Instance()->Initialize();
 
 	CSceneMgr::Get_Instance()->Scene_Change(SC_LOGO);
@@ -44,7 +44,7 @@ void CMainGame::Initialize()
 
 	TCHAR szPath[MAX_PATH] = { 0 };
 	GetCurrentDirectory(MAX_PATH, szPath);
-	OutputDebugString(L"ÇöÀç ÀÛ¾÷ µð·ºÅä¸®: ");
+	OutputDebugString(L"í˜„ìž¬ ìž‘ì—… ë””ë ‰í† ë¦¬: ");
 	OutputDebugString(szPath);
 	OutputDebugString(L"\n");
 
@@ -74,7 +74,7 @@ void CMainGame::Update()
 
 			if (++iSteps >= MAX_STEPS)
 			{
-				// ³²Àº ´©ÀûºÐÀº ¹ö¸®°Å³ª(¿©±â¼­´Â ¹ö¸²) º¸°£¿ëÀ¸·Î¸¸ À¯ÁöÇÏ´Â ¼±ÅÃµµ °¡´É
+				// ë‚¨ì€ ëˆ„ì ë¶„ì€ ë²„ë¦¬ê±°ë‚˜(ì—¬ê¸°ì„œëŠ” ë²„ë¦¼) ë³´ê°„ìš©ìœ¼ë¡œë§Œ ìœ ì§€í•˜ëŠ” ì„ íƒë„ ê°€ëŠ¥
 				CTimeMgr::Get_Instance()->m_fAccumulator = 0.f;
 				break;
 			}
@@ -100,7 +100,7 @@ void CMainGame::Render()
 		m_dwTime = GetTickCount64();
 	}
 
-	HDC     hBackDC = CBmpMgr::Get_Instance()->Find_Image(L"Back");
+	HDC     hBackDC = CBmpMgr::Get_Instance()->Find_Image(L"LOGO");
 
 	CSceneMgr::Get_Instance()->Render(hBackDC);
 

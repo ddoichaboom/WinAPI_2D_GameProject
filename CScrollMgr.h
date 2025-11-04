@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Define.h"
 
@@ -23,7 +23,7 @@ private:
 	float		m_fStageWidth;
 
 public:
-	void		Set_StageWidth(float fWidth) { m_fStageWidth = fWidth; }	// ½ºÅ×ÀÌÁö ³Êºñ ¼³Á¤ ÇÔ¼ö Ãß°¡
+	void		Set_StageWidth(float fWidth) { m_fStageWidth = fWidth; }	// ìŠ¤í…Œì´ì§€ ë„ˆë¹„ ì„¤ì • í•¨ìˆ˜ ì¶”ê°€
 	float		Get_StageWidth() const { return m_fStageWidth; }
 	float		Get_RightBound() const { return WINCX - m_fStageWidth; }
 

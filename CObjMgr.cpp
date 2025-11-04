@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CObjMgr.h"
 #include "CCollisionMgr.h"
 #include "CScrollMgr.h"
@@ -87,7 +87,7 @@ CObj* CObjMgr::Get_Target(OBJID eID, CObj* pObj)
 	return pTarget;
 }
 
-// ÀÓ½Ã·Î ÇÃ·¹ÀÌ¾î Ã£¾Æ¼­ ¹İÈ¯ÇØÁÖ´Â ¿À¹ö·Îµå Å¸°Ù Ã¼Å© ÇÔ¼ö 
+// ì„ì‹œë¡œ í”Œë ˆì´ì–´ ì°¾ì•„ì„œ ë°˜í™˜í•´ì£¼ëŠ” ì˜¤ë²„ë¡œë“œ íƒ€ê²Ÿ ì²´í¬ í•¨ìˆ˜ 
 CObj* CObjMgr::Get_Target(OBJID eID)
 {
 	if (m_ObjList[eID].empty())
@@ -228,17 +228,17 @@ bool CObjMgr::Is_Culling(CObj* pObj)
 		return false;
 	
 	float fScrollX = CScrollMgr::Get_Instance()->Get_ScrollX();
-	float fBuffer = 400.f; // È­¸é °æ°è¿¡¼­ ¾à°£ÀÇ ¿©À¯ °ø°£ 
+	float fBuffer = 400.f; // í™”ë©´ ê²½ê³„ì—ì„œ ì•½ê°„ì˜ ì—¬ìœ  ê³µê°„ 
 
 	float fScreenX = pObj->Get_Info()->fX + fScrollX;
 	float fObjHalfSizeX = pObj->Get_Info()->fCX / 2.f;
 
 	if ((fScreenX < -fObjHalfSizeX - fBuffer) || (fScreenX > WINCX + fObjHalfSizeX + fBuffer))
 	{
-		return true;		// ÄÃ¸µ ´ë»ó
+		return true;		// ì»¬ë§ ëŒ€ìƒ
 	}
 
-	return false;		// ÄÃ¸µ ´ë»óÀÌ ¾Æ´Ô ( È­¸é¿¡ º¸ÀÓ )
+	return false;		// ì»¬ë§ ëŒ€ìƒì´ ì•„ë‹˜ ( í™”ë©´ì— ë³´ì„ )
 }
 
 void	CObjMgr::Cull_Left_Of(float WorldX)

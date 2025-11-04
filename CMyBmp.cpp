@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CMyBmp.h"
 
 using namespace Gdiplus;
@@ -6,7 +6,7 @@ using namespace Gdiplus;
 CMyBmp::CMyBmp() {}
 CMyBmp::~CMyBmp() { Release(); }
 
-// È®ÀåÀÚ ¼Ò¹®ÀÚ ºñ±³ À¯Æ¿
+// í™•ì¥ì ì†Œë¬¸ì ë¹„êµ ìœ í‹¸
 static bool EndsWith(const std::wstring& s, const std::wstring& suffix) {
     if (s.size() < suffix.size()) return false;
     auto a = s, b = suffix;
@@ -17,19 +17,19 @@ static bool EndsWith(const std::wstring& s, const std::wstring& suffix) {
 
 void CMyBmp::Load_Bmp(const TCHAR* pFilePath)
 {
-    Release(); // Àç·Îµù ´ëºñ
+    Release(); // ì¬ë¡œë”© ëŒ€ë¹„
 
-    // 1) ¸Ş¸ğ¸® DC ÁØºñ
+    // 1) ë©”ëª¨ë¦¬ DC ì¤€ë¹„
     HDC hScreen = GetDC(g_hWnd);
     m_hMemDC = CreateCompatibleDC(hScreen);
     ReleaseDC(g_hWnd, hScreen);
 
-    // ÆÄÀÏ È®ÀåÀÚ·Î PNG ¿©ºÎ ÆÇ´Ü
+    // íŒŒì¼ í™•ì¥ìë¡œ PNG ì—¬ë¶€ íŒë‹¨
     std::wstring path(pFilePath ? pFilePath : L"");
     bool isPng = EndsWith(path, L".png");
 
     if (!isPng) {
-        // ===== BMP °æ·Î (±âÁ¸) =====
+        // ===== BMP ê²½ë¡œ (ê¸°ì¡´) =====
         m_hBitmap = (HBITMAP)LoadImage(
             NULL,
             pFilePath,
@@ -38,13 +38,13 @@ void CMyBmp::Load_Bmp(const TCHAR* pFilePath)
             LR_LOADFROMFILE | LR_CREATEDIBSECTION
         );
         if (!m_hBitmap) {
-            // ·Îµå ½ÇÆĞ ½Ã ¾ÈÀüÀåÄ¡
+            // ë¡œë“œ ì‹¤íŒ¨ ì‹œ ì•ˆì „ì¥ì¹˜
             m_hOldBmp = nullptr;
             m_width = m_height = 0;
             return;
         }
 
-        // BMPÀÇ Å©±â ±¸ÇÏ±â
+        // BMPì˜ í¬ê¸° êµ¬í•˜ê¸°
         BITMAP bm = {};
         GetObject(m_hBitmap, sizeof(BITMAP), &bm);
         m_width = bm.bmWidth;
@@ -54,8 +54,8 @@ void CMyBmp::Load_Bmp(const TCHAR* pFilePath)
         return;
     }
 
-    // ===== PNG °æ·Î (GDI+) =====
-    // GDI+ Bitmap ·Îµå
+    // ===== PNG ê²½ë¡œ (GDI+) =====
+    // GDI+ Bitmap ë¡œë“œ
     Bitmap* png = Bitmap::FromFile(pFilePath, FALSE);
     if (!png || png->GetLastStatus() != Ok) {
         delete png;
@@ -68,7 +68,7 @@ void CMyBmp::Load_Bmp(const TCHAR* pFilePath)
     m_width = (int)png->GetWidth();
     m_height = (int)png->GetHeight();
 
-    // 32bpp ÇÁ¸®¸ÖÆ¼ÇÃ¶óÀÌµå ARGB DIBSection »ı¼º
+    // 32bpp í”„ë¦¬ë©€í‹°í”Œë¼ì´ë“œ ARGB DIBSection ìƒì„±
     BITMAPINFO bi = {};
     bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bi.bmiHeader.biWidth = m_width;
@@ -89,7 +89,7 @@ void CMyBmp::Load_Bmp(const TCHAR* pFilePath)
 
     m_hOldBmp = (HBITMAP)SelectObject(m_hMemDC, m_hBitmap);
 
-    // GDI+·Î ¸Ş¸ğ¸® DC¿¡ ±×¸®¸é ÀÚµ¿À¸·Î ÇÁ¸®¸ÖÆ¼ ARGB°¡ µÈ´Ù
+    // GDI+ë¡œ ë©”ëª¨ë¦¬ DCì— ê·¸ë¦¬ë©´ ìë™ìœ¼ë¡œ í”„ë¦¬ë©€í‹° ARGBê°€ ëœë‹¤
     {
         Graphics g(m_hMemDC);
         g.SetInterpolationMode(InterpolationModeHighQualityBicubic);

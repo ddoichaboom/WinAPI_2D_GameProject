@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CScore.h"
 #include "CDataMgr.h"
 #include "CBmpMgr.h"
@@ -56,12 +56,12 @@ void CScore::Render(HDC hDC)
 {
     BLENDFUNCTION bf = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 
-    // 1. Á¡¼ö ·»´õ¸µ ( Áß¾Ó Á¤·Ä )
+    // 1. ì ìˆ˜ ë Œë”ë§ ( ì¤‘ì•™ ì •ë ¬ )
     if (m_pScoreIconData && m_pNumberFontInfo && m_pCommaFontInfo)
     {
         float fScoreNumWidth = Get_Formatted_Number_Width(m_lScore);
         float fIconWidth = m_pScoreIconData->tInfo.fCX;
-        float fSpace = 10.f;                                // ¾ÆÀÌÄÜ°ú ¼ıÀÚ ÅØ½ºÆ® »çÀÌ ¿©À¯°ø°£
+        float fSpace = 10.f;                                // ì•„ì´ì½˜ê³¼ ìˆ«ì í…ìŠ¤íŠ¸ ì‚¬ì´ ì—¬ìœ ê³µê°„
         float fTotalWidth = fIconWidth + fSpace + fScoreNumWidth;
         float fStartX = (WINCX / 2.f) - (fTotalWidth / 2.f);
         float fScoreY = 100.f;
@@ -80,7 +80,7 @@ void CScore::Render(HDC hDC)
         Render_Number(hDC, m_lScore, fStartX + fIconWidth + fSpace, fScoreY);
 
     }
-    // 2. ÄÚÀÎ ·»´õ¸µ ( ÁÂÃø Á¤·Ä )
+    // 2. ì½”ì¸ ë Œë”ë§ ( ì¢Œì¸¡ ì •ë ¬ )
     if (m_pCoinIconData && m_pNumberFontInfo && m_pCommaFontInfo)
     {
         float fCoinIconX = 50.f;
@@ -168,7 +168,7 @@ void CScore::Render_Number(HDC hDC, long number, float fStartX, float fStartY)
         }
         else
         {
-            int iNum = c - '0';     // ¹®ÀÚ 0À» ¼ıÀÚ 0À¸·Î , ¹®ÀÚ '1'À» ¼ıÀÚ 1·Î º¯È¯
+            int iNum = c - '0';     // ë¬¸ì 0ì„ ìˆ«ì 0ìœ¼ë¡œ , ë¬¸ì '1'ì„ ìˆ«ì 1ë¡œ ë³€í™˜
             AlphaBlend(hDC,
                 (int)fCurrentX, (int)(fStartY - fNumHeight / 2.f),
                 (int)fNumWidth, (int)fNumHeight,

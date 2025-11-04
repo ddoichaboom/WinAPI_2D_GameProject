@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CObj.h"
 
@@ -6,8 +6,8 @@ class CObjMgr
 {
 private:
 	CObjMgr();
-	CObjMgr(const CObjMgr& rhs) = delete;		// »èÁ¦
-	CObjMgr& operator=(CObjMgr& rObj) = delete;	// »èÁ¦
+	CObjMgr(const CObjMgr& rhs) = delete;		// ì‚­ì œ
+	CObjMgr& operator=(CObjMgr& rObj) = delete;	// ì‚­ì œ
 	~CObjMgr();
 
 public:
@@ -36,7 +36,7 @@ public:
 private:
 	list<CObj*>		m_ObjList[OBJ_END];
 	list<CObj*>		m_RenderList[RENDER_END];
-	bool			Is_Culling(CObj* pObj);		// È­¸é ÄÃ¸µÀ» À§ÇÑ ÇÔ¼ö ¼±¾ğ Ãß°¡
+	bool			Is_Culling(CObj* pObj);		// í™”ë©´ ì»¬ë§ì„ ìœ„í•œ í•¨ìˆ˜ ì„ ì–¸ ì¶”ê°€
 
 public:
 	static CObjMgr* Get_Instance()

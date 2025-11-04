@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CItem.h"
 
 class CEnergy :
@@ -13,6 +13,6 @@ public:
     void    Apply_Effect(CPlayer* pPlayer) override;
 
 private:
-    float   m_fHealAmount;
+    ITEM_TYPE       m_eItemType;
 };
 

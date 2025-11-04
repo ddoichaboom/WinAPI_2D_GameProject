@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CDataMgr.h"
 #include "CBmpMgr.h"
 
@@ -44,14 +44,14 @@ void CDataMgr::Load_Object_Data()
 {
 	IMAGEDATA* pInfo = nullptr;
 
-#pragma region °øÅë ¸ÞÅ¸ µ¥ÀÌÅÍ 
+#pragma region ê³µí†µ ë©”íƒ€ ë°ì´í„° 
 
-	pInfo = new IMAGEDATA(9095.f, 720.f);
+	pInfo = new IMAGEDATA(1819.f, 720.f);
 	pInfo->pFrameKey = L"STAGE01";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Stage01.bmp";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(9800.f, 720.f);
+	pInfo = new IMAGEDATA(1960.f, 720.f);
 	pInfo->pFrameKey = L"STAGE02";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Stage02.bmp";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
@@ -333,8 +333,8 @@ void CDataMgr::Load_Object_Data()
 
 #pragma endregion
 
-#pragma region STAGE01 ¸ÞÅ¸µ¥ÀÌÅÍ 
-	// (Á¾·ù) ÇÃ·§Æû - 2°¡Áö, Àå¾Ö¹° 6°¡Áö 
+#pragma region STAGE01 ë©”íƒ€ë°ì´í„° 
+	// (ì¢…ë¥˜) í”Œëž«í¼ - 2ê°€ì§€, ìž¥ì• ë¬¼ 6ê°€ì§€ 
 	pInfo = new IMAGEDATA(PLATFORM, 124.f, 140.f, 124.f, 140.f);
 	pInfo->pFrameKey = L"STAGE01_PLATFORM01";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Platform/Platform01.png";
@@ -383,8 +383,8 @@ void CDataMgr::Load_Object_Data()
 
 #pragma endregion
 
-#pragma region STAGE02 - ¸ÞÅ¸µ¥ÀÌÅÍ
-	// (Á¾·ù) ÇÃ·§Æû - 2°¡Áö, Àå¾Ö¹° 5°¡Áö 
+#pragma region STAGE02 - ë©”íƒ€ë°ì´í„°
+	// (ì¢…ë¥˜) í”Œëž«í¼ - 2ê°€ì§€, ìž¥ì• ë¬¼ 5ê°€ì§€ 
 	pInfo = new IMAGEDATA(PLATFORM, 124.f, 140.f, 124.f, 140.f);
 	pInfo->pFrameKey = L"STAGE02_PLATFORM01";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Platform/Platform01.png";

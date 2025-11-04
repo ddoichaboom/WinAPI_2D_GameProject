@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "pch.h"
 #include "Define.h"
@@ -50,9 +50,9 @@ private:
 private:
 	static CSoundMgr* m_pInstance;
 
-	FMOD::System* m_pSystem;								// FMODÀÇ ÇÙ½É ½Ã½ºÅÛ °´Ã¼
-	FMOD::Channel* m_pChannelArr[MAX_CHANNEL];				// Ã¤³Î : »ç¿îµå°¡ Àç»ıµÇ´Â Åë·Î
+	FMOD::System* m_pSystem;								// FMODì˜ í•µì‹¬ ì‹œìŠ¤í…œ ê°ì²´
+	FMOD::Channel* m_pChannelArr[MAX_CHANNEL];				// ì±„ë„ : ì‚¬ìš´ë“œê°€ ì¬ìƒë˜ëŠ” í†µë¡œ
 
-	map<wstring, FMOD::Sound*> m_mapSound;		// ·ÎµåµÈ »ç¿îµåµéÀ» °ü¸®ÇÏ´Â ¸Ê (Key : ÆÄÀÏ °æ·Î)
+	map<wstring, FMOD::Sound*> m_mapSound;		// ë¡œë“œëœ ì‚¬ìš´ë“œë“¤ì„ ê´€ë¦¬í•˜ëŠ” ë§µ (Key : íŒŒì¼ ê²½ë¡œ)
 	
 };

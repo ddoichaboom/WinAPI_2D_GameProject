@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CBoost.h"
 
 CBoost::CBoost()
@@ -19,7 +19,7 @@ void CBoost::Initialize()
 	m_tFrame.frameElapsedSec = 0.0f;
 	m_tFrame.frameIntervalSec = 0.50f;
 	m_tFrame.stateLockRemainSec = 0.00f;
-	m_tFrame.bLoop = true;    // ·çÇÁ
+	m_tFrame.bLoop = true;    // ë£¨í”„
 }
 
 void CBoost::Apply_Effect(CPlayer* pPlayer)

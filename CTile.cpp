@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CTile.h"
 #include "CBmpMgr.h"
 #include "CScrollMgr.h"

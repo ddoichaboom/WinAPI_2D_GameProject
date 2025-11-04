@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Define.h"
 
@@ -10,8 +10,8 @@ private:
 
 public:
 	bool		Key_Pressing(int iKey);
-	bool		Key_Up(int iKey);	// ´­·¶´Ù°¡ ¶ÂÀ» ¶§
-	bool		Key_Down(int iKey); // ´©¸£ÀÚ ¸¶ÀÚ
+	bool		Key_Up(int iKey);	// ëˆŒë €ë‹¤ê°€ ë—ì„ ë•Œ
+	bool		Key_Down(int iKey); // ëˆ„ë¥´ì ë§ˆì
 
 public:
 	void		Update();

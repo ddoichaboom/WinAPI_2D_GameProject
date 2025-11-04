@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CTile.h"
 #include "TcharIO.h"
@@ -15,7 +15,7 @@ public:
 	void	Late_Update();
 	void	Render(HDC hDC);
 	void	Release();
-	void	Delete_Tile(POINT pt);		// Å¸ÀÏ »èÁ¦ ÇÔ¼ö 
+	void	Delete_Tile(POINT pt);		// íƒ€ì¼ ì‚­ì œ í•¨ìˆ˜ 
 
 public:
 	void						Add_Tile(float fX, float fY, const TCHAR* pFrameKey);

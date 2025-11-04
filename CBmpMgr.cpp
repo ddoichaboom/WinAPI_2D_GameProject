@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CBmpMgr.h"
 
 CBmpMgr* CBmpMgr::m_pInstance = nullptr;

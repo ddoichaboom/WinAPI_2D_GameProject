@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CSoundMgr.h"
 #include <locale>
 #include <codecvt>
@@ -58,17 +58,17 @@ void CSoundMgr::PlaySound(const wstring& strSoundKey, SOUND_CHANNEL eChannel, fl
 		OutputDebugString((L"PlaySound called for BGM: " + strSoundKey + L"\\n").c_str());
 	}
 
-	// 1. 사운드가 로드되어 있는지 확인하고, 없으면 로드 
+	// 1. ?ъ슫?쒓? 濡쒕뱶?섏뼱 ?덈뒗吏 ?뺤씤?섍퀬, ?놁쑝硫?濡쒕뱶 
 	LoadSound(strSoundKey);
 
 	auto iter = m_mapSound.find(strSoundKey);
 	if (iter == m_mapSound.end())
 		return;
 
-	// 2. 사운드 재생
+	// 2. ?ъ슫???ъ깮
 	m_pSystem->playSound(iter->second, nullptr, false, &m_pChannelArr[eChannel]);
 
-	// 3. 볼륨 설정
+	// 3. 蹂쇰ⅷ ?ㅼ젙
 	if (m_pChannelArr[eChannel])
 		m_pChannelArr[eChannel]->setVolume(fVolume);
 }
@@ -109,14 +109,14 @@ void CSoundMgr::SetChannelVolume(SOUND_CHANNEL eChannel, float fVolume)
 
 void CSoundMgr::LoadSound(const wstring& strSoundKey)
 {
-	// 이미 로드된 사운드인지 확인
+	// ?대? 濡쒕뱶???ъ슫?쒖씤吏 ?뺤씤
 	if (m_mapSound.find(strSoundKey) != m_mapSound.end())
 		return;
 
 	string strPath = WstringToString(strSoundKey);
 	FMOD::Sound* pSound = nullptr;
 
-	// BGM 채널이면 루프, 아니면 기본 모드로 로드 
+	// BGM 梨꾨꼸?대㈃ 猷⑦봽, ?꾨땲硫?湲곕낯 紐⑤뱶濡?濡쒕뱶 
 	FMOD_MODE eMode = (strSoundKey.find(L"BGM") != wstring::npos) ? FMOD_LOOP_NORMAL : FMOD_DEFAULT;
 
 	FMOD_RESULT result = m_pSystem->createSound(strPath.c_str(), eMode, nullptr, &pSound);

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CScrollMgr.h"
 
 CScrollMgr* CScrollMgr::m_pInstance = nullptr;
@@ -28,7 +28,7 @@ void CScrollMgr::Scroll_Lock()
 	//if (WINCY - 720 > m_fScrollY)
 	//	m_fScrollY = WINCY - 720;
 
-    const float minX = WINCX - m_fStageWidth; // ¿À¸¥ÂÊ ³¡(°¡Àå ¿ÞÂÊ ½ºÅ©·Ñ °ª)
+    const float minX = WINCX - m_fStageWidth; // ì˜¤ë¥¸ìª½ ë(ê°€ìž¥ ì™¼ìª½ ìŠ¤í¬ë¡¤ ê°’)
     if (m_fScrollX > 0.f)
         m_fScrollX = 0.f;
     if (m_fScrollX < minX)
@@ -40,8 +40,8 @@ void CScrollMgr::Scroll_Lock()
     if (m_fScrollY < minY)
         m_fScrollY = minY;
 
-    // BitBlt´Â Á¤¼ö ±âÁØÀ¸·Î ÇÈ¼¿À» º¹»çÇÏ¹Ç·Î, ½ºÅ©·ÑÀ» Á¤¼ö¿¡ ½º³ÀÇÏ¸é
-    // ¼¼±×¸ÕÆ® °æ°è 'Çì¾î¶óÀÎ'ÀÌ »ç¶óÁü
+    // BitBltëŠ” ì •ìˆ˜ ê¸°ì¤€ìœ¼ë¡œ í”½ì…€ì„ ë³µì‚¬í•˜ë¯€ë¡œ, ìŠ¤í¬ë¡¤ì„ ì •ìˆ˜ì— ìŠ¤ëƒ…í•˜ë©´
+    // ì„¸ê·¸ë¨¼íŠ¸ ê²½ê³„ 'í—¤ì–´ë¼ì¸'ì´ ì‚¬ë¼ì§
     m_fScrollX = floorf(m_fScrollX + 0.5f);
     m_fScrollY = floorf(m_fScrollY + 0.5f);
 
