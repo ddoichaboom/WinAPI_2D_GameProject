@@ -24,5 +24,5 @@ void CBoost::Initialize()
 
 void CBoost::Apply_Effect(CPlayer* pPlayer)
 {
-	pPlayer->Set_Boost_Mode(2.0f);
+	pPlayer->Activate_Boost(BOOST_SPEED, BOOST_DURATION);		// 450.f, 3.0f
 }

@@ -3,7 +3,6 @@
 
 CUi::CUi()
 {
-	m_eRender = UI;
 	m_fSpeed = 0.f;
 	m_fVx = 0.f;
 	m_fVy = 0.f;

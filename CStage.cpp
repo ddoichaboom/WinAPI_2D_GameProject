@@ -20,6 +20,7 @@
 #include "Factory.h"
 #include "CBonusTime.h"
 #include "CSoundMgr.h"
+#include "CEffectMgr.h"
 
 
 CStage::CStage()
@@ -54,7 +55,7 @@ void CStage::Initialize()
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CHpBar>::Create_Obj()));
 	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CScore>::Create_Obj()));
 
-	//	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CBonusTime>::Create_Obj()));
+	CUiMgr::Get_Instance()->Add_UI(static_cast<CUi*>(CAbstractFactory<CBonusTime>::Create_Obj()));
 
 }
 
@@ -76,6 +77,8 @@ void CStage::Update(float fDeltaTime)
 	CObjMgr::Get_Instance()->Update(fDeltaTime);
 	CUiMgr::Get_Instance()->Update(fDeltaTime);
 
+	CEffectMgr::Get_Instance()->Update(fDeltaTime);
+
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, PLATFORM, CObjMgr::RECT);
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, JELLY, CObjMgr::COLLECT_JELLY);
 	CObjMgr::Get_Instance()->Check_Collision(PLAYER, OBSTACLE, CObjMgr::OBSTACLE);
@@ -85,7 +88,7 @@ void CStage::Update(float fDeltaTime)
 	if (pPlayer)
 	{
 		const float px = pPlayer->Get_Info()->fX;
-		const float preloadThreshold = 500.f;				 
+		const float preloadThreshold = m_fBgTileWidth * 0.9f;				 
 
 		if (px > (m_fWorldEndX - preloadThreshold))
 		{
@@ -102,6 +105,8 @@ void CStage::Late_Update(float fDeltaTime)
 
 	CObjMgr::Get_Instance()->Late_Update(fDeltaTime);
 
+	CEffectMgr::Get_Instance()->Late_Update(fDeltaTime);
+
 	CScrollMgr::Get_Instance()->Scroll_Lock();
 }
 
@@ -113,6 +118,9 @@ void CStage::Render(HDC hDC)
 	Render_Background_Tiled(hDC);
 
 	CObjMgr::Get_Instance()->Render(hDC);
+
+	CEffectMgr::Get_Instance()->Render(hDC);
+
 	CUiMgr::Get_Instance()->Render(hDC);
 
 
@@ -133,6 +141,8 @@ void CStage::Render(HDC hDC)
 void CStage::Release()
 {
 	CObjMgr::Get_Instance()->Delete_ID(PLAYER);
+
+	CEffectMgr::Get_Instance()->Release();
 }
 
 void CStage::Render_Background_Tiled(HDC hDC)
@@ -242,6 +252,14 @@ void CStage::Switch_Stage(int nextStageID)
 	CObjMgr::Get_Instance()->Delete_ID(ITEM);
 
 	Initialize_Stage_Config(nextStageID);
+
+	CObj* pPlayer = CObjMgr::Get_Instance()->Get_Target(PLAYER);
+	if (pPlayer)
+	{
+		pPlayer->Set_Pos(400.f, 398.f);
+		pPlayer->Update_Rect(PLAYER);
+	}
+	CScrollMgr::Get_Instance()->Reset_Scroll();
 
 	m_fWorldEndX = 0.f;
 

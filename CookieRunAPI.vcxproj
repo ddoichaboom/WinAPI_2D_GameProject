@@ -145,7 +145,12 @@ xcopy /y /d "$(SolutionDir)FMOD_SDK\studio\lib\x64\fmodstudio.dll" "$(TargetDir)
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CAbstractFactory.h" />
+    <ClInclude Include="CBanner.h" />
     <ClInclude Include="CBonusTime.h" />
+    <ClInclude Include="CChangeJelly.h" />
+    <ClInclude Include="CCoin.h" />
+    <ClInclude Include="CEffect.h" />
+    <ClInclude Include="CEffectMgr.h" />
     <ClInclude Include="CGiant.h" />
     <ClInclude Include="CBmpMgr.h" />
     <ClInclude Include="CBoost.h" />
@@ -189,7 +194,12 @@ xcopy /y /d "$(SolutionDir)FMOD_SDK\studio\lib\x64\fmodstudio.dll" "$(TargetDir)
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CBanner.cpp" />
     <ClCompile Include="CBonusTime.cpp" />
+    <ClCompile Include="CChangeJelly.cpp" />
+    <ClCompile Include="CCoin.cpp" />
+    <ClCompile Include="CEffect.cpp" />
+    <ClCompile Include="CEffectMgr.cpp" />
     <ClCompile Include="CGiant.cpp" />
     <ClCompile Include="CBmpMgr.cpp" />
     <ClCompile Include="CBoost.cpp" />

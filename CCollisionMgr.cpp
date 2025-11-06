@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "Define.h"
 #include "CCollisionMgr.h"
 #include "CTile.h"
 #include "CPlayer.h"
@@ -7,6 +8,10 @@
 #include "CEnergy.h"
 #include "CBoost.h"
 #include "CGiant.h"
+#include "CSoundMgr.h"
+#include "CObjMgr.h"
+#include "Factory.h"
+#include "CEffectMgr.h"
 
 void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 {
@@ -88,33 +93,7 @@ void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 	}
 }
 
-void CCollisionMgr::Collision_Rect(list<CObj*> Dst, vector<CObj*> Src)
-{
-	RECT	rc{};
-	float	fVy(0.f);
 
-	for (auto& Dst : Dst)
-	{
-		for (auto& Src : Src)
-		{
-			fVy = Dst->Get_Y_Axis_Speed();
-
-			if ((Dst->Get_Info()->fHitY <= Src->Get_Info()->fHitY) && (fVy >= 0.f))
-			{
-				if (IntersectRect(&rc, Dst->Get_HitRect(), Src->Get_HitRect()))
-				{
-					Dst->Set_OnGround(true);
-					Dst->Set_Y_Axis_Speed(0.f);
-					Dst->Set_PosY(-(rc.bottom - rc.top));
-					return;
-				}
-				else
-					continue;
-			}
-			
-		}
-	}
-}
 
 
 
@@ -223,9 +202,46 @@ void CCollisionMgr::Collision_Collect(list<CObj*>& Dst, list<CObj*>& Src)
 				RECT rc{};
 				if (IntersectRect(&rc, pPlayer->Get_HitRect(), pSrc->Get_HitRect()))
 				{
-					JELLYINFO* pJellyInfo = static_cast<CJelly*>(pSrc)->Get_JellyInfo();
+					CJelly* pJelly = static_cast<CJelly*>(pSrc);
+					JELLYINFO* pJellyInfo = pJelly->Get_JellyInfo();
+
 					pPlayer->Add_Score(pJellyInfo->iScore);
 					pPlayer->Add_Coin(pJellyInfo->iCoin);
+
+					wchar_t alphabet = pJelly->Get_Alphabet_Char();
+					if (alphabet != L'\0')
+					{
+						pPlayer->Collect_Alphabet(alphabet);
+					}
+
+					// 충돌 박스 중심 계산
+					float fEffectX = pSrc->Get_Info()->fHitX;
+					float fEffectY = pSrc->Get_Info()->fHitY;
+
+					// 젤리 타입별 이펙트
+					const wchar_t* effectKey = nullptr;
+					if (wcsstr(pJelly->Get_FrameKey(), L"BEAR_BIG"))
+						effectKey = L"EFFECT_GET_BEARJELLY_BIG";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"BEAR_PINK"))
+						effectKey = L"EFFECT_GET_BEARJELLY_PINK";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"BEAR_YELLOW"))
+						effectKey = L"EFFECT_GET_BEARJELLY_YELLOW";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN1_BIG"))
+						effectKey = L"EFFECT_GET_COIN_BIG";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN2_BIG"))
+						effectKey = L"EFFECT_GET_COIN_BIG";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN2"))
+						effectKey = L"EFFECT_GET_COIN_GOLD";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN1"))
+						effectKey = L"EFFECT_GET_COIN_SILVER";
+					else if (wcsstr(pJelly->Get_FrameKey(), L"JELLYBEAN"))
+						effectKey = L"EFFECT_GET_JELLYBEAN";
+
+					if (effectKey)
+					{
+						CEffectMgr::Get_Instance()->Add_Effect(static_cast<CEffect*>(Create_Effect(fEffectX, fEffectY, effectKey)));
+					}
+
 					pSrc->Set_Dead();
 				}
 			}
@@ -233,23 +249,32 @@ void CCollisionMgr::Collision_Collect(list<CObj*>& Dst, list<CObj*>& Src)
 	}
 }
 
+// 플레이어 - 장애물 충돌 처리 ( 일반 상태 / 부스트 / 거대화 구분 )
 bool CCollisionMgr::Collision_Obstacle(list<CObj*>& Dst, list<CObj*>& Src)
 {
-	for (auto& pDst : Dst)
+
+	if (!Dst.empty())
 	{
-		if (pDst->Get_Dead())
-			continue;
-
-		for (auto& pSrc : Src)
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(Dst.front());
+		if (pPlayer)
 		{
-			if (pSrc->Get_Dead())
-				continue;
-
-			RECT rc{};
-
-			if (IntersectRect(&rc, pDst->Get_HitRect(), pSrc->Get_HitRect()))
+			for (auto& pSrc : Src)
 			{
-				return true;
+				if (pSrc->Get_Dead())
+					continue;
+				
+				RECT rc{};
+				
+				if (IntersectRect(&rc, pPlayer->Get_HitRect(), pSrc->Get_HitRect()))
+				{
+					if (pPlayer->Is_Player_Can_Crash_Obstacle())
+					{
+						pSrc->Set_Dead();			// 현재는 Dead 처리 
+						return true;
+					}
+					else
+						return true;
+				}
 			}
 		}
 	}
@@ -277,6 +302,7 @@ void CCollisionMgr::Collision_Item(list<CObj*>& Dst, list<CObj*>& Src)
 			if (pItem)
 			{
 				pItem->Apply_Effect(pPlayer);
+				
 			}
 			pItemObj->Set_Dead();
 		}

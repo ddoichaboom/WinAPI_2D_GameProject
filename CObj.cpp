@@ -3,7 +3,8 @@
 
 CObj::CObj()
 	: m_fSpeed(0.f), m_bDead(false), m_bOnGround(true),
-	m_fJumpSpeed(0.f), m_fVy(0.f), m_fVx(0.f), m_bPrevOnGround(false)
+	m_fJumpSpeed(0.f), m_fVy(0.f), m_fVx(0.f), m_bPrevOnGround(false),
+	m_fAngle(0.f), m_fDistance(0.f), m_pTarget(nullptr)
 {
 	ZeroMemory(&m_tInfo, sizeof(INFO));
 	ZeroMemory(&m_tRect, sizeof(RECT));

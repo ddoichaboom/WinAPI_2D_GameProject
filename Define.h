@@ -20,6 +20,13 @@
 
 #define		JUMP_APEX_TIME		0.35f;				// 최고점 도달 시간 
 
+const	float	MAGNET_RADIUS				= 300.0f;
+const	float	MAGNET_DURATION				= 5.0f;
+const	float	BOOST_SPEED					= 450.f;
+const	float	BOOST_DURATION				= 3.0f;
+const	float	CHANGE_JELLY_DURATION		= 2.0f;
+const	float	CHANGE_OBSTACLE_DURATON		= 2.0f;
+
 
 extern HWND g_hWnd;
 
@@ -65,7 +72,6 @@ enum OBJID
 	OBSTACLE,
 	JELLY,
 	ITEM,
-	PET,
 	OBJ_END
 };
 
@@ -74,12 +80,21 @@ enum OBJID
 // LOGO 씬 - Intro / Lobby 씬 - MainBGM / 스테이지 씬 - STAGE01, STAGE02 ... 각 BGM / 
 // 플레이어 점프, 슬라이드, 오브젝트와의 상호작용 사운드 등 존재 
 enum SOUND_CHANNEL 
-{ SOUND_INTRO, SOUND_BGM, SOUND_EFFECT, SOUND_PLAYER_JUMP, SOUND_PLAYER_SLIDE, SOUND_LAND, SOUND_UI, MAX_CHANNEL };
+{ 
+	SOUND_INTRO,
+	SOUND_BGM,
+	SOUND_EFFECT,
+	SOUND_PLAYER_JUMP,
+	SOUND_PLAYER_SLIDE,
+	SOUND_LAND,
+	SOUND_UI,
+	MAX_CHANNEL 
+};
 
 
 enum RENDERID
 {
-	BACKGROUND, TILE, GAMEOBJECT, EFFECT, UI, RENDER_END
+	BACKGROUND, TILE, GAMEOBJECT, RENDER_END
 };
 
 
@@ -101,15 +116,7 @@ typedef struct tagFrame
 
 }FRAME;
 
-typedef struct tagLinePoint
-{
-	tagLinePoint() { ZeroMemory(this, sizeof(tagLinePoint)); }
-	tagLinePoint(float _fX, float _fY) : fX(_fX), fY(_fY) {}
 
-	float	fX;
-	float	fY;
-
-}LINEPOINT;
 
 enum BUTTON_TYPE
 {
@@ -156,7 +163,7 @@ enum ITEM_TYPE
 	ITEM_BIGGER,
 	ITEM_MAGNET,
 	ITEM_COIN,
-	ITEM_JELLY,
+	ITEM_CHANGE_JELLY,
 	ITEM_FEVER,
 	ITEM_FEVER_BIG,
 	IT_END
@@ -251,4 +258,24 @@ struct STAGE_CONFIG
 	wstring sndBgmPath;
 	vector<wstring> chunkPaths;
 	int currentChunkIndex;
+};
+
+enum EFFECT_TYPE
+{
+	// 수집 이펙트
+	EFFECT_GET_JELLYBEAN,
+	EFFECT_GET_BEARJELLY_PINK,
+	EFFECT_GET_BEARJELLY_YELLOW,
+	EFFECT_GET_BEARJELLY_BIG,
+	EFFECT_COIN_SILVER,
+	EFFECT_COIN_GOLD,
+	EFFECT_COIN_BIG,
+
+	// 아이템 획득 이펙트
+	EFFECT_ITEM_BOOST,
+	EFFECT_ITEM_MAGNET,
+	EFFECT_ITEM_COIN,
+	EFFECT_ITEM_CHANGEJELLY,
+
+	EFFECT_END
 };

@@ -7,6 +7,10 @@
 #include "CCollisionMgr.h"
 #include "CDataMgr.h"
 #include "CSoundMgr.h"
+#include "CEffect.h"
+#include "CEffectMgr.h"
+#include "CAbstractFactory.h"
+#include "Factory.h"
 
 
 CPlayer::CPlayer()
@@ -17,8 +21,12 @@ CPlayer::CPlayer()
     m_fDecelerationTime(0.f), m_bDecelerated(false),
     m_bBlinkMode(false), m_fBoostTime(0.f), m_bBoostMode(false),
     m_fTargetScale(1.f), m_fGiantTime(0.f),
-    m_fCurrentScale(1.f), m_fScaleSpeed(2.f), m_eScaleState(IDLE), 
-    m_bGiantMode(false), m_strJumpSoundPath(L""), m_strSlideSoundPath(L"")
+    m_fCurrentScale(1.f), m_fScaleSpeed(2.f), m_eScaleState(IDLE),
+    m_bGiantMode(false), m_strJumpSoundPath(L""), m_strSlideSoundPath(L""),
+    m_bMagnetMode(false), m_fMagnetTime(0.f), m_fMagnetRadius(0.f),
+    m_fBoostSpeed(0.f), m_bChangeJellyMode(false), m_bChangeObstacleToCoinMode(false),
+    m_fChangeJellyTime(0.f), m_fChangeObstacleTime(0.f), m_pMagnetEffect(nullptr),
+    m_fBoostEffectTimer(0.f)
 {
     ZeroMemory(&m_tPlayerInfo, sizeof(PLAYERINFO));
     ZeroMemory(&m_tRenderInfo, sizeof(INFO));
@@ -56,7 +64,6 @@ void CPlayer::Initialize()
     m_strSlideSoundPath = L"./Sound/Effect/";
     m_strSlideSoundPath += Get_FrameKey();
     m_strSlideSoundPath += L"_Slide.wav";
-
 
 
 }
@@ -245,7 +252,6 @@ void CPlayer::Release()
 {
 
 }
-
 
 
 // TODO : 부스트모드 true일 때 타일 - 1층 플랫폼의 HitRect.top을 기준점으로 안떨어지게 설정해야함 
@@ -569,7 +575,6 @@ void    CPlayer::State_Check(float deltaTime)
 
     if (bLanded && ((m_eCurMotion == FALLING) || (m_eCurMotion == JUMP)))
     {
-        
         if (m_bGiantMode)
             CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Giant_Land.wav", SOUND_LAND, 0.8f);
         m_eCurMotion = LANDING;
@@ -652,16 +657,26 @@ void   CPlayer::Time_Check(float deltaTime)
     if (m_bBoostMode)
     {
         m_fBoostTime -= deltaTime;
+        m_fBoostEffectTimer += deltaTime;
+
+        if (m_fBoostEffectTimer >= 0.1f)        // 1초에 10개
+        {
+            CEffectMgr::Get_Instance()->Add_Effect(
+                static_cast<CEffect*>(Create_Effect(m_tInfo.fHitX, m_tInfo.fHitY, L"EFFECT_ITEM_BOOST")));
+            m_fBoostEffectTimer = 0.f;
+        }
+
 
         if (m_fBoostTime > 0.f)
         {
-            m_fVx = m_fSpeed + 400.f;
+            m_fVx = m_fSpeed + m_fBoostSpeed;
         }
         else
         {
             m_bBoostMode = false;
             m_fVx = m_fSpeed;
             m_fBoostTime = 0.f;
+            m_fBoostEffectTimer = 0.f;
         }
     }
 
@@ -677,6 +692,73 @@ void   CPlayer::Time_Check(float deltaTime)
             m_fVx = m_fSpeed;
         }
     }
+
+    if (m_bMagnetMode)
+    {
+        m_fMagnetTime -= deltaTime;
+
+        if (!m_pMagnetEffect)
+        {
+            m_pMagnetEffect = static_cast<CEffect*>(
+                Create_Effect(m_tInfo.fHitX, m_tInfo.fHitY, L"EFFECT_ITEM_MAGNET"));
+            CEffectMgr::Get_Instance()->Add_Effect(m_pMagnetEffect);
+        }
+        else
+        {
+            m_pMagnetEffect->Set_Pos(m_tInfo.fHitX, m_tInfo.fHitY);
+        }
+
+        if (m_fMagnetTime <= 0.f)
+        {
+            m_bMagnetMode = false;
+            m_fMagnetTime = 0.f;
+            m_fMagnetRadius = 0.f;
+
+            if (m_pMagnetEffect)
+            {
+                m_pMagnetEffect->Set_Dead();
+                m_pMagnetEffect = nullptr;
+            }
+        }
+    }
+
+    if (m_bChangeJellyMode)
+    {
+        m_fChangeJellyTime -= deltaTime;
+
+        if (m_fChangeJellyTime <= 0.f)
+        {
+            m_bChangeJellyMode = false;
+            m_fChangeJellyTime = 0.f;
+        }
+    }
+
+    if (m_bChangeObstacleToCoinMode)
+    {
+        m_fChangeObstacleTime -= deltaTime;
+
+        if (m_fChangeObstacleTime <= 0.f)
+        {
+            m_bChangeObstacleToCoinMode = false;
+            m_fChangeObstacleTime = 0.f;
+        }
+    }
+}
+
+void    CPlayer::Activate_Boost(float fSpeed, float fDuration)
+{
+    if (m_bBoostMode)
+    {
+        m_fBoostTime += fDuration;
+        return;
+    }
+    else
+    {
+        m_bBoostMode = true;
+        m_fBoostTime = fDuration;
+        m_fBoostSpeed = fSpeed;
+        return;
+    }
 }
 
 void    CPlayer::Activate_Giant(float fTargetScale, float fDuration)
@@ -687,9 +769,68 @@ void    CPlayer::Activate_Giant(float fTargetScale, float fDuration)
         m_eScaleState = SCALE_STATE::SCALING_UP;
         m_fTargetScale = fTargetScale;
         m_fGiantTime = fDuration;
+
+        CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Giant.mp3", SOUND_EFFECT, 0.8f);
     }
     else if (m_eScaleState == SCALE_STATE::GIANT)
     {
         m_fGiantTime += fDuration;
     }
+}
+
+void    CPlayer::Activate_Magnet(float fRadius, float fDuration)
+{
+    if (m_bMagnetMode)
+    {
+        // 이미 자석 상태라면 지속 시간만 증가
+        m_fMagnetTime += fDuration;
+        return;
+    }
+    else
+    {
+        m_bMagnetMode = true;
+        m_fMagnetRadius = fRadius;
+        m_fMagnetTime = fDuration;
+
+        return;
+    }
+}
+
+void CPlayer::Activate_Change_Jelly(float fDuration)
+{
+    if (m_bChangeJellyMode)
+        m_fChangeJellyTime += fDuration;
+    else
+    {
+        m_bChangeJellyMode = true;
+        m_fChangeJellyTime = fDuration;
+    }
+}
+
+void CPlayer::Activate_Change_Obstacle_To_Coin(float fDuration)
+{
+    if (m_bChangeObstacleToCoinMode)
+        m_fChangeObstacleTime += fDuration;
+    else
+    {
+        m_bChangeObstacleToCoinMode = true;
+        m_fChangeObstacleTime = fDuration;
+    }
+}
+
+void CPlayer::Collect_Alphabet(wchar_t alphabet)
+{
+    if (alphabet == L'B' || alphabet == L'O' || alphabet == L'N' ||
+        alphabet == L'U' || alphabet == L'S' || alphabet == L'T' ||
+        alphabet == L'I' || alphabet == L'M' || alphabet == L'E')
+    {
+        m_mapBonusTimeAlphabet[alphabet] = true;
+    }
+}
+
+bool CPlayer::Has_Alphabet(wchar_t alphabet) const
+{
+    auto it = m_mapBonusTimeAlphabet.find(alphabet);
+    return it != m_mapBonusTimeAlphabet.end() && it->second;
+
 }

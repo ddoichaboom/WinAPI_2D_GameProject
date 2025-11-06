@@ -51,6 +51,8 @@ public:
 	void			Set_Dead() { m_bDead = true; }
 	bool			Get_Dead() { return m_bDead; }
 	const TCHAR*	Get_FrameKey() const { return m_pFrameKey.c_str(); }
+	void			Set_Angle(float fAngle) { m_fAngle = fAngle; }
+
 
 	void			Set_FrameKey(const TCHAR* key) { m_pFrameKey = key ? key : TEXT(""); }
 	void			Set_Button_Type(BUTTON_TYPE eButtonType) { m_eButtonType = eButtonType; }
@@ -71,6 +73,11 @@ protected:
 	FRAME			m_tFrame;
 	RENDERID		m_eRender;
 	BUTTON_TYPE		m_eButtonType;
+
+	float			m_fDistance;
+	float			m_fAngle;
+	CObj*			m_pTarget;
+
 
 
 

@@ -14,6 +14,12 @@ public:
     void Render(HDC hDC) override;
     void Release() override;
 
+public:
+    void        Set_Frame();
+
+private:
+    bool        m_bConverted;
+
 
 
 };

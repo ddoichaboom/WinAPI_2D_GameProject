@@ -21,6 +21,7 @@ public:
 
 	list<CObj*>&	Get_ObjList(OBJID eID) { return m_ObjList[eID]; };
 	void			Cull_Left_Of(float WorldX);
+
 	
 public:
 	void	Add_Object(OBJID eID, CObj* pObj);

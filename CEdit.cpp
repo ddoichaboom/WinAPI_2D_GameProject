@@ -354,8 +354,8 @@ void CEdit::Update(float fDeltaTime)
 			m_pFrameKey = L"ITEM_COIN";
 			break;
 
-		case ITEM_JELLY:
-			m_pFrameKey = L"ITEM_JELLY";
+		case ITEM_CHANGE_JELLY:
+			m_pFrameKey = L"ITEM_CHANGE_JELLY";
 			break;
 
 		case ITEM_FEVER:
@@ -434,6 +434,9 @@ void CEdit::Render(HDC hDC)
 		const int firstLineIdx = camWorldX / (int)m_fTileCX;
 		const int linesNeeded = (WINCX / (int)m_fTileCX) + 2;
 
+		HPEN hOldPen = (HPEN)SelectObject(hDC, GetStockObject(DC_PEN));
+		SetDCPenColor(hDC, RGB(128, 128, 128));  // 회색 그리드
+
 		for (int i = 0; i < (int)linesNeeded; i++)
 		{
 			const int lineIdx = firstLineIdx + i;
@@ -442,6 +445,46 @@ void CEdit::Render(HDC hDC)
 			MoveToEx(hDC, lineX, 0, nullptr);
 			LineTo(hDC, lineX, WINCY);
 		}
+
+		SelectObject(hDC, hOldPen);
+	}
+
+	// 청크 구분선 (노란색, 항상 표시)
+	if (m_fBgTileWidth > 0.f)
+	{
+		const int camWorldX = -iScrollX;
+		const int chunkWidth = (int)m_fBgTileWidth;
+		const int firstChunkIdx = camWorldX / chunkWidth;
+		const int chunksNeeded = (WINCX / chunkWidth) + 2;
+
+		// 노란색 펜 생성 (두께 2)
+		HPEN hYellowPen = CreatePen(PS_SOLID, 2, RGB(255, 255, 0));
+		HPEN hOldPen = (HPEN)SelectObject(hDC, hYellowPen);
+
+		for (int i = 0; i <= chunksNeeded; i++)
+		{
+			const int chunkIdx = firstChunkIdx + i;
+			const int chunkBoundaryX = chunkIdx * chunkWidth + iScrollX;
+
+			// 화면 밖이면 스킵
+			if (chunkBoundaryX < -10 || chunkBoundaryX > WINCX + 10)
+				continue;
+
+			// 청크 경계선 그리기
+			MoveToEx(hDC, chunkBoundaryX, 0, nullptr);
+			LineTo(hDC, chunkBoundaryX, WINCY);
+
+			// 청크 번호 표시 (선택사항)
+			wchar_t szChunkLabel[32] = L"";
+			swprintf_s(szChunkLabel, L"Chunk %02d", chunkIdx + 1);
+
+			SetTextColor(hDC, RGB(255, 255, 0));
+			SetBkMode(hDC, TRANSPARENT);
+			TextOutW(hDC, chunkBoundaryX + 5, 100, szChunkLabel, lstrlenW(szChunkLabel));
+		}
+
+		SelectObject(hDC, hOldPen);
+		DeleteObject(hYellowPen);
 	}
 
 	if (m_pFrameKey)

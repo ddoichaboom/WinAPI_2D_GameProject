@@ -71,8 +71,8 @@ CObj* CObjMgr::Get_Target(OBJID eID, CObj* pObj)
 		if (Dst->Get_Dead())
 			continue;
 
-		float	fWidth = Dst->Get_Info()->fX - pObj->Get_Info()->fX;
-		float	fHeight = Dst->Get_Info()->fY - pObj->Get_Info()->fY;
+		float	fWidth = Dst->Get_Info()->fHitX - pObj->Get_Info()->fHitX;
+		float	fHeight = Dst->Get_Info()->fHitY - pObj->Get_Info()->fHitY;
 
 		float  fDiagonal = sqrtf(fWidth * fWidth + fHeight * fHeight);
 
@@ -90,19 +90,14 @@ CObj* CObjMgr::Get_Target(OBJID eID, CObj* pObj)
 // 임시로 플레이어 찾아서 반환해주는 오버로드 타겟 체크 함수 
 CObj* CObjMgr::Get_Target(OBJID eID)
 {
-	if (m_ObjList[eID].empty())
-		return nullptr;
-
-	CObj* pTarget = nullptr;
-
-	float	fDistance(0.f);
-
-	for (auto& Dst : m_ObjList[eID])
+	if (!m_ObjList[eID].empty())
 	{
-		pTarget = Dst;
-	}
+		CObj* pPlayer = m_ObjList[eID].front();
 
-	return pTarget;
+		if (pPlayer)
+			return pPlayer;
+	}
+	return nullptr;
 }
 
 void CObjMgr::Add_Object(OBJID eID, CObj* pObj)
@@ -176,7 +171,7 @@ void CObjMgr::Render(HDC hDC)
 				continue;
 			pObj->Render(hDC);
 
-			if (CKeyMgr::g_bDebugRender && pObj->Get_RenderID() != UI)
+			if (CKeyMgr::g_bDebugRender)
 			{
 				int iScrollX = (int)CScrollMgr::Get_Instance()->Get_ScrollX();
 				const auto* pRect = pObj->Get_Rect();
@@ -224,9 +219,6 @@ void CObjMgr::Delete_ID(OBJID eID)
 
 bool CObjMgr::Is_Culling(CObj* pObj)
 {
-	if (pObj->Get_RenderID() == UI)
-		return false;
-	
 	float fScrollX = CScrollMgr::Get_Instance()->Get_ScrollX();
 	float fBuffer = 400.f; // 화면 경계에서 약간의 여유 공간 
 
@@ -262,3 +254,4 @@ void	CObjMgr::Cull_Left_Of(float WorldX)
 		cullList(m_ObjList[id]);
 	}
 }
+

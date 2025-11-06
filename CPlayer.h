@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "CObj.h"
 
+class CEffect;
+
 class CPlayer :
     public CObj
 {
@@ -38,15 +40,24 @@ public:
 
 // 아이템에서 사용할 함수들
 public:     
-    void   Set_Boost_Mode(float fBoostTime) 
-    { 
-        m_bBoostMode = true;
-        m_fBoostTime = fBoostTime;
-    }
 
+    void    Activate_Boost(float fSpeed, float fDuration);
     void    Activate_Giant(float fTargetScale, float fDuration);
+    void    Activate_Magnet(float fRadius, float fDuration);
+    void    Activate_Change_Jelly(float fDuration);
+    void    Activate_Change_Obstacle_To_Coin(float fDuration);
     void   Restore_Hp(float fHealAmount);
     
+    bool    Is_Magnet_On() const { return m_bMagnetMode; }
+    float   Get_Magnet_Radius() const { return m_fMagnetRadius; }
+    bool    Is_Player_Can_Crash_Obstacle() const { return m_bBoostMode || m_bGiantMode; }
+    bool    Is_Change_Jelly_Mode() const { return m_bChangeJellyMode; }
+    bool    Is_Change_Obstacle_To_Coin_Mode() const { return m_bChangeObstacleToCoinMode; }
+    bool    Is_Boost_Mode() const { return m_bBoostMode; }
+
+    void    Collect_Alphabet(wchar_t alphabet);
+    bool    Has_Alphabet(wchar_t alphabet) const;
+    const map<wchar_t, bool>& Get_BonusTime_Alphabets() const { return m_mapBonusTimeAlphabet; }
 
 private:
     void	Collision_Border_Line();
@@ -63,7 +74,6 @@ private:
     STATE			m_ePreMotion;
     STATE			m_eCurMotion;
     PLAYERINFO      m_tPlayerInfo;
-    
 
     bool            m_bWantJump;
     bool            m_bWantSlide;
@@ -81,12 +91,30 @@ private:
     // 아이템에 사용할 변수들
     bool            m_bBoostMode;           //  부스트 모드 
     float           m_fBoostTime;          //  부스트 모드 지속시간 타이머
+    float           m_fBoostSpeed;          // 부스트 증가 속도
+    float           m_fBoostEffectTimer;
+
     SCALE_STATE     m_eScaleState;
     float           m_fGiantTime;
     float           m_fCurrentScale;
     float           m_fTargetScale;
     float           m_fScaleSpeed;
     bool            m_bGiantMode;
-    
+
+    bool            m_bMagnetMode;
+    float           m_fMagnetTime;
+    float           m_fMagnetRadius;
+
+    bool            m_bChangeJellyMode;
+    float           m_fChangeJellyTime;
+
+    bool            m_bChangeObstacleToCoinMode;
+    float           m_fChangeObstacleTime;
+
+    // 보너스 타임 알파벳 수집 (B, O, N, U, S, T, I, M, E)
+    map<wchar_t, bool> m_mapBonusTimeAlphabet;
+
+    CEffect*        m_pMagnetEffect;
+
 };
 

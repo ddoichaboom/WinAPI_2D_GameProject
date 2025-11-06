@@ -25,5 +25,7 @@ private:
     float               m_fEffectPosX;
     float               m_fEffectSpeed;
 
+    CObj*               m_pPlayer;
+
 };
 

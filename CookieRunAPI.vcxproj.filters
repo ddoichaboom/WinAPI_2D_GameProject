@@ -127,6 +127,21 @@
     <Filter Include="01. Obj\04. Item\03. Item_Magnet">
       <UniqueIdentifier>{dc4c9a61-7a2f-488a-b0c8-be2825d2a9e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Obj\04. Item\04. Item_Change_Jelly">
+      <UniqueIdentifier>{02ac56e7-c49a-4ca2-9c71-513b7e34adff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\04. Item\05. Item_Coin">
+      <UniqueIdentifier>{8c325588-c51b-47f8-9f57-d4c53fd0ef6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\12. UiMgr\06. Ui\04. Banner">
+      <UniqueIdentifier>{9b0b97b6-0b9e-499d-9f76-73a029990365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\13. EffectMgr">
+      <UniqueIdentifier>{cae4c578-5645-4baa-a38d-ee30e31be027}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Design\13. EffectMgr\Effect">
+      <UniqueIdentifier>{f2b74f03-43a2-4881-b7b8-67db8f8dbaa6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -258,6 +273,21 @@
     <ClInclude Include="CMagnet.h">
       <Filter>01. Obj\04. Item\03. Item_Magnet</Filter>
     </ClInclude>
+    <ClInclude Include="CChangeJelly.h">
+      <Filter>01. Obj\04. Item\04. Item_Change_Jelly</Filter>
+    </ClInclude>
+    <ClInclude Include="CCoin.h">
+      <Filter>01. Obj\04. Item\05. Item_Coin</Filter>
+    </ClInclude>
+    <ClInclude Include="CBanner.h">
+      <Filter>02. Design\12. UiMgr\06. Ui\04. Banner</Filter>
+    </ClInclude>
+    <ClInclude Include="CEffectMgr.h">
+      <Filter>02. Design\13. EffectMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CEffect.h">
+      <Filter>02. Design\13. EffectMgr\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CookieRunAPI.cpp">
@@ -370,6 +400,21 @@
     </ClCompile>
     <ClCompile Include="CMagnet.cpp">
       <Filter>01. Obj\04. Item\03. Item_Magnet</Filter>
+    </ClCompile>
+    <ClCompile Include="CChangeJelly.cpp">
+      <Filter>01. Obj\04. Item\04. Item_Change_Jelly</Filter>
+    </ClCompile>
+    <ClCompile Include="CCoin.cpp">
+      <Filter>01. Obj\04. Item\05. Item_Coin</Filter>
+    </ClCompile>
+    <ClCompile Include="CBanner.cpp">
+      <Filter>02. Design\12. UiMgr\06. Ui\04. Banner</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffectMgr.cpp">
+      <Filter>02. Design\13. EffectMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffect.cpp">
+      <Filter>02. Design\13. EffectMgr\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

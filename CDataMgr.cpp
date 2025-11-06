@@ -76,12 +76,12 @@ void CDataMgr::Load_Object_Data()
 	pInfo->ImagePath = L"./Image/Ui/Hp_bar/ui_hp_bar.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 310.f, 44.f);
+	pInfo = new IMAGEDATA(UI_OBJECT, 270.f, 38.f);
 	pInfo->pFrameKey = L"UI_BONUSTIME_BG";
 	pInfo->ImagePath = L"./Image/Ui/Bonustime/imgtxt_bonustime_bg.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 310.f, 44.f);
+	pInfo = new IMAGEDATA(UI_OBJECT, 270.f, 38.f);
 	pInfo->pFrameKey = L"UI_BONUSTIME_EFFECT";
 	pInfo->ImagePath = L"./Image/Ui/Bonustime/imgtxt_bonustime_effect.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
@@ -116,32 +116,32 @@ void CDataMgr::Load_Object_Data()
 	pInfo->ImagePath = L"./Image/JELLY/jelly_jellybean.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(JELLY, 55.f, 51.f, 53.f, 51.f);
+	pInfo = new IMAGEDATA(JELLY, 55.f, 51.f, 55.f, 51.f);
 	pInfo->pFrameKey = L"JELLY_BEAR_PINK";
 	pInfo->ImagePath = L"./Image/JELLY/jelly_bear_pink.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(JELLY, 55.f, 51.f, 55.f, 51.f);
+	pInfo = new IMAGEDATA(JELLY, 55.f, 51.f, 55.f, 51.f);			// 젤리 위치 이펙트 생성
 	pInfo->pFrameKey = L"JELLY_BEAR_YELLOW";
 	pInfo->ImagePath = L"./Image/JELLY/jelly_bear_yellow.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(JELLY, 144.f, 138.f, 144.f, 138.f);
+	pInfo = new IMAGEDATA(JELLY, 144.f, 138.f, 144.f, 138.f);		// 젤리 위치 이펙트 생성
 	pInfo->pFrameKey = L"JELLY_BEAR_BIG";
 	pInfo->ImagePath = L"./Image/JELLY/jelly_bear_big.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(JELLY, 48.f, 48.f, 48.f, 48.f);
+	pInfo = new IMAGEDATA(JELLY, 36.f, 36.f, 36.f, 36.f);			// 젤리 위치 이펙트 생성
 	pInfo->pFrameKey = L"JELLY_COIN1";
 	pInfo->ImagePath = L"./Image/JELLY/jelly_coin1.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(JELLY, 160.f, 161.f, 139.f, 138.f);
+	pInfo = new IMAGEDATA(JELLY, 160.f, 161.f, 139.f, 138.f);		// 젤리 위치 이펙트 생성
 	pInfo->pFrameKey = L"JELLY_COIN1_BIG";
 	pInfo->ImagePath = L"./Image/JELLY/jelly_coin1_big.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(JELLY, 58.f, 59.f, 48.f, 48.f);
+	pInfo = new IMAGEDATA(JELLY, 35.f, 36.f, 35.f, 36.f);
 	pInfo->pFrameKey = L"JELLY_COIN2";
 	pInfo->ImagePath = L"./Image/JELLY/jelly_coin2.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
@@ -317,8 +317,8 @@ void CDataMgr::Load_Object_Data()
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
 	pInfo = new IMAGEDATA(ITEM, 90.f, 90.f, 85.f, 85.f);
-	pInfo->pFrameKey = L"ITEM_JELLY";
-	pInfo->ImagePath = L"./Image/Item/item_jelly.png";
+	pInfo->pFrameKey = L"ITEM_CHANGE_JELLY";
+	pInfo->ImagePath = L"./Image/Item/item_change_jelly.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
 	pInfo = new IMAGEDATA(ITEM, 90.f, 90.f, 85.f, 87.f);
@@ -333,50 +333,105 @@ void CDataMgr::Load_Object_Data()
 
 #pragma endregion
 
+#pragma region	Effect 메타 데이터
+
+	pInfo = new IMAGEDATA(60.f, 60.f);
+	pInfo->pFrameKey = L"EFFECT_GET_JELLYBEAN";
+	pInfo->ImagePath = L"./Image/Effect/effect_get_jellybean.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(55.f, 51.f);
+	pInfo->pFrameKey = L"EFFECT_GET_BEARJELLY_PINK";
+	pInfo->ImagePath = L"./Image/Effect/effect_get_bearjelly_pink.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(55.f, 51.f);
+	pInfo->pFrameKey = L"EFFECT_GET_BEARJELLY_YELLOW";
+	pInfo->ImagePath = L"./Image/Effect/effect_get_bearjelly_yellow.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(180.f, 138.f);
+	pInfo->pFrameKey = L"EFFECT_GET_BEARJELLY_BIG";
+	pInfo->ImagePath = L"./Image/Effect/effect_get_bearjelly_big.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(36.f, 36.f);
+	pInfo->pFrameKey = L"EFFECT_GET_COIN_SILVER";
+	pInfo->ImagePath = L"./Image/Effect/effect_coin_silver.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(36.f, 36.f);
+	pInfo->pFrameKey = L"EFFECT_GET_COIN_GOLD";
+	pInfo->ImagePath = L"./Image/Effect/effect_coin_gold.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(160.f, 161.f);
+	pInfo->pFrameKey = L"EFFECT_GET_COIN_BIG";
+	pInfo->ImagePath = L"./Image/Effect/effect_coin_big.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(154.f, 101.f);
+	pInfo->pFrameKey = L"EFFECT_ITEM_BOOST";
+	pInfo->ImagePath = L"./Image/Effect/effect_item_boost.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(250.f, 250.f);
+	pInfo->pFrameKey = L"EFFECT_ITEM_MAGNET";
+	pInfo->ImagePath = L"./Image/Effect/effect_item_magnet.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(65.f, 65.f);
+	pInfo->pFrameKey = L"EFFECT_ITEM_CHANGEJELLY";
+	pInfo->ImagePath = L"./Image/Effect/effect_item_changejelly.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(36.f, 36.f);
+	pInfo->pFrameKey = L"EFFECT_ITEM_COIN";
+	pInfo->ImagePath = L"./Image/Effect/effect_item_coin.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+
+#pragma endregion
+
+
 #pragma region STAGE01 메타데이터 
 	// (종류) 플랫폼 - 2가지, 장애물 6가지 
-	pInfo = new IMAGEDATA(PLATFORM, 124.f, 140.f, 124.f, 140.f);
+	pInfo = new IMAGEDATA(PLATFORM, 124.f, 140.f, 124.0f, 140.0f);
 	pInfo->pFrameKey = L"STAGE01_PLATFORM01";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Platform/Platform01.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(PLATFORM, 124.f, 39.f, 124.f, 39.f);
+	pInfo = new IMAGEDATA(PLATFORM, 124.f, 39.f, 124.0f, 39.0f);
 	pInfo->pFrameKey = L"STAGE01_PLATFORM02";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Platform/Platform02.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	//pInfo = new IMAGEDATA(OBSTACLE, 87.f, 118.f, 79.f, 98.f);
-	pInfo = new IMAGEDATA(OBSTACLE, 87.f, 118.f, 59.f, 78.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 87.f, 118.f, 72.0f, 72.0f);
 	pInfo->pFrameKey = L"STAGE01_OBSTACLE01";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Obstacle/Obstacle01.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	//pInfo = new IMAGEDATA(OBSTACLE, 87.f, 118.f, 70.f, 98.f);
-	pInfo = new IMAGEDATA(OBSTACLE, 87.f, 118.f, 50.f, 78.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 87.f, 118.f, 72.0f, 72.0f);
 	pInfo->pFrameKey = L"STAGE01_OBSTACLE02";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Obstacle/Obstacle02.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	//pInfo = new IMAGEDATA(OBSTACLE, 125.f, 227.f, 121.f, 216.f);
-	pInfo = new IMAGEDATA(OBSTACLE, 125.f, 227.f, 101.f, 196.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 125.f, 227.f, 72.0f, 144.0f);
 	pInfo->pFrameKey = L"STAGE01_OBSTACLE03";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Obstacle/Obstacle03.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	//pInfo = new IMAGEDATA(OBSTACLE, 125.f, 227.f, 112.f, 216.f);
-	pInfo = new IMAGEDATA(OBSTACLE, 125.f, 227.f, 92.f, 196.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 125.f, 227.f, 72.0f, 144.0f);
 	pInfo->pFrameKey = L"STAGE01_OBSTACLE04";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Obstacle/Obstacle04.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	//pInfo = new IMAGEDATA(OBSTACLE, 165.f, 493.f, 164.f, 482.f);
-	pInfo = new IMAGEDATA(OBSTACLE, 165.f, 493.f, 144.f, 462.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 165.f, 493.f, 144.0f, 360.0f);
 	pInfo->pFrameKey = L"STAGE01_OBSTACLE05";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Obstacle/Obstacle05.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	//pInfo = new IMAGEDATA(OBSTACLE, 165.f, 493.f, 115.f, 482.f);
-	pInfo = new IMAGEDATA(OBSTACLE, 165.f, 493.f, 95.f, 462.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 165.f, 493.f, 144.0f, 360.0f);
 	pInfo->pFrameKey = L"STAGE01_OBSTACLE06";
 	pInfo->ImagePath = L"./Image/Stage/Stage01/Obstacle/Obstacle06.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
@@ -385,37 +440,37 @@ void CDataMgr::Load_Object_Data()
 
 #pragma region STAGE02 - 메타데이터
 	// (종류) 플랫폼 - 2가지, 장애물 5가지 
-	pInfo = new IMAGEDATA(PLATFORM, 124.f, 140.f, 124.f, 140.f);
+	pInfo = new IMAGEDATA(PLATFORM, 124.f, 140.f, 124.0f, 140.0f);
 	pInfo->pFrameKey = L"STAGE02_PLATFORM01";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Platform/Platform01.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(PLATFORM, 124.f, 39.f, 124.f, 39.f);
+	pInfo = new IMAGEDATA(PLATFORM, 124.f, 39.f, 124.0f, 39.0f);
 	pInfo->pFrameKey = L"STAGE02_PLATFORM02";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Platform/Platform02.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(OBSTACLE, 159.f, 124.f, 118.f, 114.f);		
+	pInfo = new IMAGEDATA(OBSTACLE, 159.f, 124.f, 72.0f, 72.0f);		
 	pInfo->pFrameKey = L"STAGE02_OBSTACLE01";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Obstacle/Obstacle01.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(OBSTACLE, 158.f, 249.f, 117.f, 239.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 158.f, 249.f, 72.0f, 144.0f);
 	pInfo->pFrameKey = L"STAGE02_OBSTACLE02";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Obstacle/Obstacle02.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(OBSTACLE, 158.f, 249.f, 117.f, 239.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 158.f, 249.f, 72.0f, 144.0f);
 	pInfo->pFrameKey = L"STAGE02_OBSTACLE03";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Obstacle/Obstacle03.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(OBSTACLE, 184.f, 634.f, 153.f, 634.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 184.f, 634.f, 108.0f, 360.0f);
 	pInfo->pFrameKey = L"STAGE02_OBSTACLE04";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Obstacle/Obstacle04.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(OBSTACLE, 184.f, 632.f, 150.f, 632.f);
+	pInfo = new IMAGEDATA(OBSTACLE, 184.f, 632.f, 108.0f, 360.0f);
 	pInfo->pFrameKey = L"STAGE02_OBSTACLE05";
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Obstacle/Obstacle05.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;

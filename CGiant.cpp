@@ -20,6 +20,9 @@ void CGiant::Initialize()
 	m_tFrame.frameIntervalSec = 0.50f;
 	m_tFrame.stateLockRemainSec = 0.00f;
 	m_tFrame.bLoop = true;    // 루프
+
+	m_fSpeed = 0.f;				// 기본은 움직이지 않는 젤리
+	m_fAngle = 0.f;
 }
 void CGiant::Apply_Effect(CPlayer* pPlayer)
 {
