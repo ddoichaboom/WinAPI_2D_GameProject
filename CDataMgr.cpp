@@ -56,52 +56,62 @@ void CDataMgr::Load_Object_Data()
 	pInfo->ImagePath = L"./Image/Stage/Stage02/Stage02.bmp";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 236.f, 178.f);
+	pInfo = new IMAGEDATA(236.f, 178.f);
 	pInfo->pFrameKey = L"JUMP_BUTTON";
 	pInfo->ImagePath = L"./Image/Ui/Button/Jump_button.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 236.f, 178.f);
+	pInfo = new IMAGEDATA(236.f, 178.f);
 	pInfo->pFrameKey = L"SLIDE_BUTTON";
 	pInfo->ImagePath = L"./Image/Ui/Button/Slide_button.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 824.f, 64.f);
+	pInfo = new IMAGEDATA(370.f, 90.f);
+	pInfo->pFrameKey = L"START_BUTTON";
+	pInfo->ImagePath = L"./Image/Ui/Button/Start_button.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(500.f, 500.f);
+	pInfo->pFrameKey = L"GINGER_BRAVE_COOKIE_LOBBY";
+	pInfo->ImagePath = L"./Image/Lobby/Ginger_Brave_Cookie.png";
+	m_mapImageData[pInfo->pFrameKey] = pInfo;
+
+	pInfo = new IMAGEDATA(824.f, 64.f);
 	pInfo->pFrameKey = L"UI_HP_BAR_BG";
 	pInfo->ImagePath = L"./Image/Ui/Hp_bar/ui_hp_bar_bg.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 760.f, 26.f);		
+	pInfo = new IMAGEDATA(760.f, 26.f);		
 	pInfo->pFrameKey = L"UI_HP_BAR";
 	pInfo->ImagePath = L"./Image/Ui/Hp_bar/ui_hp_bar.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 270.f, 38.f);
+	pInfo = new IMAGEDATA(270.f, 38.f);
 	pInfo->pFrameKey = L"UI_BONUSTIME_BG";
 	pInfo->ImagePath = L"./Image/Ui/Bonustime/imgtxt_bonustime_bg.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 270.f, 38.f);
+	pInfo = new IMAGEDATA(270.f, 38.f);
 	pInfo->pFrameKey = L"UI_BONUSTIME_EFFECT";
 	pInfo->ImagePath = L"./Image/Ui/Bonustime/imgtxt_bonustime_effect.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 213.f, 30.f);
+	pInfo = new IMAGEDATA(213.f, 30.f);
 	pInfo->pFrameKey = L"UI_FONT_NUMBER";
 	pInfo->ImagePath = L"./Image/Ui/Font/ui_font_number.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 10.f, 30.f);
+	pInfo = new IMAGEDATA(10.f, 30.f);
 	pInfo->pFrameKey = L"UI_FONT_COMMA";
 	pInfo->ImagePath = L"./Image/Ui/Font/ui_font_comma.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 30.f, 30.f);
+	pInfo = new IMAGEDATA(30.f, 30.f);
 	pInfo->pFrameKey = L"UI_ICON_SCORE";
 	pInfo->ImagePath = L"./Image/Ui/Icon/ui_icon_score.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;
 
-	pInfo = new IMAGEDATA(UI_OBJECT, 30.f, 30.f);
+	pInfo = new IMAGEDATA(30.f, 30.f);
 	pInfo->pFrameKey = L"UI_ICON_COIN";
 	pInfo->ImagePath = L"./Image/Ui/Icon/ui_icon_coin.png";
 	m_mapImageData[pInfo->pFrameKey] = pInfo;

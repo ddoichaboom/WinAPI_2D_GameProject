@@ -26,7 +26,8 @@ CPlayer::CPlayer()
     m_bMagnetMode(false), m_fMagnetTime(0.f), m_fMagnetRadius(0.f),
     m_fBoostSpeed(0.f), m_bChangeJellyMode(false), m_bChangeObstacleToCoinMode(false),
     m_fChangeJellyTime(0.f), m_fChangeObstacleTime(0.f), m_pMagnetEffect(nullptr),
-    m_fBoostEffectTimer(0.f)
+    m_fBoostEffectTimer(0.f), m_fHpDecreaseTimer(0.f),
+    m_bClearSequence(false), m_fClearTimer(0.f), m_fClearDuration(0.f), m_fOriginalSpeed(0.f)
 {
     ZeroMemory(&m_tPlayerInfo, sizeof(PLAYERINFO));
     ZeroMemory(&m_tRenderInfo, sizeof(INFO));
@@ -39,9 +40,9 @@ CPlayer::~CPlayer()
 
 void CPlayer::Initialize()
 {
-    m_fSpeed = 550.0f;
+    m_fSpeed = 650.0f;
     m_fVx = m_fSpeed;
-    m_fJumpSpeed = 700.f;
+    m_fJumpSpeed = 625.f;
     m_bOnGround = true;
     m_bPrevOnGround = true;
     m_eRender = GAMEOBJECT;
@@ -70,6 +71,8 @@ void CPlayer::Initialize()
 
 int CPlayer::Update(float deltaTime)
 {
+    //Time_Check(deltaTime);
+
     Key_Input();
 
     if (m_fVy < 0.f)
@@ -128,6 +131,20 @@ void CPlayer::Late_Update(float deltaTime)
             // TODO : 게임 오버 씬 전환 
             // Set_Dead();      // 필요하면 적용
         }
+        return;
+    }
+
+    // 클리어 시퀀스 진행 중
+    if (m_bClearSequence)
+    {
+        Time_Check(deltaTime);
+
+        Motion_Change();
+        Update_Rect(PLAYER);
+        Offset(deltaTime);
+        Move_Frame(deltaTime);
+
+        m_bPrevOnGround = m_bOnGround;
         return;
     }
 
@@ -474,9 +491,9 @@ void    CPlayer::Motion_Change()
             m_tFrame.iEnd = 10;
             m_tFrame.iMotion = 14;
             m_tFrame.frameElapsedSec = 0.0f;
-            m_tFrame.frameIntervalSec = 0.20f;   // 200ms
-            m_tFrame.stateLockRemainSec = 0.0f;    // 락 없음
-            m_tFrame.bLoop = true;    // 루프
+            m_tFrame.frameIntervalSec = 0.30f;   // 200ms
+            m_tFrame.stateLockRemainSec = 0.5f;    // 락 없음
+            m_tFrame.bLoop = false;    // 루프
             break;
 
         case EXHAUST:
@@ -507,7 +524,11 @@ void    CPlayer::Motion_Change()
 
 void    CPlayer::State_Check(float deltaTime)
 {
-
+    // 클리어 시퀀스 중에는 상태 변경 금지
+    if (m_bClearSequence)
+    {
+        return;
+    }
 
     if (m_tFrame.stateLockRemainSec > 0.0f)
     {
@@ -743,6 +764,35 @@ void   CPlayer::Time_Check(float deltaTime)
             m_fChangeObstacleTime = 0.f;
         }
     }
+
+    // 클리어 시퀀스 처리
+    if (m_bClearSequence)
+    {
+        m_fClearTimer += deltaTime;
+
+        // 속도 감소 보간 (선형)
+        float progress = m_fClearTimer / m_fClearDuration;
+        progress = min(progress, 1.0f);  // 1.0 초과 방지
+
+        // 원래 속도에서 0으로 점진적 감소
+        m_fVx = m_fOriginalSpeed * (1.0f - progress);
+
+        // 완전히 멈추면 CLEAR 모션
+        if (progress >= 1.0f)
+        {
+            m_fVx = 0.f;
+            m_eCurMotion = CLEAR;
+        }
+    }
+
+    // 체력 감소 시스템 (일정 시간마다 체력 감소)
+    m_fHpDecreaseTimer += deltaTime;
+
+    if (m_fHpDecreaseTimer >= HP_DECREASE_INTERVAL)
+    {
+        Take_Damage(HP_DECREASE_AMOUNT);
+        m_fHpDecreaseTimer = 0.f;
+    }
 }
 
 void    CPlayer::Activate_Boost(float fSpeed, float fDuration)
@@ -833,4 +883,12 @@ bool CPlayer::Has_Alphabet(wchar_t alphabet) const
     auto it = m_mapBonusTimeAlphabet.find(alphabet);
     return it != m_mapBonusTimeAlphabet.end() && it->second;
 
+}
+
+void    CPlayer::Activate_Clear_Sequence(float fDuration)
+{
+    m_bClearSequence = true;
+    m_fClearTimer = 0.f;
+    m_fClearDuration = fDuration;
+    m_fOriginalSpeed = m_fVx;  // 현재 속도 저장
 }

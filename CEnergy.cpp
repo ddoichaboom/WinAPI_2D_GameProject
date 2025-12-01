@@ -43,7 +43,7 @@ void CEnergy::Apply_Effect(CPlayer* pPlayer)
 	
 	if (m_eItemType == ITEM_ENERGY)
 	{
-		pPlayer->Restore_Hp(30.f);
+		pPlayer->Restore_Hp(20.f);
 	}
 	else if (m_eItemType == ITEM_ENERGY_BIG)
 	{
@@ -61,7 +61,7 @@ void CEnergy::Apply_Effect(CPlayer* pPlayer)
 			}
 			else if (wcsstr(pStage->Get_Current_Stage().bgTileKey.c_str(), L"STAGE02"))
 			{
-				// TODO - 스테이지 3 구현 안한다면 여기서 플레이어(클리어) 애니메이션 트리거
+				pPlayer->Activate_Clear_Sequence(CLEAR_SEQUENCE_DURATION);
 			}
 
 		}

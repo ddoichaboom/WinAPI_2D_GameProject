@@ -114,7 +114,6 @@ void CMainGame::Release()
 {
 	ReleaseDC(g_hWnd, m_hDC);
 
-	CEffectMgr::Destroy_Instance();
 	CDataMgr::Destroy_Instance();
 	CTimeMgr::Destroy_Instance();
 	CSoundMgr::Destroy_Instance();
@@ -126,4 +125,5 @@ void CMainGame::Release()
 	CScrollMgr::Destroy_Instance();
 	CObjMgr::Destroy_Instance();
 	CUiMgr::Destroy_Instance();
+	CEffectMgr::Destroy_Instance();
 }

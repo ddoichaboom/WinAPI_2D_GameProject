@@ -46,6 +46,7 @@ public:
     void    Activate_Magnet(float fRadius, float fDuration);
     void    Activate_Change_Jelly(float fDuration);
     void    Activate_Change_Obstacle_To_Coin(float fDuration);
+    void    Activate_Clear_Sequence(float fDuration);
     void   Restore_Hp(float fHealAmount);
     
     bool    Is_Magnet_On() const { return m_bMagnetMode; }
@@ -115,6 +116,14 @@ private:
     map<wchar_t, bool> m_mapBonusTimeAlphabet;
 
     CEffect*        m_pMagnetEffect;
+
+    float           m_fHpDecreaseTimer;     // 체력 감소 간격 타이머
+
+    // 클리어 시퀀스 시스템
+    bool            m_bClearSequence;       // 클리어 시퀀스 진행 중
+    float           m_fClearTimer;          // 속도 감소 타이머
+    float           m_fClearDuration;       // 속도 감소 시간
+    float           m_fOriginalSpeed;       // 원래 속도 저장
 
 };
 

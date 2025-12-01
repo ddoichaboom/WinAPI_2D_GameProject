@@ -38,6 +38,7 @@ private:
 
     POINT			m_tCursor;
     bool            m_bRenderVerticalLine;
+    bool            m_bSceneLeave;
 
     int             m_iStageType; 
     int             m_iPrevStageType;

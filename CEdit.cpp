@@ -16,6 +16,7 @@
 #include "Factory.h"
 #include "CSoundMgr.h"
 #include "CTimeMgr.h"
+#include "CSceneMgr.h"
 
 CEdit::CEdit()
 	:  m_iEditType(EDIT_FIRST_PLATFORM),
@@ -23,7 +24,8 @@ CEdit::CEdit()
 	m_iObstacleType(0), m_iJellyTextType(0), m_iStageType(STAGE01),
 	m_pStageFrameKey(nullptr), m_fTileCX(0.f),
 	m_iItemType(ITEM_ENERGY), m_iPrevStageType(ST_END),
-	m_iCurrentChunkIndex(0), m_fBgTileWidth(0.f), m_fEditorScrollX(0.f)
+	m_iCurrentChunkIndex(0), m_fBgTileWidth(0.f), m_fEditorScrollX(0.f),
+	m_bSceneLeave(false)
 {
 	ZeroMemory(&m_tCursor, sizeof(POINT));
 }
@@ -381,6 +383,8 @@ void CEdit::Update(float fDeltaTime)
 
 void CEdit::Late_Update(float fDeltaTime)
 {
+
+
 	
 	CObjMgr::Get_Instance()->Late_Update(fDeltaTime);
 
@@ -849,6 +853,14 @@ void CEdit::Key_Input()
 		else
 			m_iJellyTextType = 0;
 	}
+
+	//// --- 씬 전환 키 (ENTER) ---
+	//if (CKeyMgr::Get_Instance()->Key_Down(VK_RETURN))
+	//{
+	//	CSceneMgr::Get_Instance()->Scene_Change(SC_LOBBY);
+	//	m_bSceneLeave = true;  // 전환 플래그 세팅
+	//	return;                // 이 프레임의 나머지 입력 로직 중단
+	//}
 		
 }
 
@@ -1011,7 +1023,7 @@ void CEdit::Save_Chunk_Data(const TCHAR* pFilePath)
 	CloseHandle(hFile);
 
 	wchar_t szMsg[128] = L"";
-	+swprintf_s(szMsg, L"Chunk %02d Saved!", m_iCurrentChunkIndex + 1);
-	+MessageBox(g_hWnd, szMsg, L"Save Success", MB_OK);
+	swprintf_s(szMsg, L"Chunk %02d Saved!", m_iCurrentChunkIndex + 1);
+	MessageBox(g_hWnd, szMsg, L"Save Success", MB_OK);
 
 }

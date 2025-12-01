@@ -18,7 +18,7 @@
 #define		BOUNDARY_BOTTOM		720.f
 #define		TILEX				44
 
-#define		JUMP_APEX_TIME		0.35f;				// 최고점 도달 시간 
+#define		JUMP_APEX_TIME		0.375f;				// 최고점 도달 시간 
 
 const	float	MAGNET_RADIUS				= 300.0f;
 const	float	MAGNET_DURATION				= 5.0f;
@@ -26,6 +26,11 @@ const	float	BOOST_SPEED					= 450.f;
 const	float	BOOST_DURATION				= 3.0f;
 const	float	CHANGE_JELLY_DURATION		= 2.0f;
 const	float	CHANGE_OBSTACLE_DURATON		= 2.0f;
+
+const float   HP_DECREASE_INTERVAL = 1.0f;         // 1초마다
+const float   HP_DECREASE_AMOUNT = 2.0f;         // 1씩 감소
+
+const float   CLEAR_SEQUENCE_DURATION = 2.0f;
 
 
 extern HWND g_hWnd;

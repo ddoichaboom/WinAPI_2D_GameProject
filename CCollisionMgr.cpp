@@ -21,7 +21,6 @@ void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 		const float vy = pDst->Get_Y_Axis_Speed();
 		if (vy < 0.f) {
 			// 상승 중에는 상-하 보정 없음
-			//pDst->Set_OnGround(false);
 			continue;
 		}
 
@@ -48,8 +47,11 @@ void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 			if (overlapX < kMinOverlapX)
 				continue;
 
-			// 2) Dst가 위, Src가 아래(상-하 후보만)
-			if (d->fHitY >= s->fHitY)
+			// 2) Dst의 발이 Src의 상면보다 위에 있어야 함 (중심이 아닌 bottom/top 기준)
+			const float dstBottom = d->fHitY + d->fHitCY * 0.5f;   // 플레이어 발
+			const float srcTop = s->fHitY - s->fHitCY * 0.5f;      // 플랫폼 상면
+
+			if (dstBottom > srcTop + 20.f)  // 발이 플랫폼 상면보다 20픽셀 이상 아래면 제외
 				continue;
 
 			// 3) AABB 침투량 계산
@@ -80,10 +82,12 @@ void CCollisionMgr::Collision_Rect(list<CObj*> Dst, list<CObj*> Src)
 			// 지면 상태 세팅
 			pDst->Set_OnGround(true);
 
-			// 히트중심 재정렬
+			
 			const INFO* d = pDst->Get_Info();
-			pDst->Set_Hit_Pos(d->fX, d->fY + (d->fCY - d->fHitCY) * 0.5f);
-
+			
+			
+			pDst->Update_Rect(PLAYER);  // 전체 Rect 재계산 (거대화 스케일 반영)
+			
 			// 한 개만 처리하고 종료(다중 보정 금지)
 			continue;
 		}
@@ -221,21 +225,45 @@ void CCollisionMgr::Collision_Collect(list<CObj*>& Dst, list<CObj*>& Src)
 					// 젤리 타입별 이펙트
 					const wchar_t* effectKey = nullptr;
 					if (wcsstr(pJelly->Get_FrameKey(), L"BEAR_BIG"))
+					{
 						effectKey = L"EFFECT_GET_BEARJELLY_BIG";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Jelly_BearJelly.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"BEAR_PINK"))
+					{
 						effectKey = L"EFFECT_GET_BEARJELLY_PINK";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Jelly_BearJelly.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"BEAR_YELLOW"))
+					{
 						effectKey = L"EFFECT_GET_BEARJELLY_YELLOW";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Jelly_BearJelly.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN1_BIG"))
+					{
 						effectKey = L"EFFECT_GET_COIN_BIG";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_BigCoin.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN2_BIG"))
+					{
 						effectKey = L"EFFECT_GET_COIN_BIG";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_BigCoin.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN2"))
+					{
 						effectKey = L"EFFECT_GET_COIN_GOLD";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Coin2.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"COIN1"))
+					{
 						effectKey = L"EFFECT_GET_COIN_SILVER";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Coin1.wav", SOUND_EFFECT, 0.4f);
+					}
 					else if (wcsstr(pJelly->Get_FrameKey(), L"JELLYBEAN"))
+					{
 						effectKey = L"EFFECT_GET_JELLYBEAN";
+						CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Jelly_JellyBean.wav", SOUND_EFFECT, 0.4f);
+					}
 
 					if (effectKey)
 					{
@@ -302,7 +330,7 @@ void CCollisionMgr::Collision_Item(list<CObj*>& Dst, list<CObj*>& Src)
 			if (pItem)
 			{
 				pItem->Apply_Effect(pPlayer);
-				
+				CSoundMgr::Get_Instance()->PlaySound(L"./Sound/Effect/Get_Item.wav", SOUND_EFFECT, 0.4f);
 			}
 			pItemObj->Set_Dead();
 		}
