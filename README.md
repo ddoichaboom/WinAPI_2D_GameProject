@@ -1,4 +1,4 @@
-# WinAPI 2D Runner
+# WinAPI_2D_GameProject
 
 **엔진 없이 C++ · Win32 API(GDI)로 만든 2D 러너 게임과 인게임 맵 에디터**
 
